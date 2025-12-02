@@ -1,0 +1,9 @@
+node_modules/
+.env
+uploads/
+*.log
+.DS_Store
+Thumbs.db
+fix_git.ps1
+fix_git_v2.ps1
+migrate_db.js
