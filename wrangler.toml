@@ -1,0 +1,26 @@
+name = "libros-web"
+compatibility_date = "2023-12-01"
+
+# Main entry point
+main = "src/index.js"
+
+# Static assets (Frontend)
+[site]
+bucket = "./public"
+
+# Database (D1)
+[[d1_databases]]
+binding = "DB"
+database_name = "libros-db"
+database_id = "to-be-generated" # Run: npx wrangler d1 create libros-db
+
+# Object Storage (R2)
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "libros-files"
+
+# Environment variables
+[vars]
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""
+JWT_SECRET = "dev-secret-key"
