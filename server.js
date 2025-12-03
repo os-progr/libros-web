@@ -8,7 +8,7 @@ console.log('📅 Build Time: ' + new Date().toISOString());
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const passport = require('./config/passport');
+const passport = require('./config/google-auth');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
