@@ -8,6 +8,7 @@ const session = require('express-session');
 const passport = require('./config/passport');
 const cors = require('cors');
 const path = require('path');
+const multer = require('multer');
 const { testConnection } = require('./config/database');
 
 // Import routes

@@ -4,8 +4,8 @@
   "description": "Plataforma para compartir y descubrir libros con autenticación de Google",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node init-uploads.js && node server.js",
+    "dev": "node init-uploads.js && nodemon server.js"
   },
   "keywords": [
     "books",
