@@ -2,6 +2,9 @@
 // EXPRESS SERVER - LIBROS WEB
 // ============================================
 
+console.log('🚀 STARTING APP - VERSION 2.0 (DEBUG MODE)');
+console.log('📅 Build Time: ' + new Date().toISOString());
+
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
