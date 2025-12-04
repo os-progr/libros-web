@@ -1,5 +1,18 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.3 (2025-12-04)
+
+### 🐛 Correcciones de Errores
+- **routes/auth.js**: Corregida importación de `../config/passport` a `../config/google-auth`
+- **Despliegue**: Solucionado error `MODULE_NOT_FOUND` en producción
+
+### 🔧 Impacto
+- ✅ La aplicación ahora se despliega correctamente en Railway
+- ✅ La autenticación con Google funciona sin errores
+- ✅ Todos los módulos se cargan correctamente
+
+---
+
 ## v10.2 (2025-12-04)
 
 ### 📚 Documentación
