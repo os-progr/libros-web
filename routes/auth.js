@@ -4,7 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../config/google-auth');
 
 // @route   GET /auth/google
 // @desc    Initiate Google OAuth flow
