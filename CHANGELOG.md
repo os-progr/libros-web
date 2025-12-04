@@ -1,5 +1,19 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.2 (2025-12-04)
+
+### 📚 Documentación
+- **CHANGELOG.md**: Registro completo de cambios y versiones
+- **DEVELOPER_MODE_GUIDE.md**: Guía detallada del modo desarrollador para el administrador
+- **auto-version.ps1**: Script mejorado de versionado automático
+
+### 🔧 Mejoras
+- Sistema de versionado automático completamente funcional
+- Documentación completa para el administrador
+- Guías de uso para las nuevas funcionalidades
+
+---
+
 ## v10.1 (2025-12-04)
 
 ### ✨ Nuevas Funcionalidades
