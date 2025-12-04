@@ -563,3 +563,29 @@ body {
     justify-content: center;
   }
 }
+/* Developer Mode Toggle (Admin Only) */
+.developer-toggle {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.developer-toggle:hover {
+  background-color: var(--border-color);
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

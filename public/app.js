@@ -9,24 +9,36 @@
 (function () {
     'use strict';
 
-    // Disable right-click context menu
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        return false;
-    });
+    // Check if developer mode is enabled
+    function isDevModeEnabled() {
+        return localStorage.getItem('developerMode') === 'true';
+    }
 
-    // Disable common developer shortcuts
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'F12' ||
-            (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-            (e.ctrlKey && e.shiftKey && e.key === 'J') ||
-            (e.ctrlKey && e.key === 'u') ||
-            (e.ctrlKey && e.shiftKey && e.key === 'C') ||
-            (e.ctrlKey && e.key === 's')) {
+    // Disable right-click context menu
+    function preventContextMenu(e) {
+        if (!isDevModeEnabled()) {
             e.preventDefault();
             return false;
         }
-    });
+    }
+
+    // Disable common developer shortcuts
+    function preventDevShortcuts(e) {
+        if (!isDevModeEnabled()) {
+            if (e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                (e.ctrlKey && e.key === 's')) {
+                e.preventDefault();
+                return false;
+            }
+        }
+    }
+
+    document.addEventListener('contextmenu', preventContextMenu);
+    document.addEventListener('keydown', preventDevShortcuts);
 })();
 
 // ============================================
@@ -41,35 +53,67 @@ const AppState = {
 };
 
 // ============================================
-// THEME MANAGER
+// DEVELOPER MODE MANAGER (Admin Only)
 // ============================================
-const ThemeManager = {
-    init() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        this.setTheme(savedTheme);
+const DeveloperMode = {
+    adminEmail: 'edaninguna@gmail.com',
 
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
+    init(user) {
+        // Only show developer icon for admin
+        if (user && user.email === this.adminEmail) {
+            const developerToggle = document.getElementById('developerToggle');
+            if (developerToggle) {
+                developerToggle.classList.remove('hidden');
+                developerToggle.addEventListener('click', () => this.toggleDevMode());
+            }
+        }
+
+        // Load saved developer mode state
+        const devMode = localStorage.getItem('developerMode') === 'true';
+        if (devMode) {
+            this.enableDevMode();
         }
     },
 
-    setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        this.updateIcon(theme);
+    toggleDevMode() {
+        const isEnabled = localStorage.getItem('developerMode') === 'true';
+        if (isEnabled) {
+            this.disableDevMode();
+        } else {
+            this.enableDevMode();
+        }
     },
 
-    toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        this.setTheme(newTheme);
+    enableDevMode() {
+        localStorage.setItem('developerMode', 'true');
+        // Re-enable developer tools
+        document.removeEventListener('contextmenu', this.preventContextMenu);
+        document.removeEventListener('keydown', this.preventDevShortcuts);
+        alert('🔧 Modo Desarrollador Activado\n\nHerramientas de desarrollador habilitadas.');
     },
 
-    updateIcon(theme) {
-        const icon = document.querySelector('.theme-icon');
-        if (icon) {
-            icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+    disableDevMode() {
+        localStorage.setItem('developerMode', 'false');
+        // Disable developer tools again
+        document.addEventListener('contextmenu', this.preventContextMenu);
+        document.addEventListener('keydown', this.preventDevShortcuts);
+        alert('🔒 Modo Desarrollador Desactivado\n\nHerramientas de desarrollador bloqueadas.');
+    },
+
+    preventContextMenu(e) {
+        e.preventDefault();
+        return false;
+    },
+
+    preventDevShortcuts(e) {
+        if (e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+            (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+            (e.ctrlKey && e.key === 'u') ||
+            (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+            (e.ctrlKey && e.key === 's')) {
+            e.preventDefault();
+            return false;
         }
     }
 };
@@ -282,7 +326,19 @@ const UIManager = {
     // Download current book
     downloadCurrentBook(format = 'pdf') {
         if (!AppState.currentBook) return;
-        window.location.href = `/api/books/${AppState.currentBook.id}/download?format=${format}`;
+
+        const book = AppState.currentBook;
+        const formatName = format === 'pdf' ? 'PDF' : 'Word';
+        const message = `¿Deseas descargar "${book.title}" en formato ${formatName}?`;
+
+        if (confirm(message)) {
+            window.location.href = `/api/books/${AppState.currentBook.id}/download?format=${format}`;
+
+            // Show success message
+            setTimeout(() => {
+                alert(`✅ Descarga iniciada: ${book.title} (${formatName})`);
+            }, 500);
+        }
     },
 
     // Escape HTML to prevent XSS
@@ -405,13 +461,13 @@ async function loadBooks() {
 }
 
 async function initializeApp() {
-    // Initialize Theme
-    ThemeManager.init();
-
     // Check authentication status
     const user = await API.checkAuth();
     AppState.user = user;
     AppState.isAuthenticated = !!user;
+
+    // Initialize Developer Mode (only for admin)
+    DeveloperMode.init(user);
 
     // Update UI based on auth status
     UIManager.updateAuthUI(user);
