@@ -1,0 +1,66 @@
+# 📝 Registro de Cambios - LibrosWeb
+
+## v10.1 (2025-12-04)
+
+### ✨ Nuevas Funcionalidades
+
+#### 🔧 Modo Desarrollador (Solo Administrador)
+- **Icono de Engranaje (⚙️)**: Reemplaza el botón de cambio de tema
+- **Acceso Exclusivo**: Solo visible para `edaninguna@gmail.com`
+- **Funcionalidades**:
+  - Activa/desactiva herramientas de desarrollador
+  - Permite usar F12, clic derecho y atajos de teclado
+  - Animación de pulso para fácil identificación
+  - Estado persistente en localStorage
+
+#### 📥 Confirmación de Descarga
+- **Diálogo de Confirmación**: Aparece antes de descargar cualquier libro
+- **Información Clara**: Muestra el título del libro y formato (PDF/Word)
+- **Mensaje de Éxito**: Confirma que la descarga ha iniciado
+
+### 🛠️ Cambios Técnicos
+- Modificado `public/index.html`: Nuevo botón de desarrollador
+- Modificado `public/app.js`: 
+  - Nuevo módulo `DeveloperMode`
+  - Actualizada función `downloadCurrentBook()`
+  - Protección de código condicional
+- Modificado `public/styles.css`: Estilos con animación para el botón de desarrollador
+- Creado `VERSION`: Archivo de control de versiones
+- Creado `auto-version.ps1`: Script de versionado automático
+
+### 📦 Archivos Nuevos
+- `VERSION` - Control de versiones
+- `auto-version.ps1` - Script de versionado automático
+- `CHANGELOG.md` - Este archivo
+
+---
+
+## 🚀 Cómo Usar el Script de Versionado
+
+Para crear una nueva versión automáticamente:
+
+```powershell
+.\auto-version.ps1
+```
+
+Este script:
+1. Lee la versión actual del archivo `VERSION`
+2. Incrementa el número menor (10.1 → 10.2 → 10.3)
+3. Hace commit con el mensaje de versión
+4. Crea el tag correspondiente
+5. Sube todo a GitHub
+
+---
+
+## 📋 Versiones Anteriores
+
+### v10.0 y anteriores
+- Sistema de autenticación con Google OAuth
+- Gestión de libros (subir, ver, descargar)
+- Soporte para PDF y Word
+- Imágenes de portada personalizadas
+- Búsqueda de libros
+- Sistema de géneros
+- Panel de administración
+- Sistema de reportes
+- Protección anti-inspección de código

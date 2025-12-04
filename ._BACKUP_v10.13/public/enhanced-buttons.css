@@ -1,0 +1,158 @@
+/* ============================================ */
+/* ENHANCED BUTTON STYLES - Premium Design */
+/* ============================================ */
+
+/* Override button styles with premium design */
+.btn {
+    padding: 0.65rem 1.25rem !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Ripple effect */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Premium gradient for primary buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px 0 rgba(102, 126, 234, 0.6) !important;
+}
+
+.btn-primary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Enhanced secondary buttons */
+.btn-secondary {
+    border: 2px solid var(--border-color) !important;
+    background-color: transparent !important;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Larger buttons */
+.btn-large {
+    padding: 0.875rem 1.75rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 1rem !important;
+}
+
+/* Download buttons - special styling */
+#downloadPdfBtn,
+#downloadDocxBtn {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(245, 87, 108, 0.4) !important;
+}
+
+#downloadPdfBtn:hover,
+#downloadDocxBtn:hover {
+    box-shadow: 0 6px 20px 0 rgba(245, 87, 108, 0.6) !important;
+}
+
+/* Upload button - special styling */
+#uploadBtn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(79, 172, 254, 0.4) !important;
+}
+
+#uploadBtn:hover {
+    box-shadow: 0 6px 20px 0 rgba(79, 172, 254, 0.6) !important;
+}
+
+/* Form submit button */
+.form-group .btn-primary {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(67, 233, 123, 0.4) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+}
+
+.form-group .btn-primary:hover {
+    box-shadow: 0 6px 20px 0 rgba(67, 233, 123, 0.6) !important;
+}
+
+/* Viewer actions buttons */
+.viewer-actions {
+    padding: 1.25rem !important;
+    background: linear-gradient(180deg, var(--card-background) 0%, rgba(102, 126, 234, 0.05) 100%) !important;
+}
+
+.viewer-actions .btn {
+    min-width: 140px;
+    justify-content: center;
+}
+
+/* Delete button */
+.delete-book-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(255, 107, 107, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.delete-book-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px 0 rgba(255, 107, 107, 0.6) !important;
+}
+
+/* Google login button */
+.google-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4) !important;
+}
+
+.google-btn:hover {
+    box-shadow: 0 6px 20px 0 rgba(102, 126, 234, 0.6) !important;
+}
+
+/* Button icons animation */
+.btn span:first-child {
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.btn:hover span:first-child {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* File input labels */
+.file-input-label {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.file-input:hover+.file-input-label {
+    border-color: var(--primary-color) !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}

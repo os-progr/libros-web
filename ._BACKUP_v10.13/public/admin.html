@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - LibrosWeb</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>LibrosWeb - Admin</span>
+                </div>
+                <div class="nav-actions">
+                    <button class="btn btn-secondary" onclick="window.location.href='/'">← Volver a Inicio</button>
+                    <button class="btn btn-secondary" id="logoutBtn">🚪 Salir</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main admin-main">
+        <div class="container">
+            <div class="hero">
+                <h1 class="hero-title">Panel de Administración</h1>
+                <p class="hero-subtitle">Control total del sistema</p>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="stats">📊 Estadísticas</button>
+                <button class="admin-tab" data-tab="activity">📝 Actividad</button>
+                <button class="admin-tab" data-tab="reports">🚨 Reportes</button>
+                <button class="admin-tab" data-tab="flagged">🚩 Contenido Marcado</button>
+            </div>
+
+            <!-- Tab: Statistics -->
+            <div id="adminTab-stats" class="admin-tab-content active">
+                <!-- Quick Stats Grid -->
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Usuarios Totales</h3>
+                            <p id="totalUsers" class="stat-value">-</p>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-info">
+                            <h3>Libros Totales</h3>
+                            <p id="totalBooks" class="stat-value">-</p>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">👀</div>
+                        <div class="stat-info">
+                            <h3>Visitas Hoy</h3>
+                            <p id="todayVisits" class="stat-value">-</p>
+                            <span id="todayUniqueUsers" class="stat-sub">0 usuarios únicos</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <h3>Visitas (7 días)</h3>
+                            <p id="weekVisits" class="stat-value">-</p>
+                            <span id="weekUniqueUsers" class="stat-sub">0 usuarios únicos</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card alert">
+                        <div class="stat-icon">🚨</div>
+                        <div class="stat-info">
+                            <h3>Reportes Pendientes</h3>
+                            <p id="pendingReports" class="stat-value">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traffic Chart -->
+                <div class="admin-chart-container">
+                    <h3 class="chart-title">📈 Tráfico de los Últimos 30 Días</h3>
+                    <canvas id="trafficChart"></canvas>
+                </div>
+
+                <!-- Top Books -->
+                <div class="admin-section">
+                    <h3 class="section-title">🔥 Libros Más Vistos</h3>
+                    <div id="topBooksList" class="top-books-list">
+                        <!-- Books will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Activity Logs -->
+            <div id="adminTab-activity" class="admin-tab-content">
+                <div class="admin-section">
+                    <h3 class="section-title">📝 Registro de Actividades Recientes</h3>
+                    <div id="activityLogsList" class="activity-logs-list">
+                        <!-- Activity logs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Content Reports -->
+            <div id="adminTab-reports" class="admin-tab-content">
+                <div class="admin-section">
+                    <h3 class="section-title">🚨 Reportes de Contenido Inapropiado</h3>
+                    <div id="reportsList" class="reports-list">
+                        <!-- Reports will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Flagged Content -->
+            <div id="adminTab-flagged" class="admin-tab-content">
+                <div class="admin-section">
+                    <h3 class="section-title">🚩 Contenido Marcado como Inapropiado</h3>
+                    <div id="flaggedBooksList" class="flagged-books-list">
+                        <!-- Flagged books will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-app.js"></script>
+</body>
+
+</html>

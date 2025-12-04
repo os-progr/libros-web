@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibrosWeb - Comparte y Descubre Libros</title>
+    <meta name="description"
+        content="Plataforma para compartir y descubrir libros. Publica tus obras y explora la biblioteca de la comunidad.">
+
+    <!-- Google Fonts -->
+    <div class="main-window">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>LibrosWeb</span>
+                </div>
+
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar libros, autores..."
+                        autocomplete="off">
+                </div>
+
+                <div class="nav-actions">
+                    <!-- Authenticated user actions -->
+                    <div id="authenticatedActions" class="hidden nav-actions">
+                        <div class="user-profile">
+                            <img id="userPicture" src="" alt="User" class="user-avatar"
+                                style="width: 32px; height: 32px; border-radius: 50%;">
+                            <span id="userName" style="font-weight: 600; font-size: 0.9rem;"></span>
+                        </div>
+                        <button class="btn btn-primary" id="uploadBtn">
+                            <span>📤</span>
+                            <span>Publicar</span>
+                        </button>
+                        <a href="/admin.html" class="btn btn-secondary hidden" id="adminPanelLink">
+                            <span>⚙️</span>
+                        </a>
+                        <button class="btn btn-secondary" id="logoutBtn" title="Cerrar Sesión">
+                            <span>🚪</span>
+                        </button>
+                    </div>
+
+                    <!-- Unauthenticated user actions -->
+                    <div id="unauthenticatedActions" class="hidden">
+                        <a href="/auth/google" class="btn btn-primary">
+                            <span>🔐</span>
+                            <span>Acceder</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Welcome Screen (for unauthenticated users) -->
+                <section id="welcomeScreen" class="hidden">
+                    <div class="welcome-section">
+                        <!-- Hero Card Principal -->
+                        <div class="hero-card">
+                            <div class="hero-text">
+                                <h1 class="hero-title">Bienvenido a LibrosWeb</h1>
+                                <p class="hero-subtitle">Publica tus libros y gestiona tu biblioteca personal de manera
+                                    sencilla y elegante.</p>
+                                <a href="/auth/google" class="btn btn-primary btn-large">
+                                    <span>🔐</span>
+                                    <span>Iniciar sesión con Google</span>
+                                </a>
+                            </div>
+                            <div class="hero-image">
+                                📚
+                            </div>
+                        </div>
+
+                        <!-- Feature Cards -->
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">📖</div>
+                                <h3 class="feature-title">Publica tus Libros</h3>
+                                <p class="feature-desc">Sube tus obras en formato PDF y Word fácilmente.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🔓</div>
+                                <h3 class="feature-title">Acceso Libre</h3>
+                                <p class="feature-desc">Comparte conocimiento sin restricciones con la comunidad.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">☁️</div>
+                                <h3 class="feature-title">En la Nube</h3>
+                                <p class="feature-desc">Accede a tu biblioteca desde cualquier dispositivo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Dashboard (for admin users) -->
+                <section id="adminDashboard" class="hidden">
+                    <div class="welcome-section">
+                        <h1 class="hero-title" style="text-align: center; margin-bottom: 2rem;">Panel de Administración
+                        </h1>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">👥</div>
+                                <h3 class="feature-title">Usuarios Totales</h3>
+                                <p id="totalUsers" class="feature-desc"
+                                    style="font-size: 2rem; color: white; font-weight: 700;">-</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">📚</div>
+                                <h3 class="feature-title">Libros Totales</h3>
+                                <p id="totalBooks" class="feature-desc"
+                                    style="font-size: 2rem; color: white; font-weight: 700;">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Books Section (for authenticated users) -->
+                <section id="booksSection" class="hidden">
+                    <!-- Polls Section -->
+                    <div id="pollsSection" class="polls-section">
+                        <!-- Polls will be dynamically inserted here -->
+                    </div>
+
+                    <div class="books-grid" id="booksGrid">
+                        <!-- Books will be dynamically inserted here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state hidden" id="emptyState" style="text-align: center; padding: 4rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;">📖</div>
+                        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No hay libros aún</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Sé el primero en publicar un libro
+                        </p>
+                        <button class="btn btn-primary" onclick="document.getElementById('uploadBtn').click()">
+                            <span>📤</span>
+                            <span>Publicar el Primer Libro</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Publicar Nuevo Libro</h2>
+                <button class="modal-close" id="closeUploadModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label class="form-label" for="bookTitle">Título del Libro *</label>
+                        <input type="text" class="form-input" id="bookTitle" required placeholder="Ej: El Principito">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookAuthor">Autor *</label>
+                        <input type="text" class="form-input" id="bookAuthor" required
+                            placeholder="Ej: Antoine de Saint-Exupéry">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookDescription">Descripción</label>
+                        <textarea class="form-textarea" id="bookDescription"
+                            placeholder="Breve descripción del libro..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookGenre">Género Literario *</label>
+                        <select class="form-select" id="bookGenre" required>
+                            <option value="">Selecciona un género...</option>
+                            <!-- Géneros se cargarán dinámicamente -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Archivo PDF (Obligatorio) *</label>
+                        <div class="file-input-wrapper">
+                            <label for="bookFile" class="file-input-label">
+                                <span>📄</span>
+                                <span>Seleccionar archivo PDF</span>
+                            </label>
+                            <input type="file" class="file-input" id="bookFile" name="pdf" accept=".pdf" required>
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Archivo Word (Opcional)</label>
+                        <div class="file-input-wrapper">
+                            <label for="bookDocx" class="file-input-label">
+                                <span>📝</span>
+                                <span>Seleccionar archivo Word</span>
+                            </label>
+                            <input type="file" class="file-input" id="bookDocx" name="docx" accept=".doc,.docx">
+                        </div>
+                        <div class="file-name" id="docxFileName"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Imagen de Portada (Opcional)</label>
+                        <div class="file-input-wrapper">
+                            <label for="bookCover" class="file-input-label">
+                                <span>🖼️</span>
+                                <span>Seleccionar imagen</span>
+                            </label>
+                            <input type="file" class="file-input" id="bookCover" name="cover" accept="image/*">
+                        </div>
+                        <div class="file-name" id="coverFileName"></div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            Publicar Libro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    </body>
+
+</html>

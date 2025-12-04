@@ -1,0 +1,434 @@
+/* ============================================
+   ADMIN PANEL STYLES
+   ============================================ */
+
+.admin-main {
+    min-height: 100vh;
+    padding-bottom: 3rem;
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.admin-tab {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.admin-tab:hover {
+    color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.admin-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Tab Content */
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Stats Grid */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-stat-card {
+    background-color: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.admin-stat-card.alert {
+    border-left: 4px solid #ef4444;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-info h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.stat-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Chart Container */
+.admin-chart-container {
+    background-color: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    height: 400px;
+}
+
+.chart-title {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+#trafficChart {
+    max-height: 320px;
+}
+
+/* Admin Sections */
+.admin-section {
+    background-color: var(--card-background);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Top Books List */
+.top-books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.top-book-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--input-bg);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.top-book-item:hover {
+    transform: translateX(5px);
+    border-color: var(--primary-color);
+}
+
+.book-rank {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    min-width: 50px;
+    text-align: center;
+}
+
+.top-book-item .book-info {
+    flex: 1;
+}
+
+.top-book-item .book-info h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.top-book-item .book-info p {
+    margin: 0.25rem 0 0 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.book-views {
+    font-weight: 600;
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+
+/* Activity Logs */
+.activity-logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.activity-log-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--input-bg);
+    border-radius: 0.75rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.log-icon {
+    font-size: 1.5rem;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.log-content {
+    flex: 1;
+}
+
+.log-header {
+    margin-bottom: 0.5rem;
+}
+
+.log-header strong {
+    color: var(--text-primary);
+}
+
+.log-action {
+    color: var(--text-secondary);
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.log-details {
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+.log-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Reports List */
+.reports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.report-item {
+    background-color: var(--input-bg);
+    border-radius: 0.75rem;
+    border: 2px solid #f59e0b;
+    padding: 1.5rem;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.report-reason {
+    background-color: #f59e0b;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.report-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.report-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.report-content p {
+    margin: 0.25rem 0;
+    color: var(--text-secondary);
+}
+
+.report-description {
+    padding: 0.75rem;
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+    margin: 0.75rem 0 !important;
+    font-style: italic;
+}
+
+.report-reporter {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.report-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Flagged Books List */
+.flagged-books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.flagged-book-item {
+    background-color: var(--input-bg);
+    border-radius: 0.75rem;
+    border: 2px solid #ef4444;
+    padding: 1.5rem;
+}
+
+.book-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.book-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.flagged-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.flag-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background-color: var(--card-background);
+    border-radius: 0.5rem;
+}
+
+.flag-reason,
+.flagged-by {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.flag-reason {
+    font-weight: 600;
+    color: #ef4444;
+}
+
+/* Empty Message */
+.empty-message {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-chart-container {
+        height: 300px;
+    }
+
+    .admin-tabs {
+        gap: 0;
+    }
+
+    .admin-tab {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .report-actions {
+        flex-direction: column;
+    }
+
+    .report-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Dark mode adjustments (already handled by CSS variables) */
+[data-theme="dark"] .admin-stat-card,
+[data-theme="dark"] .admin-chart-container,
+[data-theme="dark"] .admin-section {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+/* Loading animation */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
