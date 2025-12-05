@@ -1,5 +1,15 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.6 (2025-12-04)
+
+### 📚 Gestión de Libros (Admin)
+- **Vista de Libros**: Tabla completa con todos los libros, autores y quién los subió.
+- **Edición de Libros**: Modal para editar título, autor y descripción de cualquier libro.
+- **Eliminación de Libros**: Capacidad para eliminar libros problemáticos o duplicados.
+- **Indicadores**: Visualización rápida de descargas y reportes por libro.
+
+---
+
 ## v10.5 (2025-12-04)
 
 ### 👥 Gestión de Usuarios (Admin)

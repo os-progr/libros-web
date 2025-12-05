@@ -802,7 +802,208 @@ const AdminPanel = {
     },
 
     viewBooks() {
-        alert('Funcionalidad de gestión de libros próximamente');
+        const modal = document.getElementById('booksModal');
+        if (modal) {
+            modal.classList.add('active');
+            this.loadBooks();
+
+            // Setup close button
+            const closeBtn = document.getElementById('closeBooksModal');
+            if (closeBtn) {
+                closeBtn.onclick = () => {
+                    modal.classList.remove('active');
+                };
+            }
+
+            // Close on outside click
+            modal.onclick = (e) => {
+                if (e.target.id === 'booksModal') {
+                    modal.classList.remove('active');
+                }
+            };
+        }
+    },
+
+    async loadBooks() {
+        const tbody = document.getElementById('booksTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Cargando libros...</td></tr>';
+
+        try {
+            const response = await fetch('/api/admin/books');
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderBooks(data.books);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error al cargar libros</td></tr>';
+            }
+        } catch (error) {
+            console.error('Error loading books:', error);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error de conexión</td></tr>';
+        }
+    },
+
+    renderBooks(books) {
+        const tbody = document.getElementById('booksTableBody');
+        if (!tbody) return;
+
+        if (books.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay libros registrados</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = books.map(book => `
+            <tr>
+                <td>
+                    <div class="book-title-cell" title="${this.escapeHtml(book.title)}">
+                        ${this.escapeHtml(book.title)}
+                    </div>
+                </td>
+                <td>
+                    <div class="book-author-cell">
+                        ${this.escapeHtml(book.author)}
+                    </div>
+                </td>
+                <td>
+                    <div class="uploader-info">
+                        ${this.escapeHtml(book.uploader_name || 'Desconocido')}<br>
+                        <small>${this.escapeHtml(book.uploader_email || '')}</small>
+                    </div>
+                </td>
+                <td>${book.download_count || 0}</td>
+                <td>
+                    ${book.report_count > 0
+                ? `<span class="badge badge-danger">${book.report_count} reportes</span>`
+                : '<span class="badge badge-success">0</span>'}
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn btn-edit" onclick="AdminPanel.openEditBook(${book.id})">
+                            ✏️
+                        </button>
+                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id}, '${this.escapeHtml(book.title)}')">
+                            🗑️
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    },
+
+    async deleteBook(bookId, bookTitle) {
+        if (confirm(`¿Estás seguro de que quieres eliminar el libro "${bookTitle}"?\n\nEsta acción no se puede deshacer.`)) {
+            try {
+                const response = await fetch(`/api/admin/books/${bookId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Libro eliminado exitosamente');
+                    this.loadBooks(); // Reload list
+                    this.loadStats(); // Update stats
+                } else {
+                    alert(`❌ Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('❌ Error al eliminar libro');
+            }
+        }
+    },
+
+    // Store books data temporarily for editing
+    booksData: [],
+
+    openEditBook(bookId) {
+        // Fetch book details first (or find in loaded list if we stored it)
+        // For simplicity, we'll fetch the list again or use what we have
+        // Ideally we should store the list in this.booksData when loading
+
+        // Let's fetch the specific book details from the current table row is hard, 
+        // so better to fetch from API or filter from a stored list.
+        // Since we don't have a single book endpoint, we'll use the list endpoint again or rely on the DOM
+        // A better approach: store books in memory when loading
+
+        // Let's modify loadBooks to store data
+        this.fetchAndEdit(bookId);
+    },
+
+    async fetchAndEdit(bookId) {
+        try {
+            const response = await fetch('/api/admin/books');
+            const data = await response.json();
+
+            if (data.success) {
+                const book = data.books.find(b => b.id === bookId);
+                if (book) {
+                    this.showEditModal(book);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching book details:', error);
+        }
+    },
+
+    showEditModal(book) {
+        const modal = document.getElementById('editBookModal');
+        const form = document.getElementById('editBookForm');
+
+        if (modal && form) {
+            document.getElementById('editBookId').value = book.id;
+            document.getElementById('editBookTitle').value = book.title;
+            document.getElementById('editBookAuthor').value = book.author;
+            document.getElementById('editBookDescription').value = book.description || '';
+
+            modal.classList.add('active');
+
+            // Setup close handlers
+            const closeBtn = document.getElementById('closeEditBookModal');
+            const cancelBtn = document.getElementById('cancelEditBook');
+
+            const close = () => modal.classList.remove('active');
+
+            if (closeBtn) closeBtn.onclick = close;
+            if (cancelBtn) cancelBtn.onclick = close;
+
+            // Handle form submit
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.updateBook();
+            };
+        }
+    },
+
+    async updateBook() {
+        const id = document.getElementById('editBookId').value;
+        const title = document.getElementById('editBookTitle').value;
+        const author = document.getElementById('editBookAuthor').value;
+        const description = document.getElementById('editBookDescription').value;
+
+        try {
+            const response = await fetch(`/api/admin/books/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, author, description })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('✅ Libro actualizado exitosamente');
+                document.getElementById('editBookModal').classList.remove('active');
+                this.loadBooks();
+            } else {
+                alert(`❌ Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error updating book:', error);
+            alert('❌ Error al actualizar libro');
+        }
     },
 
     escapeHtml(text) {

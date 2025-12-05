@@ -292,6 +292,66 @@
             </div>
         </div>
     </div>
+    <!-- Books Management Modal -->
+    <div class="modal-overlay" id="booksModal">
+        <div class="modal books-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📚 Gestión de Libros</h2>
+                <button class="modal-close" id="closeBooksModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="books-table-container">
+                    <table class="users-table"> <!-- Reusing users-table class for consistent styling -->
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Subido por</th>
+                                <th>Descargas</th>
+                                <th>Reportes</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+                            <!-- Books will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Book Modal -->
+    <div class="modal-overlay" id="editBookModal">
+        <div class="modal edit-book-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">✏️ Editar Libro</h2>
+                <button class="modal-close" id="closeEditBookModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editBookForm" class="edit-book-form">
+                    <input type="hidden" id="editBookId">
+                    <div class="form-group">
+                        <label for="editBookTitle">Título</label>
+                        <input type="text" id="editBookTitle" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookAuthor">Autor</label>
+                        <input type="text" id="editBookAuthor" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookDescription">Descripción</label>
+                        <textarea id="editBookDescription" rows="4" class="form-input"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEditBook">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -300,4 +360,5 @@
 </body>
 
 </html>
+
 
