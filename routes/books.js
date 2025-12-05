@@ -301,8 +301,9 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the book
-        if (book.user_id !== req.user.id) {
+        // Check if user owns the book or is admin
+        const adminEmail = 'edaninguna@gmail.com';
+        if (book.user_id !== req.user.id && req.user.email !== adminEmail) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para eliminar este libro'
