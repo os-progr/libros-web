@@ -15,61 +15,132 @@
         rel="stylesheet">
 
     <!-- Styles -->
-    <div class="container">
-        <!-- Welcome Screen (for unauthenticated users) -->
-        <section id="welcomeScreen" class="hidden">
-            <div class="hero">
-                <h1 class="hero-title">Bienvenido a LibrosWeb</h1>
-                <p class="hero-subtitle">Publica tus libros y gestiona tu biblioteca personal</p>
-            </div>
-            <div class="welcome-content">
-                <div class="welcome-card">
-                    <div class="welcome-icon">📚</div>
-                    <h3>Publica tus Libros</h3>
-                    <p>Sube tus obras en formato PDF y Word</p>
-                </div>
-                <div class="welcome-card">
-                    <div class="welcome-icon">🔓</div>
-                    <h3>Acceso Libre</h3>
-                    <p>Comparte conocimiento sin restricciones</p>
-                </div>
-                <div class="welcome-card">
-                    <div class="welcome-icon">☁️</div>
-                    <h3>En la Nube</h3>
-                    <p>Accede a tu biblioteca desde cualquier dispositivo</p>
-                </div>
-            </div>
-            <div class="welcome-cta">
-                <a href="/auth/google" class="btn btn-primary btn-large">
-                    <span>🔐</span>
-                    <span>Iniciar sesión con Google</span>
-                </a>
-            </div>
-        </section>
+    <link rel="stylesheet" href="styles.css">
+</head>
 
-        <!-- Books Section (for authenticated users) -->
-        <section id="booksSection" class="hidden">
-            <div class="hero">
-                <h1 class="hero-title">Mis Libros</h1>
-                <p class="hero-subtitle">Gestiona tu biblioteca personal</p>
-            </div>
+<body class="no-select">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>LibrosWeb</span>
+                </div>
 
-            <div class="books-grid" id="booksGrid">
-                <!-- Books will be dynamically inserted here -->
-            </div>
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar libros, autores..."
+                        autocomplete="off">
+                </div>
 
-            <!-- Empty State -->
-            <div class="empty-state hidden" id="emptyState">
-                <div class="empty-icon">📖</div>
-                <h2 class="empty-title">No hay libros aún</h2>
-                <p class="empty-text">Sé el primero en publicar un libro</p>
-                <button class="btn btn-primary" onclick="document.getElementById('uploadBtn').click()">
-                    <span>📤</span>
-                    <span>Publicar el Primer Libro</span>
-                </button>
+                <div class="nav-actions">
+                    <!-- Developer Mode Icon (Only for admin) -->
+                    <button class="developer-toggle hidden" id="developerToggle" title="Modo Desarrollador">
+                        <span class="developer-icon">⚙️</span>
+                    </button>
+
+                    <!-- Authenticated user actions -->
+                    <div id="authenticatedActions" class="hidden">
+                        <div class="notifications-wrapper">
+                            <button class="notification-btn" id="notificationBtn">
+                                🔔
+                                <span class="notification-badge hidden" id="notificationBadge">0</span>
+                            </button>
+                            <div class="notifications-dropdown hidden" id="notificationsDropdown">
+                                <div class="notifications-header">
+                                    <h3>Notificaciones</h3>
+                                    <button class="mark-read-btn" id="markAllReadBtn">Marcar todas leídas</button>
+                                </div>
+                                <div class="notifications-list" id="notificationsList">
+                                    <div class="empty-notifications">No tienes notificaciones</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="user-profile">
+                            <img id="userPicture" src="" alt="User" class="user-avatar">
+                            <span id="userName"></span>
+                        </div>
+                        <button class="btn btn-primary" id="uploadBtn">
+                            <span>📤</span>
+                            <span>Publicar Libro</span>
+                        </button>
+                        <button class="btn btn-secondary" id="logoutBtn">
+                            <span>🚪</span>
+                            <span>Salir</span>
+                        </button>
+                    </div>
+
+                    <!-- Unauthenticated user actions -->
+                    <div id="unauthenticatedActions" class="hidden">
+                        <a href="/auth/google" class="btn btn-primary google-btn">
+                            <span>🔐</span>
+                            <span>Iniciar sesión con Google</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Welcome Screen (for unauthenticated users) -->
+            <section id="welcomeScreen" class="hidden">
+                <div class="hero">
+                    <h1 class="hero-title">Bienvenido a LibrosWeb</h1>
+                    <p class="hero-subtitle">Publica tus libros y gestiona tu biblioteca personal</p>
+                </div>
+                <div class="welcome-content">
+                    <div class="welcome-card">
+                        <div class="welcome-icon">📚</div>
+                        <h3>Publica tus Libros</h3>
+                        <p>Sube tus obras en formato PDF y Word</p>
+                    </div>
+                    <div class="welcome-card">
+                        <div class="welcome-icon">🔓</div>
+                        <h3>Acceso Libre</h3>
+                        <p>Comparte conocimiento sin restricciones</p>
+                    </div>
+                    <div class="welcome-card">
+                        <div class="welcome-icon">☁️</div>
+                        <h3>En la Nube</h3>
+                        <p>Accede a tu biblioteca desde cualquier dispositivo</p>
+                    </div>
+                </div>
+                <div class="welcome-cta">
+                    <a href="/auth/google" class="btn btn-primary btn-large">
+                        <span>🔐</span>
+                        <span>Iniciar sesión con Google</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Books Section (for authenticated users) -->
+            <section id="booksSection" class="hidden">
+                <div class="hero">
+                    <h1 class="hero-title">Mis Libros</h1>
+                    <p class="hero-subtitle">Gestiona tu biblioteca personal</p>
+                </div>
+
+                <div class="books-grid" id="booksGrid">
+                    <!-- Books will be dynamically inserted here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state hidden" id="emptyState">
+                    <div class="empty-icon">📖</div>
+                    <h2 class="empty-title">No hay libros aún</h2>
+                    <p class="empty-text">Sé el primero en publicar un libro</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('uploadBtn').click()">
+                        <span>📤</span>
+                        <span>Publicar el Primer Libro</span>
+                    </button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Upload Modal -->
@@ -367,6 +438,6 @@
 
     <!-- JavaScript -->
     <script src="app.js"></script>
-    </body>
+</body>
 
 </html>
