@@ -470,6 +470,119 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal review-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">⭐ Reseñas</h2>
+                <button class="modal-close" id="closeReviewModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="book-summary-mini" id="reviewBookSummary"></div>
+
+                <div class="reviews-container">
+                    <div class="existing-reviews" id="reviewsList">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="write-review-section" id="writeReviewSection">
+                    <h3>Escribir Reseña</h3>
+                    <form id="reviewForm">
+                        <input type="hidden" id="reviewBookId">
+                        <div class="form-group">
+                            <label class="form-label">Calificación</label>
+                            <div class="star-rating-input" id="starRatingInput">
+                                <span data-value="1">★</span>
+                                <span data-value="2">★</span>
+                                <span data-value="3">★</span>
+                                <span data-value="4">★</span>
+                                <span data-value="5">★</span>
+                            </div>
+                            <input type="hidden" id="reviewRating" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tu Opinión</label>
+                            <textarea class="form-textarea" id="reviewText" rows="3"
+                                placeholder="¿Qué te pareció este libro?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Publicar Reseña</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal profile-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">👤 Perfil de Usuario</h2>
+                <button class="modal-close" id="closeProfileModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-header">
+                    <img src="" alt="Profile" id="profileImage" class="profile-avatar-large">
+                    <div class="profile-info">
+                        <h2 id="profileName">Usuario</h2>
+                        <p id="profileBio" class="profile-bio">Sin biografía</p>
+                        <div class="profile-meta">
+                            <span id="profileLocation">📍 Ubicación desconocida</span>
+                            <a href="#" id="profileWebsite" target="_blank">🌐 Sitio Web</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <span class="stat-number" id="profileTotalBooks">0</span>
+                        <span class="stat-label">Libros</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number" id="profileTotalDownloads">0</span>
+                        <span class="stat-label">Descargas</span>
+                    </div>
+                </div>
+
+                <div id="profileEditSection" class="hidden">
+                    <button class="btn btn-secondary" id="btnEditProfile">✏️ Editar Perfil</button>
+                </div>
+
+                <h3>📚 Libros Publicados</h3>
+                <div class="profile-books-grid" id="profileBooksGrid">
+                    <!-- User books will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">✏️ Editar Perfil</h2>
+                <button class="modal-close" id="closeEditProfileModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label class="form-label">Biografía</label>
+                        <textarea class="form-textarea" id="editProfileBio" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sitio Web</label>
+                        <input type="url" class="form-input" id="editProfileWebsite">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ubicación</label>
+                        <input type="text" class="form-input" id="editProfileLocation">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Logout Confirmation Modal -->
     <div class="modal-overlay" id="logoutModal">
         <div class="modal confirmation-modal">

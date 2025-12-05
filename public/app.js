@@ -192,6 +192,58 @@ const API = {
             console.error('Error deleting book:', error);
             return { success: false };
         }
+    },
+
+    // Get reviews
+    async getReviews(bookId) {
+        try {
+            const response = await fetch(`/api/reviews/book/${bookId}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+            return { success: false };
+        }
+    },
+
+    // Add review
+    async addReview(data) {
+        try {
+            const response = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error adding review:', error);
+            return { success: false };
+        }
+    },
+
+    // Get Profile
+    async getProfile(userId) {
+        try {
+            const response = await fetch(`/api/profile/${userId}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            return { success: false };
+        }
+    },
+
+    // Update Profile
+    async updateProfile(data) {
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            return { success: false };
+        }
     }
 };
 
@@ -260,11 +312,28 @@ const UIManager = {
                     <h3 class="book-title">${this.escapeHtml(book.title)}</h3>
                     <p class="book-author">por ${this.escapeHtml(book.author)}</p>
                     ${book.description ? `<p class="book-description">${this.escapeHtml(book.description)}</p>` : ''}
+                    
+                    <!-- Rating Stars -->
+                    <div class="book-rating">
+                        ${this.renderStars(book.avg_rating || 0)}
+                        <span class="rating-text">${book.avg_rating ? book.avg_rating.toFixed(1) : '0.0'} (${book.review_count || 0})</span>
+                    </div>
+
                     <div class="book-meta">
                         <span class="download-badge download-allowed">
                             ✓ Descarga libre
                         </span>
                         ${book.created_at ? `<span class="book-date">📅 ${this.formatDate(book.created_at)}</span>` : ''}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="book-actions">
+                        <button class="book-action-btn" onclick="event.stopPropagation(); UIManager.openReviewModal(${book.id})" title="Ver reseñas">
+                            ⭐ Reseñas
+                        </button>
+                        <button class="book-action-btn" onclick="event.stopPropagation(); UIManager.shareBook(${book.id}, '${this.escapeHtml(book.title)}')" title="Compartir">
+                            📤 Compartir
+                        </button>
                     </div>
                 </div>
             </div>
@@ -364,6 +433,288 @@ const UIManager = {
         const date = new Date(dateString);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return date.toLocaleDateString('es-ES', options);
+    },
+
+    // Render star rating
+    renderStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) stars += '⭐';
+        if (hasHalfStar) stars += '⭐';
+        for (let i = 0; i < emptyStars; i++) stars += '☆';
+
+        return `<span class="stars">${stars}</span>`;
+    },
+
+    // Share book on social media
+    shareBook(bookId, bookTitle) {
+        const url = `${window.location.origin}/?book=${bookId}`;
+        const text = `¡Mira este libro: "${bookTitle}"!`;
+
+        const shareOptions = [
+            { name: 'WhatsApp', url: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, icon: '💬' },
+            { name: 'Facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, icon: '📘' },
+            { name: 'Twitter', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, icon: '🐦' },
+            { name: 'Copiar enlace', action: 'copy', icon: '📋' }
+        ];
+
+        const modal = document.createElement('div');
+        modal.className = 'share-modal-overlay';
+        modal.innerHTML = `
+            <div class="share-modal">
+                <h3>Compartir libro</h3>
+                <div class="share-options">
+                    ${shareOptions.map(option => `
+                        <button class="share-option-btn" data-url="${option.url || ''}" data-action="${option.action || 'open'}">
+                            <span class="share-icon">${option.icon}</span>
+                            <span>${option.name}</span>
+                        </button>
+                    `).join('')}
+                </div>
+                <button class="close-share-modal">Cerrar</button>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Handle share actions
+        modal.querySelectorAll('.share-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                if (action === 'copy') {
+                    navigator.clipboard.writeText(url);
+                    alert('✅ Enlace copiado al portapapeles');
+                } else {
+                    window.open(btn.dataset.url, '_blank');
+                }
+            });
+        });
+
+        // Close modal
+        modal.querySelector('.close-share-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    },
+
+    // Open review modal
+    async openReviewModal(bookId) {
+        const book = AppState.books.find(b => b.id == bookId);
+        if (!book) return;
+
+        const modal = document.getElementById('reviewModal');
+        const summary = document.getElementById('reviewBookSummary');
+        const reviewsList = document.getElementById('reviewsList');
+        const reviewForm = document.getElementById('reviewForm');
+
+        // Update summary
+        summary.innerHTML = `
+            <div class="mini-cover">${book.cover_path ? `<img src="/api/books/${book.id}/cover">` : '📖'}</div>
+            <div class="mini-info">
+                <h4>${this.escapeHtml(book.title)}</h4>
+                <p>by ${this.escapeHtml(book.author)}</p>
+                <div class="mini-rating">${this.renderStars(book.avg_rating || 0)} (${book.review_count || 0} reseñas)</div>
+            </div>
+        `;
+
+        // Reset form
+        document.getElementById('reviewBookId').value = bookId;
+        document.getElementById('reviewRating').value = '';
+        document.getElementById('reviewText').value = '';
+        this.resetStarRating();
+
+        // Show/Hide write section based on auth and ownership
+        const writeSection = document.getElementById('writeReviewSection');
+        if (!AppState.user) {
+            writeSection.classList.add('hidden');
+        } else if (book.user_id === AppState.user.id) {
+            writeSection.classList.add('hidden'); // Cannot review own book
+            writeSection.innerHTML = '<p class="info-message">No puedes reseñar tu propio libro.</p>';
+            writeSection.classList.remove('hidden');
+        } else {
+            writeSection.innerHTML = `
+                <h3>Escribir Reseña</h3>
+                <form id="reviewForm">
+                    <input type="hidden" id="reviewBookId" value="${bookId}">
+                    <div class="form-group">
+                        <label class="form-label">Calificación</label>
+                        <div class="star-rating-input" id="starRatingInput">
+                            <span data-value="1">★</span>
+                            <span data-value="2">★</span>
+                            <span data-value="3">★</span>
+                            <span data-value="4">★</span>
+                            <span data-value="5">★</span>
+                        </div>
+                        <input type="hidden" id="reviewRating" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tu Opinión</label>
+                        <textarea class="form-textarea" id="reviewText" rows="3" 
+                            placeholder="¿Qué te pareció este libro?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Publicar Reseña</button>
+                </form>
+            `;
+            writeSection.classList.remove('hidden');
+            // Re-attach event listener
+            document.getElementById('reviewForm').addEventListener('submit', EventHandlers.handleReviewSubmit);
+            this.setupStarRating();
+        }
+
+        // Load reviews
+        reviewsList.innerHTML = '<div class="loading-spinner">Cargando reseñas...</div>';
+        modal.classList.add('active');
+
+        const result = await API.getReviews(bookId);
+        if (result.success) {
+            this.renderReviews(result.reviews, result.stats);
+        } else {
+            reviewsList.innerHTML = '<p class="error-text">Error al cargar reseñas.</p>';
+        }
+    },
+
+    // Render reviews list
+    renderReviews(reviews, stats) {
+        const list = document.getElementById('reviewsList');
+        if (reviews.length === 0) {
+            list.innerHTML = '<div class="empty-reviews">No hay reseñas todavía. ¡Sé el primero!</div>';
+            return;
+        }
+
+        list.innerHTML = reviews.map(review => `
+            <div class="review-item">
+                <div class="review-header">
+                    <div class="review-user" onclick="UIManager.openProfileModal(${review.user_id})" style="cursor: pointer;">
+                        <img src="${review.user_picture || ''}" alt="User" class="review-avatar">
+                        <span class="review-author-name">${this.escapeHtml(review.user_name)}</span>
+                    </div>
+                    <span class="review-date">${this.formatDate(review.created_at)}</span>
+                </div>
+                <div class="review-rating">
+                    ${this.renderStars(review.rating)}
+                </div>
+                <div class="review-text">${this.escapeHtml(review.review_text)}</div>
+                ${AppState.user && AppState.user.id === review.user_id ? `
+                    <button class="delete-review-btn" onclick="UIManager.deleteReview(${review.id}, ${review.book_id})">Eliminar</button>
+                ` : ''}
+            </div>
+        `).join('');
+    },
+
+    // Setup star rating input interaction
+    setupStarRating() {
+        const container = document.getElementById('starRatingInput');
+        if (!container) return;
+
+        const stars = container.querySelectorAll('span');
+        const input = document.getElementById('reviewRating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = star.dataset.value;
+                input.value = value;
+                this.updateStarVisuals(value);
+            });
+        });
+    },
+
+    updateStarVisuals(value) {
+        const stars = document.querySelectorAll('#starRatingInput span');
+        stars.forEach(s => {
+            if (s.dataset.value <= value) s.classList.add('active');
+            else s.classList.remove('active');
+        });
+    },
+
+    resetStarRating() {
+        this.updateStarVisuals(0);
+    },
+
+    // Open Profile Modal
+    async openProfileModal(userId) {
+        const modal = document.getElementById('profileModal');
+        modal.classList.add('active');
+
+        // Loading state
+        document.getElementById('profileName').textContent = 'Cargando...';
+        document.getElementById('profileBooksGrid').innerHTML = '<div class="loading">Cargando perfil...</div>';
+
+        const result = await API.getProfile(userId);
+
+        if (result.success) {
+            const p = result.profile;
+            document.getElementById('profileName').textContent = p.name;
+            document.getElementById('profileImage').src = p.picture || '';
+            document.getElementById('profileBio').textContent = p.bio || 'Sin biografía';
+            document.getElementById('profileLocation').textContent = p.location ? `📍 ${p.location}` : '📍 Ubicación no especificada';
+
+            const webLink = document.getElementById('profileWebsite');
+            if (p.website) {
+                webLink.href = p.website;
+                webLink.classList.remove('hidden');
+            } else {
+                webLink.classList.add('hidden');
+            }
+
+            document.getElementById('profileTotalBooks').textContent = p.stats.total_books;
+            document.getElementById('profileTotalDownloads').textContent = p.stats.total_downloads;
+
+            // Show edit button if own profile
+            const editSection = document.getElementById('profileEditSection');
+            if (AppState.user && AppState.user.id === p.id) {
+                editSection.classList.remove('hidden');
+                document.getElementById('btnEditProfile').onclick = () => this.openEditProfileModal(p);
+            } else {
+                editSection.classList.add('hidden');
+            }
+
+            // Render books
+            this.renderProfileBooks(p.books);
+        }
+    },
+
+    openEditProfileModal(profile) {
+        document.getElementById('editProfileBio').value = profile.bio || '';
+        document.getElementById('editProfileWebsite').value = profile.website || '';
+        document.getElementById('editProfileLocation').value = profile.location || '';
+        document.getElementById('editProfileModal').classList.add('active');
+    },
+
+    renderProfileBooks(books) {
+        const grid = document.getElementById('profileBooksGrid');
+        if (!books || books.length === 0) {
+            grid.innerHTML = '<div class="empty-state-mini">No ha publicado libros aún.</div>';
+            return;
+        }
+
+        grid.innerHTML = books.map(book => `
+            <div class="book-card-mini" onclick="UIManager.openBookViewer(${book.id})">
+                <div class="mini-cover">${book.cover_path ? `<img src="/api/books/${book.id}/cover">` : '📖'}</div>
+                <div class="mini-details">
+                    <div class="mini-title">${this.escapeHtml(book.title)}</div>
+                    <div class="mini-stats">⭐ ${book.avg_rating.toFixed(1)} | ⬇️ ${book.download_count}</div>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    // Delete a review
+    async deleteReview(reviewId, bookId) {
+        if (confirm('¿Eliminar esta reseña?')) {
+            const result = await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' });
+            const data = await result.json();
+            if (data.success) {
+                this.openReviewModal(bookId); // Refresh
+            } else {
+                alert('Error al eliminar reseña');
+            }
+        }
     },
 
     // Delete book from library
@@ -509,6 +860,58 @@ const EventHandlers = {
                 });
             }
         }
+    },
+
+    // Handle review submission
+    async handleReviewSubmit(e) {
+        e.preventDefault();
+        const bookId = document.getElementById('reviewBookId').value;
+        const rating = document.getElementById('reviewRating').value;
+        const text = document.getElementById('reviewText').value.trim();
+
+        if (!rating) {
+            alert('Por favor selecciona una calificación.');
+            return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        UIManager.showLoading(submitBtn);
+
+        const result = await API.addReview({ book_id: bookId, rating, review_text: text });
+
+        if (result.success) {
+            UIManager.openReviewModal(bookId); // Reload reviews
+        } else {
+            alert(result.message || 'Error al publicar reseña');
+        }
+        UIManager.hideLoading(submitBtn, originalText);
+    },
+
+    // Handle profile edit submission
+    async handleEditProfileSubmit(e) {
+        e.preventDefault();
+        const bio = document.getElementById('editProfileBio').value.trim();
+        const website = document.getElementById('editProfileWebsite').value.trim();
+        const location = document.getElementById('editProfileLocation').value.trim();
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        UIManager.showLoading(submitBtn);
+
+        const result = await API.updateProfile({ bio, website, location });
+
+        if (result.success) {
+            alert('Perfil actualizado');
+            document.getElementById('editProfileModal').classList.remove('active');
+            // Reload profile view
+            if (AppState.user) {
+                UIManager.openProfileModal(AppState.user.id);
+            }
+        } else {
+            alert(result.message || 'Error al actualizar perfil');
+        }
+        UIManager.hideLoading(submitBtn, originalText);
     }
 };
 async function loadBooks() {
@@ -633,8 +1036,49 @@ function setupEventListeners() {
             if (viewerModal.classList.contains('active')) {
                 UIManager.closeBookViewer();
             }
+
+            // Close other modals with Escape
+            const reviewModal = document.getElementById('reviewModal');
+            if (reviewModal.classList.contains('active')) reviewModal.classList.remove('active');
+
+            const profileModal = document.getElementById('profileModal');
+            if (profileModal.classList.contains('active')) profileModal.classList.remove('active');
+
+            const editProfileModal = document.getElementById('editProfileModal');
+            if (editProfileModal.classList.contains('active')) editProfileModal.classList.remove('active');
         }
     });
+
+    // Review Modal Listeners
+    const reviewModal = document.getElementById('reviewModal');
+    if (reviewModal) {
+        document.getElementById('closeReviewModal').addEventListener('click', () => {
+            reviewModal.classList.remove('active');
+        });
+        reviewModal.addEventListener('click', (e) => {
+            if (e.target === reviewModal) reviewModal.classList.remove('active');
+        });
+    }
+
+    // Profile Modal Listeners
+    const profileModal = document.getElementById('profileModal');
+    if (profileModal) {
+        document.getElementById('closeProfileModal').addEventListener('click', () => {
+            profileModal.classList.remove('active');
+        });
+        profileModal.addEventListener('click', (e) => {
+            if (e.target === profileModal) profileModal.classList.remove('active');
+        });
+    }
+
+    // Edit Profile Modal Listeners
+    const editProfileModal = document.getElementById('editProfileModal');
+    if (editProfileModal) {
+        document.getElementById('closeEditProfileModal').addEventListener('click', () => {
+            editProfileModal.classList.remove('active');
+        });
+        document.getElementById('editProfileForm').addEventListener('submit', EventHandlers.handleEditProfileSubmit);
+    }
 }
 
 // ============================================
