@@ -264,6 +264,7 @@ const UIManager = {
                         <span class="download-badge download-allowed">
                             ✓ Descarga libre
                         </span>
+                        ${book.created_at ? `<span class="book-date">📅 ${this.formatDate(book.created_at)}</span>` : ''}
                     </div>
                 </div>
             </div>
@@ -356,6 +357,13 @@ const UIManager = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    // Format date to readable format
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('es-ES', options);
     },
 
     // Delete book from library
@@ -578,6 +586,26 @@ function setupEventListeners() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', EventHandlers.handleLogout);
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
     }
 
     // Close modals when clicking outside
