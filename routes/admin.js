@@ -135,6 +135,47 @@ router.get('/users', isAdmin, async (req, res) => {
     }
 });
 
+// @route   DELETE /api/admin/users/:id
+// @desc    Eliminar un usuario (admin)
+// @access  Admin only
+router.delete('/users/:id', isAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Verificar que el usuario existe
+        const [users] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Evitar que el admin se elimine a sí mismo
+        if (users[0].email === 'edaninguna@gmail.com') {
+            return res.status(400).json({
+                success: false,
+                message: 'No puedes eliminar la cuenta de administrador principal'
+            });
+        }
+
+        // Eliminar el usuario (la cascada en BD debería manejar libros y descargas, 
+        // pero por seguridad podríamos limpiar archivos primero si fuera necesario)
+        await db.query('DELETE FROM users WHERE id = ?', [userId]);
+
+        res.json({
+            success: true,
+            message: 'Usuario eliminado exitosamente'
+        });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar usuario'
+        });
+    }
+});
+
 // @route   GET /api/admin/books
 // @desc    Obtener todos los libros con información detallada
 // @access  Admin only

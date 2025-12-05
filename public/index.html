@@ -264,6 +264,35 @@
             </div>
         </div>
     </div>
+    <!-- Users Management Modal -->
+    <div class="modal-overlay" id="usersModal">
+        <div class="modal users-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">👥 Gestión de Usuarios</h2>
+                <button class="modal-close" id="closeUsersModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Email</th>
+                                <th>Libros</th>
+                                <th>Descargas</th>
+                                <th>Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- JavaScript -->
@@ -271,3 +300,4 @@
 </body>
 
 </html>
+

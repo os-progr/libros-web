@@ -715,3 +715,83 @@ body {
   font-weight: 600;
   color: var(--text-primary);
 }
+
+/* Users Modal Styles */
+.users-modal {
+  max-width: 1000px;
+  width: 95%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.users-table-container {
+  overflow-x: auto;
+  flex: 1;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.users-table th,
+.users-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.users-table th {
+  background-color: var(--background-color);
+  font-weight: 600;
+  color: var(--text-secondary);
+  position: sticky;
+  top: 0;
+}
+
+.users-table tr:hover {
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-cell img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.action-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-danger:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+}

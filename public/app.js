@@ -588,13 +588,13 @@ const AdminPanel = {
         // Quick Actions
         const btnRefresh = document.getElementById('btnRefreshStats');
         if (btnRefresh) btnRefresh.addEventListener('click', () => this.loadStats());
-        
+
         const btnClear = document.getElementById('btnClearCache');
         if (btnClear) btnClear.addEventListener('click', () => this.clearCache());
-        
+
         const btnUsers = document.getElementById('btnViewUsers');
         if (btnUsers) btnUsers.addEventListener('click', () => this.viewUsers());
-        
+
         const btnBooks = document.getElementById('btnViewAllBooks');
         if (btnBooks) btnBooks.addEventListener('click', () => this.viewBooks());
     },
@@ -650,7 +650,7 @@ const AdminPanel = {
                              descargas • por 
                         </div>
                     </div>
-                ;
+                    ;
             } else {
                 popularBookEl.innerHTML = 
                     <div class="popular-book-icon">ℹ️</div>
@@ -658,7 +658,7 @@ const AdminPanel = {
                         <div class="popular-book-title">Sin datos</div>
                         <div class="popular-book-subtitle">Aún no hay descargas</div>
                     </div>
-                ;
+                    ;
             }
         }
     },
@@ -666,7 +666,7 @@ const AdminPanel = {
     animateValue(id, value) {
         const element = document.getElementById(id);
         if (!element) return;
-        
+
         const start = 0;
         const end = parseInt(value) || 0;
         const duration = 1000;
@@ -674,7 +674,7 @@ const AdminPanel = {
         let current = start;
         const increment = end > start ? 1 : -1;
         const stepTime = Math.abs(Math.floor(duration / range));
-        
+
         if (range === 0) {
             element.textContent = end;
             return;
@@ -704,7 +704,101 @@ const AdminPanel = {
     },
 
     viewUsers() {
-        alert('Funcionalidad de gestión de usuarios próximamente');
+        const modal = document.getElementById('usersModal');
+        if (modal) {
+            modal.classList.add('active');
+            this.loadUsers();
+
+            // Setup close button
+            const closeBtn = document.getElementById('closeUsersModal');
+            if (closeBtn) {
+                closeBtn.onclick = () => {
+                    modal.classList.remove('active');
+                };
+            }
+
+            // Close on outside click
+            modal.onclick = (e) => {
+                if (e.target.id === 'usersModal') {
+                    modal.classList.remove('active');
+                }
+            };
+        }
+    },
+
+    async loadUsers() {
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Cargando usuarios...</td></tr>';
+
+        try {
+            const response = await fetch('/api/admin/users');
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderUsers(data.users);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error al cargar usuarios</td></tr>';
+            }
+        } catch (error) {
+            console.error('Error loading users:', error);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error de conexión</td></tr>';
+        }
+    },
+
+    renderUsers(users) {
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay usuarios registrados</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = users.map(user => `
+            <tr>
+                <td>
+                    <div class="user-cell">
+                        <img src="${user.picture || 'https://via.placeholder.com/32'}" alt="${this.escapeHtml(user.name)}">
+                        <span class="user-name">${this.escapeHtml(user.name)}</span>
+                    </div>
+                </td>
+                <td>${this.escapeHtml(user.email)}</td>
+                <td>${user.books_count || 0}</td>
+                <td>${user.downloads_count || 0}</td>
+                <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                <td>
+                    ${user.email !== 'edaninguna@gmail.com' ? `
+                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteUser(${user.id}, '${this.escapeHtml(user.name)}')">
+                            🗑️ Eliminar
+                        </button>
+                    ` : '<span class="badge badge-admin">Admin</span>'}
+                </td>
+            </tr>
+        `).join('');
+    },
+
+    async deleteUser(userId, userName) {
+        if (confirm(`¿Estás seguro de que quieres eliminar al usuario "${userName}"?\n\nEsta acción eliminará también todos sus libros y no se puede deshacer.`)) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Usuario eliminado exitosamente');
+                    this.loadUsers(); // Reload list
+                    this.loadStats(); // Update stats
+                } else {
+                    alert(`❌ Error: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('❌ Error al eliminar usuario');
+            }
+        }
     },
 
     viewBooks() {
@@ -719,7 +813,7 @@ const AdminPanel = {
 };
 
 // Redefine DeveloperMode.init to use AdminPanel
-DeveloperMode.init = function(user) {
+DeveloperMode.init = function (user) {
     // Initialize Admin Panel
     if (typeof AdminPanel !== 'undefined') {
         AdminPanel.init();
@@ -730,7 +824,7 @@ DeveloperMode.init = function(user) {
         const developerToggle = document.getElementById('developerToggle');
         if (developerToggle) {
             developerToggle.classList.remove('hidden');
-            
+
             // Click opens Admin Panel
             developerToggle.addEventListener('click', () => {
                 if (typeof AdminPanel !== 'undefined') {
@@ -745,7 +839,7 @@ DeveloperMode.init = function(user) {
             });
         }
     }
-    
+
     // Load saved developer mode state
     const devMode = localStorage.getItem('developerMode') === 'true';
     if (devMode) {

@@ -1,5 +1,18 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.5 (2025-12-04)
+
+### 👥 Gestión de Usuarios (Admin)
+- **Vista de Usuarios**: Nueva tabla detallada con todos los usuarios registrados.
+- **Datos de Usuario**: Visualización de avatar, email, fecha de registro, libros subidos y descargas realizadas.
+- **Eliminación de Usuarios**: Capacidad para que el administrador elimine usuarios (con confirmación de seguridad).
+- **Protección**: El administrador principal no puede ser eliminado.
+
+### 🛠️ Backend
+- **Nueva Ruta**: `DELETE /api/admin/users/:id` para eliminar usuarios de forma segura.
+
+---
+
 ## v10.4 (2025-12-04)
 
 ### ✨ Panel de Administración
