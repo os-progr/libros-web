@@ -1,5 +1,15 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.8 (2025-12-05)
+
+### 🔔 Notificaciones y Feedback Admin
+- **Sistema de Notificaciones**: Los usuarios ahora reciben notificaciones en tiempo real (campana en el header).
+- **Feedback de Admin**: El administrador puede enviar recomendaciones, advertencias o consejos directamente a los autores desde el panel de gestión de libros.
+- **Base de Datos**: Nueva tabla `notifications` inicializada automáticamente.
+- **Mejoras UI**: Nueva interfaz para envío de feedback y visualización de alertas.
+
+---
+
 ## v10.7 (2025-12-05)
 
 ### 🌍 Acceso Público

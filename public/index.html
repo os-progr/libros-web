@@ -15,116 +15,61 @@
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body class="no-select">
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">📚</span>
-                    <span>LibrosWeb</span>
+    <div class="container">
+        <!-- Welcome Screen (for unauthenticated users) -->
+        <section id="welcomeScreen" class="hidden">
+            <div class="hero">
+                <h1 class="hero-title">Bienvenido a LibrosWeb</h1>
+                <p class="hero-subtitle">Publica tus libros y gestiona tu biblioteca personal</p>
+            </div>
+            <div class="welcome-content">
+                <div class="welcome-card">
+                    <div class="welcome-icon">📚</div>
+                    <h3>Publica tus Libros</h3>
+                    <p>Sube tus obras en formato PDF y Word</p>
                 </div>
-
-                <div class="search-bar">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar libros, autores..."
-                        autocomplete="off">
+                <div class="welcome-card">
+                    <div class="welcome-icon">🔓</div>
+                    <h3>Acceso Libre</h3>
+                    <p>Comparte conocimiento sin restricciones</p>
                 </div>
-
-                <div class="nav-actions">
-                    <!-- Developer Mode Icon (Only for admin) -->
-                    <button class="developer-toggle hidden" id="developerToggle" title="Modo Desarrollador">
-                        <span class="developer-icon">⚙️</span>
-                    </button>
-
-                    <!-- Authenticated user actions -->
-                    <div id="authenticatedActions" class="hidden">
-                        <div class="user-profile">
-                            <img id="userPicture" src="" alt="User" class="user-avatar">
-                            <span id="userName"></span>
-                        </div>
-                        <button class="btn btn-primary" id="uploadBtn">
-                            <span>📤</span>
-                            <span>Publicar Libro</span>
-                        </button>
-                        <button class="btn btn-secondary" id="logoutBtn">
-                            <span>🚪</span>
-                            <span>Salir</span>
-                        </button>
-                    </div>
-
-                    <!-- Unauthenticated user actions -->
-                    <div id="unauthenticatedActions" class="hidden">
-                        <a href="/auth/google" class="btn btn-primary google-btn">
-                            <span>🔐</span>
-                            <span>Iniciar sesión con Google</span>
-                        </a>
-                    </div>
+                <div class="welcome-card">
+                    <div class="welcome-icon">☁️</div>
+                    <h3>En la Nube</h3>
+                    <p>Accede a tu biblioteca desde cualquier dispositivo</p>
                 </div>
             </div>
-        </div>
-    </header>
+            <div class="welcome-cta">
+                <a href="/auth/google" class="btn btn-primary btn-large">
+                    <span>🔐</span>
+                    <span>Iniciar sesión con Google</span>
+                </a>
+            </div>
+        </section>
 
-    <!-- Main Content -->
-    <main class="main">
-        <div class="container">
-            <!-- Welcome Screen (for unauthenticated users) -->
-            <section id="welcomeScreen" class="hidden">
-                <div class="hero">
-                    <h1 class="hero-title">Bienvenido a LibrosWeb</h1>
-                    <p class="hero-subtitle">Publica tus libros y gestiona tu biblioteca personal</p>
-                </div>
-                <div class="welcome-content">
-                    <div class="welcome-card">
-                        <div class="welcome-icon">📚</div>
-                        <h3>Publica tus Libros</h3>
-                        <p>Sube tus obras en formato PDF y Word</p>
-                    </div>
-                    <div class="welcome-card">
-                        <div class="welcome-icon">🔓</div>
-                        <h3>Acceso Libre</h3>
-                        <p>Comparte conocimiento sin restricciones</p>
-                    </div>
-                    <div class="welcome-card">
-                        <div class="welcome-icon">☁️</div>
-                        <h3>En la Nube</h3>
-                        <p>Accede a tu biblioteca desde cualquier dispositivo</p>
-                    </div>
-                </div>
-                <div class="welcome-cta">
-                    <a href="/auth/google" class="btn btn-primary btn-large">
-                        <span>🔐</span>
-                        <span>Iniciar sesión con Google</span>
-                    </a>
-                </div>
-            </section>
+        <!-- Books Section (for authenticated users) -->
+        <section id="booksSection" class="hidden">
+            <div class="hero">
+                <h1 class="hero-title">Mis Libros</h1>
+                <p class="hero-subtitle">Gestiona tu biblioteca personal</p>
+            </div>
 
-            <!-- Books Section (for authenticated users) -->
-            <section id="booksSection" class="hidden">
-                <div class="hero">
-                    <h1 class="hero-title">Mis Libros</h1>
-                    <p class="hero-subtitle">Gestiona tu biblioteca personal</p>
-                </div>
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be dynamically inserted here -->
+            </div>
 
-                <div class="books-grid" id="booksGrid">
-                    <!-- Books will be dynamically inserted here -->
-                </div>
-
-                <!-- Empty State -->
-                <div class="empty-state hidden" id="emptyState">
-                    <div class="empty-icon">📖</div>
-                    <h2 class="empty-title">No hay libros aún</h2>
-                    <p class="empty-text">Sé el primero en publicar un libro</p>
-                    <button class="btn btn-primary" onclick="document.getElementById('uploadBtn').click()">
-                        <span>📤</span>
-                        <span>Publicar el Primer Libro</span>
-                    </button>
-                </div>
-            </section>
-        </div>
+            <!-- Empty State -->
+            <div class="empty-state hidden" id="emptyState">
+                <div class="empty-icon">📖</div>
+                <h2 class="empty-title">No hay libros aún</h2>
+                <p class="empty-text">Sé el primero en publicar un libro</p>
+                <button class="btn btn-primary" onclick="document.getElementById('uploadBtn').click()">
+                    <span>📤</span>
+                    <span>Publicar el Primer Libro</span>
+                </button>
+            </div>
+        </section>
+    </div>
     </main>
 
     <!-- Upload Modal -->
@@ -237,28 +182,57 @@
                 <div class="admin-section">
                     <h3 class="admin-section-title">📊 Estadísticas del Sistema</h3>
                     <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="statUsers">-</div><div class="stat-label">Usuarios</div></div>
-                        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-value" id="statBooks">-</div><div class="stat-label">Libros</div></div>
-                        <div class="stat-card"><div class="stat-icon">⬇️</div><div class="stat-value" id="statDownloadsToday">-</div><div class="stat-label">Descargas Hoy</div></div>
-                        <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="statTotalDownloads">-</div><div class="stat-label">Total Descargas</div></div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-value" id="statUsers">-</div>
+                            <div class="stat-label">Usuarios</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-value" id="statBooks">-</div>
+                            <div class="stat-label">Libros</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⬇️</div>
+                            <div class="stat-value" id="statDownloadsToday">-</div>
+                            <div class="stat-label">Descargas Hoy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-value" id="statTotalDownloads">-</div>
+                            <div class="stat-label">Total Descargas</div>
+                        </div>
                     </div>
-                    <div class="popular-book" id="popularBook"><div class="popular-book-icon">🔥</div><div class="popular-book-info"><div class="popular-book-title">Cargando...</div><div class="popular-book-subtitle">Libro más popular</div></div></div>
+                    <div class="popular-book" id="popularBook">
+                        <div class="popular-book-icon">🔥</div>
+                        <div class="popular-book-info">
+                            <div class="popular-book-title">Cargando...</div>
+                            <div class="popular-book-subtitle">Libro más popular</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="admin-section">
                     <h3 class="admin-section-title">⚡ Acciones Rápidas</h3>
                     <div class="admin-actions">
-                        <button class="btn btn-secondary" id="btnRefreshStats"><span>🔄</span><span>Actualizar Datos</span></button>
-                        <button class="btn btn-secondary" id="btnClearCache"><span>🗑️</span><span>Limpiar Caché</span></button>
-                        <button class="btn btn-secondary" id="btnViewUsers"><span>👥</span><span>Ver Usuarios</span></button>
-                        <button class="btn btn-secondary" id="btnViewAllBooks"><span>📚</span><span>Gestionar Libros</span></button>
+                        <button class="btn btn-secondary" id="btnRefreshStats"><span>🔄</span><span>Actualizar
+                                Datos</span></button>
+                        <button class="btn btn-secondary" id="btnClearCache"><span>🗑️</span><span>Limpiar
+                                Caché</span></button>
+                        <button class="btn btn-secondary" id="btnViewUsers"><span>👥</span><span>Ver
+                                Usuarios</span></button>
+                        <button class="btn btn-secondary" id="btnViewAllBooks"><span>📚</span><span>Gestionar
+                                Libros</span></button>
                     </div>
                 </div>
                 <div class="admin-section">
                     <h3 class="admin-section-title">ℹ️ Información del Sistema</h3>
                     <div class="system-info">
-                        <div class="info-row"><span class="info-label">Versión:</span><span class="info-value">v10.4</span></div>
-                        <div class="info-row"><span class="info-label">Libros Hoy:</span><span class="info-value" id="statBooksToday">-</span></div>
-                        <div class="info-row"><span class="info-label">Reportes Pendientes:</span><span class="info-value" id="statPendingReports">-</span></div>
+                        <div class="info-row"><span class="info-label">Versión:</span><span
+                                class="info-value">v10.4</span></div>
+                        <div class="info-row"><span class="info-label">Libros Hoy:</span><span class="info-value"
+                                id="statBooksToday">-</span></div>
+                        <div class="info-row"><span class="info-label">Reportes Pendientes:</span><span
+                                class="info-value" id="statPendingReports">-</span></div>
                     </div>
                 </div>
             </div>
@@ -355,10 +329,44 @@
 
 
 
+    <!-- Admin Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal feedback-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📢 Enviar Recomendación</h2>
+                <button class="modal-close" id="closeFeedbackModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm">
+                    <input type="hidden" id="feedbackBookId">
+                    <div class="form-group">
+                        <label class="form-label">Libro:</label>
+                        <div id="feedbackBookTitle" class="book-preview-title"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="feedbackMessage">Mensaje / Recomendación *</label>
+                        <textarea class="form-textarea" id="feedbackMessage" required rows="5"
+                            placeholder="Ej: Te recomendamos mejorar la calidad de la portada..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="feedbackType">Tipo</label>
+                        <select class="form-input" id="feedbackType">
+                            <option value="info">ℹ️ Información / Consejo</option>
+                            <option value="warning">⚠️ Advertencia</option>
+                            <option value="success">✅ Felicitación</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelFeedback">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="app.js"></script>
-</body>
+    </body>
 
 </html>
-
-

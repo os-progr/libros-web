@@ -277,6 +277,56 @@ router.put('/books/:id', isAdmin, async (req, res) => {
     }
 });
 
+// @route   POST /api/admin/books/:id/feedback
+// @desc    Enviar feedback/recomendación al autor de un libro
+// @access  Admin only
+router.post('/books/:id/feedback', isAdmin, async (req, res) => {
+    try {
+        const bookId = req.params.id;
+        const { message, type } = req.body;
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: 'El mensaje es obligatorio'
+            });
+        }
+
+        // Obtener el libro y su autor
+        const [books] = await db.query('SELECT * FROM books WHERE id = ?', [bookId]);
+        if (books.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Libro no encontrado'
+            });
+        }
+
+        const book = books[0];
+
+        // Crear la notificación
+        await db.query(`
+            INSERT INTO notifications (user_id, title, message, type)
+            VALUES (?, ?, ?, ?)
+        `, [
+            book.user_id,
+            `Recomendación sobre "${book.title}"`,
+            message,
+            type || 'info'
+        ]);
+
+        res.json({
+            success: true,
+            message: 'Feedback enviado exitosamente'
+        });
+    } catch (error) {
+        console.error('Error sending feedback:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al enviar feedback'
+        });
+    }
+});
+
 // @route   GET /api/admin/activity
 // @desc    Obtener actividad reciente del sistema
 // @access  Admin only

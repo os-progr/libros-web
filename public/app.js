@@ -883,10 +883,13 @@ const AdminPanel = {
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <button class="action-btn btn-edit" onclick="AdminPanel.openEditBook(${book.id})">
+                        <button class="action-btn btn-edit" onclick="AdminPanel.openEditBook(${book.id})" title="Editar">
                             ✏️
                         </button>
-                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id}, '${this.escapeHtml(book.title)}')">
+                        <button class="action-btn btn-view" onclick="AdminPanel.openFeedbackModal(${book.id}, '${this.escapeHtml(book.title)}')" title="Enviar Recomendación">
+                            📢
+                        </button>
+                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id}, '${this.escapeHtml(book.title)}')" title="Eliminar">
                             🗑️
                         </button>
                     </div>
@@ -1009,10 +1012,200 @@ const AdminPanel = {
         }
     },
 
+    openFeedbackModal(bookId, bookTitle) {
+        const modal = document.getElementById('feedbackModal');
+        const form = document.getElementById('feedbackForm');
+
+        if (modal && form) {
+            document.getElementById('feedbackBookId').value = bookId;
+            document.getElementById('feedbackBookTitle').textContent = bookTitle;
+            document.getElementById('feedbackMessage').value = '';
+
+            modal.classList.add('active');
+
+            // Setup close handlers
+            const closeBtn = document.getElementById('closeFeedbackModal');
+            const cancelBtn = document.getElementById('cancelFeedback');
+            const close = () => modal.classList.remove('active');
+
+            if (closeBtn) closeBtn.onclick = close;
+            if (cancelBtn) cancelBtn.onclick = close;
+
+            // Handle form submit
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.sendFeedback();
+            };
+        }
+    },
+
+    async sendFeedback() {
+        const id = document.getElementById('feedbackBookId').value;
+        const message = document.getElementById('feedbackMessage').value;
+        const type = document.getElementById('feedbackType').value;
+
+        try {
+            const response = await fetch(`/api/admin/books/${id}/feedback`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, type })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('✅ Recomendación enviada exitosamente');
+                document.getElementById('feedbackModal').classList.remove('active');
+            } else {
+                alert(`❌ Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error sending feedback:', error);
+            alert('❌ Error al enviar recomendación');
+        }
+    },
+
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+};
+
+// ============================================
+// NOTIFICATIONS MANAGER
+// ============================================
+const NotificationsManager = {
+    init() {
+        const btn = document.getElementById('notificationBtn');
+        const dropdown = document.getElementById('notificationsDropdown');
+        const markAllBtn = document.getElementById('markAllReadBtn');
+
+        if (btn && dropdown) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+                if (!dropdown.classList.contains('hidden')) {
+                    this.loadNotifications();
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', () => this.markAllAsRead());
+        }
+
+        // Poll for notifications every minute
+        setInterval(() => this.checkCount(), 60000);
+        this.checkCount(); // Initial check
+    },
+
+    async checkCount() {
+        if (!AppState.isAuthenticated) return;
+
+        try {
+            const response = await fetch('/api/notifications');
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateBadge(data.unreadCount);
+            }
+        } catch (error) {
+            console.error('Error checking notifications:', error);
+        }
+    },
+
+    updateBadge(count) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            badge.textContent = count;
+            if (count > 0) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    },
+
+    async loadNotifications() {
+        const list = document.getElementById('notificationsList');
+        if (!list) return;
+
+        list.innerHTML = '<div class="notification-item">Cargando...</div>';
+
+        try {
+            const response = await fetch('/api/notifications');
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateBadge(data.unreadCount);
+                this.renderList(data.notifications);
+            }
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            list.innerHTML = '<div class="notification-item">Error al cargar</div>';
+        }
+    },
+
+    renderList(notifications) {
+        const list = document.getElementById('notificationsList');
+        if (!list) return;
+
+        if (notifications.length === 0) {
+            list.innerHTML = '<div class="empty-notifications">No tienes notificaciones</div>';
+            return;
+        }
+
+        list.innerHTML = notifications.map(notif => `
+            <div class="notification-item ${notif.is_read ? '' : 'unread'}" onclick="NotificationsManager.markAsRead(${notif.id})">
+                <div class="notification-title ${this.getTypeClass(notif.type)}">
+                    ${this.getTypeIcon(notif.type)} ${notif.title}
+                </div>
+                <div class="notification-message">${notif.message}</div>
+                <div class="notification-date">${new Date(notif.created_at).toLocaleString()}</div>
+            </div>
+        `).join('');
+    },
+
+    getTypeClass(type) {
+        return `notif-type-${type || 'info'}`;
+    },
+
+    getTypeIcon(type) {
+        const icons = {
+            info: 'ℹ️',
+            warning: '⚠️',
+            success: '✅',
+            error: '❌'
+        };
+        return icons[type] || 'ℹ️';
+    },
+
+    async markAsRead(id) {
+        try {
+            await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+            this.checkCount(); // Refresh badge
+            this.loadNotifications(); // Refresh list to remove unread style
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
+    },
+
+    async markAllAsRead() {
+        try {
+            await fetch('/api/notifications/read-all', { method: 'PUT' });
+            this.checkCount();
+            this.loadNotifications();
+        } catch (error) {
+            console.error('Error marking all as read:', error);
+        }
     }
 };
 
@@ -1021,6 +1214,11 @@ DeveloperMode.init = function (user) {
     // Initialize Admin Panel
     if (typeof AdminPanel !== 'undefined') {
         AdminPanel.init();
+    }
+
+    // Initialize Notifications
+    if (typeof NotificationsManager !== 'undefined') {
+        NotificationsManager.init();
     }
 
     // Only show developer icon for admin
