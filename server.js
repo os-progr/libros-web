@@ -19,6 +19,8 @@ const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/books');
 const adminRoutes = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
+const reviewRoutes = require('./routes/reviews');
+const profileRoutes = require('./routes/profile');
 
 // Initialize Express app
 const app = express();
@@ -68,6 +70,8 @@ app.use('/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
