@@ -477,6 +477,23 @@
         </div>
     </div>
 
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal confirmation-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">🚪 Cerrar Sesión</h2>
+                <button class="modal-close" id="closeLogoutModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="confirmation-text">¿Estás seguro de que deseas salir de tu cuenta?</p>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
+                    <button class="btn btn-danger" id="confirmLogout">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="app.js"></script>
 </body>

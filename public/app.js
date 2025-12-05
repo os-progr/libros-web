@@ -441,19 +441,39 @@ const EventHandlers = {
     },
 
     // Handle logout
-    async handleLogout() {
-        if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-            const result = await API.logout();
-            if (result.success) {
-                window.location.reload();
+    handleLogout() {
+        const modal = document.getElementById('logoutModal');
+        if (modal) {
+            modal.classList.add('active');
+
+            const close = () => modal.classList.remove('active');
+
+            // Setup handlers
+            const closeBtn = document.getElementById('closeLogoutModal');
+            const cancelBtn = document.getElementById('cancelLogout');
+            const confirmBtn = document.getElementById('confirmLogout');
+
+            if (closeBtn) closeBtn.onclick = close;
+            if (cancelBtn) cancelBtn.onclick = close;
+
+            if (confirmBtn) {
+                confirmBtn.onclick = async () => {
+                    const result = await API.logout();
+                    if (result.success) {
+                        window.location.reload();
+                    }
+                };
+            }
+        } else {
+            // Fallback
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                API.logout().then(result => {
+                    if (result.success) window.location.reload();
+                });
             }
         }
     }
 };
-
-// ============================================
-// INITIALIZATION
-// ============================================
 async function loadBooks() {
     const books = await API.getBooks();
     AppState.books = books;
