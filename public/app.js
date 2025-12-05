@@ -847,6 +847,13 @@ const AdminPanel = {
                     modal.classList.remove('active');
                 }
             };
+
+            // Setup Search
+            const searchInput = document.getElementById('adminBookSearch');
+            if (searchInput) {
+                searchInput.value = ''; // Reset
+                searchInput.oninput = (e) => this.filterBooks(e.target.value);
+            }
         }
     },
 
@@ -861,6 +868,7 @@ const AdminPanel = {
             const data = await response.json();
 
             if (data.success) {
+                this.books = data.books; // Store for searching
                 this.renderBooks(data.books);
             } else {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error al cargar libros</td></tr>';
@@ -869,6 +877,18 @@ const AdminPanel = {
             console.error('Error loading books:', error);
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Error de conexión</td></tr>';
         }
+    },
+
+    filterBooks(query) {
+        if (!this.books) return;
+
+        query = query.toLowerCase();
+        const filtered = this.books.filter(book =>
+            book.title.toLowerCase().includes(query) ||
+            book.author.toLowerCase().includes(query) ||
+            (book.uploader_name && book.uploader_name.toLowerCase().includes(query))
+        );
+        this.renderBooks(filtered);
     },
 
     renderBooks(books) {
