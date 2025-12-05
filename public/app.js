@@ -238,13 +238,23 @@ const UIManager = {
 
         emptyState.classList.add('hidden');
 
-        booksGrid.innerHTML = books.map(book => `
+        const isAdmin = AppState.user?.email === 'edaninguna@gmail.com';
+
+        booksGrid.innerHTML = books.map(book => {
+            const canDelete = AppState.user && (book.user_id === AppState.user.id || isAdmin);
+
+            return `
             <div class="book-card fade-in" data-book-id="${book.id}">
+                ${canDelete ? `
+                    <button class="book-delete-btn" onclick="event.stopPropagation(); UIManager.deleteBookFromLibrary(${book.id}, '${this.escapeHtml(book.title)}')" title="Eliminar libro">
+                        🗑️
+                    </button>
+                ` : ''}
                 <div class="book-cover">
                     ${book.cover_path
-                ? `<img src="/api/books/${book.id}/cover" alt="${this.escapeHtml(book.title)}">`
-                : `<div class="book-cover-placeholder">📖</div>`
-            }
+                    ? `<img src="/api/books/${book.id}/cover" alt="${this.escapeHtml(book.title)}">`
+                    : `<div class="book-cover-placeholder">📖</div>`
+                }
                 </div>
                 <div class="book-info">
                     <h3 class="book-title">${this.escapeHtml(book.title)}</h3>
@@ -257,7 +267,7 @@ const UIManager = {
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
 
         // Add click handlers to book cards
         document.querySelectorAll('.book-card').forEach(card => {
@@ -346,6 +356,25 @@ const UIManager = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    // Delete book from library
+    async deleteBookFromLibrary(bookId, bookTitle) {
+        if (confirm(`¿Estás seguro de que quieres eliminar "${bookTitle}"?\n\nEsta acción no se puede deshacer.`)) {
+            try {
+                const result = await API.deleteBook(bookId);
+
+                if (result.success) {
+                    alert('✅ Libro eliminado exitosamente');
+                    await loadBooks(); // Reload the books list
+                } else {
+                    alert(`❌ Error: ${result.message || 'No se pudo eliminar el libro'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('❌ Error al eliminar el libro');
+            }
+        }
     },
 
     // Show loading state
