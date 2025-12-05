@@ -176,6 +176,54 @@ router.delete('/users/:id', isAdmin, async (req, res) => {
     }
 });
 
+// @route   POST /api/admin/users/:id/notify
+// @desc    Enviar notificación directa a un usuario
+// @access  Admin only
+router.post('/users/:id/notify', isAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { message, title, type } = req.body;
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: 'El mensaje es obligatorio'
+            });
+        }
+
+        // Verificar que el usuario existe
+        const [users] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Crear la notificación
+        await db.query(`
+            INSERT INTO notifications (user_id, title, message, type)
+            VALUES (?, ?, ?, ?)
+        `, [
+            userId,
+            title || 'Mensaje del Administrador',
+            message,
+            type || 'info'
+        ]);
+
+        res.json({
+            success: true,
+            message: 'Notificación enviada exitosamente'
+        });
+    } catch (error) {
+        console.error('Error sending notification:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al enviar notificación'
+        });
+    }
+});
+
 // @route   GET /api/admin/books
 // @desc    Obtener todos los libros con información detallada
 // @access  Admin only

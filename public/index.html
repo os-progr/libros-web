@@ -436,6 +436,47 @@
         </div>
     </div>
 
+    <!-- Admin User Notification Modal -->
+    <div class="modal-overlay" id="userNotifyModal">
+        <div class="modal feedback-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">🔔 Notificar Usuario</h2>
+                <button class="modal-close" id="closeUserNotifyModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userNotifyForm">
+                    <input type="hidden" id="userNotifyUserId">
+                    <div class="form-group">
+                        <label class="form-label">Usuario Destino:</label>
+                        <div id="userNotifyUserName" class="book-preview-title"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="userNotifyTitle">Título</label>
+                        <input type="text" class="form-input" id="userNotifyTitle" placeholder="Ej: Aviso importante">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="userNotifyMessage">Mensaje *</label>
+                        <textarea class="form-textarea" id="userNotifyMessage" required rows="5"
+                            placeholder="Escribe tu mensaje aquí..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="userNotifyType">Tipo</label>
+                        <select class="form-input" id="userNotifyType">
+                            <option value="info">ℹ️ Información</option>
+                            <option value="warning">⚠️ Advertencia</option>
+                            <option value="success">✅ Éxito</option>
+                            <option value="error">❌ Error/Alerta</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelUserNotify">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar Notificación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="app.js"></script>
 </body>

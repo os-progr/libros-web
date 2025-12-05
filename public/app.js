@@ -773,6 +773,9 @@ const AdminPanel = {
                 <td>${new Date(user.created_at).toLocaleDateString()}</td>
                 <td>
                     ${user.email !== 'edaninguna@gmail.com' ? `
+                        <button class="action-btn btn-view" onclick="AdminPanel.openUserNotifyModal(${user.id}, '${this.escapeHtml(user.name)}')" title="Enviar Notificación">
+                            🔔
+                        </button>
                         <button class="action-btn btn-danger" onclick="AdminPanel.deleteUser(${user.id}, '${this.escapeHtml(user.name)}')">
                             🗑️ Eliminar
                         </button>
@@ -1069,6 +1072,61 @@ const AdminPanel = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    openUserNotifyModal(userId, userName) {
+        const modal = document.getElementById('userNotifyModal');
+        const form = document.getElementById('userNotifyForm');
+
+        if (modal && form) {
+            document.getElementById('userNotifyUserId').value = userId;
+            document.getElementById('userNotifyUserName').textContent = userName;
+            document.getElementById('userNotifyMessage').value = '';
+            document.getElementById('userNotifyTitle').value = '';
+
+            modal.classList.add('active');
+
+            // Setup close handlers
+            const closeBtn = document.getElementById('closeUserNotifyModal');
+            const cancelBtn = document.getElementById('cancelUserNotify');
+            const close = () => modal.classList.remove('active');
+
+            if (closeBtn) closeBtn.onclick = close;
+            if (cancelBtn) cancelBtn.onclick = close;
+
+            // Handle form submit
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.sendUserNotification();
+            };
+        }
+    },
+
+    async sendUserNotification() {
+        const userId = document.getElementById('userNotifyUserId').value;
+        const message = document.getElementById('userNotifyMessage').value;
+        const title = document.getElementById('userNotifyTitle').value;
+        const type = document.getElementById('userNotifyType').value;
+
+        try {
+            const response = await fetch(`/api/admin/users/${userId}/notify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, title, type })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('✅ Notificación enviada exitosamente');
+                document.getElementById('userNotifyModal').classList.remove('active');
+            } else {
+                alert(`❌ Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error sending notification:', error);
+            alert('❌ Error al enviar notificación');
+        }
     }
 };
 
