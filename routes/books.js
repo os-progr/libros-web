@@ -252,6 +252,18 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             filename = `${book.title} - ${book.author}.pdf`;
         }
 
+        // Register download in database
+        const db = require('../config/database');
+        try {
+            await db.query(
+                'INSERT INTO downloads (user_id, book_id) VALUES (?, ?)',
+                [req.user.id, book.id]
+            );
+        } catch (dbError) {
+            console.error('Error registering download:', dbError);
+            // Continue with download even if registration fails
+        }
+
         // Send file as download
         res.download(path.resolve(filePath), filename);
     } catch (error) {

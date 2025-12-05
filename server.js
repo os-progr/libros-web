@@ -17,6 +17,7 @@ const { testConnection } = require('./config/database');
 // Import routes
 const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/books');
+const adminRoutes = require('./routes/admin');
 
 // Initialize Express app
 const app = express();
@@ -64,6 +65,7 @@ app.use('/auth', authRoutes);
 
 // API routes
 app.use('/api/books', bookRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
