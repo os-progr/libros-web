@@ -235,11 +235,10 @@ router.get('/books', isAdmin, async (req, res) => {
                 u.name as uploader_name,
                 u.email as uploader_email,
                 COUNT(DISTINCT d.id) as download_count,
-                COUNT(DISTINCT r.id) as report_count
+                0 as report_count
             FROM books b
             LEFT JOIN users u ON b.user_id = u.id
             LEFT JOIN downloads d ON b.id = d.book_id
-            LEFT JOIN reports r ON b.id = r.book_id
             GROUP BY b.id
             ORDER BY b.created_at DESC
         `);
