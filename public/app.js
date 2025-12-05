@@ -561,3 +561,194 @@ function setupEventListeners() {
 // START APPLICATION
 // ============================================
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+// ============================================
+// ADMIN PANEL MANAGER
+// ============================================
+const AdminPanel = {
+    isOpen: false,
+
+    init() {
+        // Close button
+        const closeBtn = document.getElementById('closeAdminPanel');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.close());
+        }
+
+        // Close on outside click
+        const modal = document.getElementById('adminPanel');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target.id === 'adminPanel') {
+                    this.close();
+                }
+            });
+        }
+
+        // Quick Actions
+        const btnRefresh = document.getElementById('btnRefreshStats');
+        if (btnRefresh) btnRefresh.addEventListener('click', () => this.loadStats());
+        
+        const btnClear = document.getElementById('btnClearCache');
+        if (btnClear) btnClear.addEventListener('click', () => this.clearCache());
+        
+        const btnUsers = document.getElementById('btnViewUsers');
+        if (btnUsers) btnUsers.addEventListener('click', () => this.viewUsers());
+        
+        const btnBooks = document.getElementById('btnViewAllBooks');
+        if (btnBooks) btnBooks.addEventListener('click', () => this.viewBooks());
+    },
+
+    open() {
+        const modal = document.getElementById('adminPanel');
+        if (modal) {
+            modal.classList.add('active');
+            this.isOpen = true;
+            this.loadStats();
+        }
+    },
+
+    close() {
+        const modal = document.getElementById('adminPanel');
+        if (modal) {
+            modal.classList.remove('active');
+            this.isOpen = false;
+        }
+    },
+
+    async loadStats() {
+        try {
+            const response = await fetch('/api/admin/stats');
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateUI(data.stats);
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    },
+
+    updateUI(stats) {
+        // Update counters with animation
+        this.animateValue('statUsers', stats.totalUsers);
+        this.animateValue('statBooks', stats.totalBooks);
+        this.animateValue('statDownloadsToday', stats.downloadsToday);
+        this.animateValue('statTotalDownloads', stats.totalDownloads);
+        this.animateValue('statBooksToday', stats.newBooksToday);
+        this.animateValue('statPendingReports', stats.pendingReports);
+
+        // Update popular book
+        const popularBookEl = document.getElementById('popularBook');
+        if (popularBookEl) {
+            if (stats.mostPopularBook) {
+                popularBookEl.innerHTML = 
+                    <div class="popular-book-icon">🔥</div>
+                    <div class="popular-book-info">
+                        <div class="popular-book-title"></div>
+                        <div class="popular-book-subtitle">
+                             descargas • por 
+                        </div>
+                    </div>
+                ;
+            } else {
+                popularBookEl.innerHTML = 
+                    <div class="popular-book-icon">ℹ️</div>
+                    <div class="popular-book-info">
+                        <div class="popular-book-title">Sin datos</div>
+                        <div class="popular-book-subtitle">Aún no hay descargas</div>
+                    </div>
+                ;
+            }
+        }
+    },
+
+    animateValue(id, value) {
+        const element = document.getElementById(id);
+        if (!element) return;
+        
+        const start = 0;
+        const end = parseInt(value) || 0;
+        const duration = 1000;
+        const range = end - start;
+        let current = start;
+        const increment = end > start ? 1 : -1;
+        const stepTime = Math.abs(Math.floor(duration / range));
+        
+        if (range === 0) {
+            element.textContent = end;
+            return;
+        }
+
+        const timer = setInterval(() => {
+            current += increment;
+            element.textContent = current;
+            if (current == end) {
+                clearInterval(timer);
+            }
+        }, Math.max(stepTime, 20)); // Min 20ms per step
+    },
+
+    async clearCache() {
+        if (confirm('¿Estás seguro de limpiar la caché del sistema?')) {
+            try {
+                const response = await fetch('/api/admin/clear-cache', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Caché limpiado exitosamente');
+                }
+            } catch (error) {
+                alert('❌ Error al limpiar caché');
+            }
+        }
+    },
+
+    viewUsers() {
+        alert('Funcionalidad de gestión de usuarios próximamente');
+    },
+
+    viewBooks() {
+        alert('Funcionalidad de gestión de libros próximamente');
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+};
+
+// Redefine DeveloperMode.init to use AdminPanel
+DeveloperMode.init = function(user) {
+    // Initialize Admin Panel
+    if (typeof AdminPanel !== 'undefined') {
+        AdminPanel.init();
+    }
+
+    // Only show developer icon for admin
+    if (user && user.email === this.adminEmail) {
+        const developerToggle = document.getElementById('developerToggle');
+        if (developerToggle) {
+            developerToggle.classList.remove('hidden');
+            
+            // Click opens Admin Panel
+            developerToggle.addEventListener('click', () => {
+                if (typeof AdminPanel !== 'undefined') {
+                    AdminPanel.open();
+                }
+            });
+
+            // Right click toggles Dev Tools access
+            developerToggle.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.toggleDevMode();
+            });
+        }
+    }
+    
+    // Load saved developer mode state
+    const devMode = localStorage.getItem('developerMode') === 'true';
+    if (devMode) {
+        this.enableDevMode();
+    }
+};

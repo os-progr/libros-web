@@ -1,0 +1,88 @@
+
+    <!-- Admin Panel Modal -->
+    <div class="modal-overlay" id="adminPanel">
+        <div class="modal admin-panel-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Panel de Administración</h2>
+                <button class="modal-close" id="closeAdminPanel">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Statistics Section -->
+                <div class="admin-section">
+                    <h3 class="admin-section-title">📊 Estadísticas del Sistema</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-value" id="statUsers">-</div>
+                            <div class="stat-label">Usuarios</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-value" id="statBooks">-</div>
+                            <div class="stat-label">Libros</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⬇️</div>
+                            <div class="stat-value" id="statDownloadsToday">-</div>
+                            <div class="stat-label">Descargas Hoy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-value" id="statTotalDownloads">-</div>
+                            <div class="stat-label">Total Descargas</div>
+                        </div>
+                    </div>
+                    
+                    <div class="popular-book" id="popularBook">
+                        <div class="popular-book-icon">🔥</div>
+                        <div class="popular-book-info">
+                            <div class="popular-book-title">Cargando...</div>
+                            <div class="popular-book-subtitle">Libro más popular</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Section -->
+                <div class="admin-section">
+                    <h3 class="admin-section-title">⚡ Acciones Rápidas</h3>
+                    <div class="admin-actions">
+                        <button class="btn btn-secondary" id="btnRefreshStats">
+                            <span>🔄</span>
+                            <span>Actualizar Datos</span>
+                        </button>
+                        <button class="btn btn-secondary" id="btnClearCache">
+                            <span>🗑️</span>
+                            <span>Limpiar Caché</span>
+                        </button>
+                        <button class="btn btn-secondary" id="btnViewUsers">
+                            <span>👥</span>
+                            <span>Ver Usuarios</span>
+                        </button>
+                        <button class="btn btn-secondary" id="btnViewAllBooks">
+                            <span>📚</span>
+                            <span>Gestionar Libros</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- System Info Section -->
+                <div class="admin-section">
+                    <h3 class="admin-section-title">ℹ️ Información del Sistema</h3>
+                    <div class="system-info">
+                        <div class="info-row">
+                            <span class="info-label">Versión:</span>
+                            <span class="info-value">v10.4</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Libros Hoy:</span>
+                            <span class="info-value" id="statBooksToday">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Reportes Pendientes:</span>
+                            <span class="info-value" id="statPendingReports">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

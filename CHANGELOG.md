@@ -1,5 +1,26 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.4 (2025-12-04)
+
+### ✨ Panel de Administración
+- **Panel Simplificado**: Nuevo modal de administración accesible desde el icono de desarrollador (⚙️)
+- **Estadísticas en Tiempo Real**:
+  - Usuarios registrados
+  - Total de libros
+  - Descargas del día y totales
+  - Libro más popular
+- **Acciones Rápidas**:
+  - Actualizar datos
+  - Limpiar caché
+  - Gestión de usuarios y libros (próximamente)
+
+### 🛠️ Mejoras Técnicas
+- **Backend**: Nuevas rutas `/api/admin` para estadísticas y gestión
+- **Base de Datos**: Nueva tabla `downloads` para rastrear descargas
+- **Frontend**: Lógica modular para el panel de administración (`AdminPanel`)
+
+---
+
 ## v10.3 (2025-12-04)
 
 ### 🐛 Correcciones de Errores
