@@ -104,6 +104,17 @@ const bookQueries = {
         return await query(sql, [userId]);
     },
 
+    // Get all books (for public feed)
+    findAll: async () => {
+        const sql = `
+            SELECT books.*, users.name as author_name 
+            FROM books 
+            LEFT JOIN users ON books.user_id = users.id 
+            ORDER BY created_at DESC
+        `;
+        return await query(sql);
+    },
+
     // Get book by ID
     findById: async (id) => {
         const sql = 'SELECT * FROM books WHERE id = ?';

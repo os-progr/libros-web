@@ -1,5 +1,17 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v10.7 (2025-12-05)
+
+### 🌍 Acceso Público
+- **Biblioteca Compartida**: Ahora todos los usuarios autenticados pueden ver y descargar TODOS los libros publicados, no solo los suyos.
+- **Inicio de Sesión**: La página de inicio ya no redirige automáticamente. Muestra una pantalla de bienvenida invitando a iniciar sesión para acceder.
+
+### 🐛 Correcciones
+- **Sintaxis**: Corregido error de comillas en el módulo de JavaScript que impedía la carga de la aplicación.
+- **Navegación**: Flujo de usuario mejorado para visitantes no autenticados.
+
+---
+
 ## v10.6 (2025-12-04)
 
 ### 📚 Gestión de Libros (Admin)

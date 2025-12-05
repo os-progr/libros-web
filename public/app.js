@@ -475,6 +475,9 @@ async function initializeApp() {
     // If authenticated, load books
     if (user) {
         await loadBooks();
+    } else {
+        // Show welcome screen (handled by updateAuthUI)
+        // window.location.href = '/auth/google';
     }
 
     // Setup event listeners
@@ -642,23 +645,23 @@ const AdminPanel = {
         const popularBookEl = document.getElementById('popularBook');
         if (popularBookEl) {
             if (stats.mostPopularBook) {
-                popularBookEl.innerHTML = 
+                popularBookEl.innerHTML = `
                     <div class="popular-book-icon">🔥</div>
                     <div class="popular-book-info">
-                        <div class="popular-book-title"></div>
+                        <div class="popular-book-title">${this.escapeHtml(stats.mostPopularBook.title)}</div>
                         <div class="popular-book-subtitle">
-                             descargas • por 
+                             ${stats.mostPopularBook.download_count} descargas • por ${this.escapeHtml(stats.mostPopularBook.author)}
                         </div>
                     </div>
-                    ;
+                `;
             } else {
-                popularBookEl.innerHTML = 
+                popularBookEl.innerHTML = `
                     <div class="popular-book-icon">ℹ️</div>
                     <div class="popular-book-info">
                         <div class="popular-book-title">Sin datos</div>
                         <div class="popular-book-subtitle">Aún no hay descargas</div>
                     </div>
-                    ;
+                `;
             }
         }
     },

@@ -74,7 +74,7 @@ const upload = multer({
 // @access  Private
 router.get('/', isAuthenticated, async (req, res) => {
     try {
-        const books = await bookQueries.findByUserId(req.user.id);
+        const books = await bookQueries.findAll();
         res.json({
             success: true,
             books: books
@@ -158,13 +158,8 @@ router.get('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the book
-        if (book.user_id !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tienes permiso para ver este libro'
-            });
-        }
+        // Ownership check removed for viewing details
+        // if (book.user_id !== req.user.id) { ... }
 
         res.json({
             success: true,
@@ -193,13 +188,8 @@ router.get('/:id/view', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the book
-        if (book.user_id !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tienes permiso para ver este libro'
-            });
-        }
+        // Ownership check removed for viewing content
+        // if (book.user_id !== req.user.id) { ... }
 
         // Send PDF file
         res.sendFile(path.resolve(book.pdf_path));
@@ -227,13 +217,8 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the book
-        if (book.user_id !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tienes permiso para descargar este libro'
-            });
-        }
+        // Ownership check removed for downloading
+        // if (book.user_id !== req.user.id) { ... }
 
         let filePath;
         let filename;
@@ -289,13 +274,8 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Check if user owns the book
-        if (book.user_id !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tienes permiso para ver esta portada'
-            });
-        }
+        // Ownership check removed for cover
+        // if (book.user_id !== req.user.id) { ... }
 
         res.sendFile(path.resolve(book.cover_path));
     } catch (error) {
