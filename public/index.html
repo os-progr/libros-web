@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="login-styles.css">
     <link rel="stylesheet" href="social-styles.css">
+    <link rel="stylesheet" href="comments-styles.css">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
@@ -710,9 +711,33 @@
             </div>
         </div>
 
+        <!-- Comments Modal -->
+        <div class="modal-overlay" id="commentsModal">
+            <div class="modal comments-modal-large">
+                <div class="modal-header">
+                    <h3 class="modal-title">💬 Comentarios: <span id="commentsBookTitle"></span></h3>
+                    <button class="modal-close" onclick="CommentsSystem.closeCommentsModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="comments-section">
+                        <div id="commentsContainer">
+                            <div class="loading">Cargando comentarios...</div>
+                        </div>
+                    </div>
+                    <div class="comment-input-section">
+                        <div id="replyIndicator" class="reply-indicator hidden"></div>
+                        <textarea id="commentInput" class="comment-textarea"
+                            placeholder="Escribe un comentario... (Ctrl+Enter para publicar)"></textarea>
+                        <button class="btn btn-primary" onclick="CommentsSystem.postComment()">Publicar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- JavaScript -->
         <script src="app.js"></script>
         <script src="social.js"></script>
+        <script src="comments.js"></script>
 </body>
 
 </html>

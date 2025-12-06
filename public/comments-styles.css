@@ -1,0 +1,247 @@
+/* ============================================
+   COMMENTS SYSTEM STYLES
+   ============================================ */
+
+/* Comments Modal */
+.comments-modal-large {
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+}
+
+.comments-section {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.empty-comments {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Comment Item */
+.comment {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comment-reply {
+    margin-left: 2.5rem;
+    margin-top: 0.75rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.comment-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.comment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.comment-action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.25rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.comment-action-btn:hover {
+    opacity: 1;
+}
+
+.comment-body {
+    margin-bottom: 0.75rem;
+}
+
+.comment-text {
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.comment-footer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.comment-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.comment-like-btn:hover {
+    background: var(--background-color);
+    border-color: var(--primary-color);
+}
+
+.comment-like-btn.liked {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: #ff0000;
+}
+
+.like-icon {
+    font-size: 1rem;
+}
+
+.like-count {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.comment-reply-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.comment-reply-btn:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.comment-replies {
+    margin-top: 0.75rem;
+}
+
+/* Comment Input Section */
+.comment-input-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.reply-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--background-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.reply-indicator button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    padding: 0;
+    line-height: 1;
+}
+
+.reply-indicator button:hover {
+    color: var(--text-primary);
+}
+
+.comment-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.comment-textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comments-modal-large {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .comment-reply {
+        margin-left: 1.5rem;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .comment-footer {
+        flex-wrap: wrap;
+    }
+}
