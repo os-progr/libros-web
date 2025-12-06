@@ -249,6 +249,7 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
         }
 
         let fileUrl;
+        let filename;
 
         if (format === 'docx') {
             if (!book.docx_path) {
@@ -258,8 +259,10 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
                 });
             }
             fileUrl = book.docx_path;
+            filename = `${book.title} - ${book.author}.docx`;
         } else {
             fileUrl = book.pdf_path;
+            filename = `${book.title} - ${book.author}.pdf`;
         }
 
         // Register download in database
@@ -273,8 +276,16 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             console.error('Error registering download:', dbError);
         }
 
-        // Redirect to Cloudinary URL
-        res.redirect(fileUrl);
+        // Modify Cloudinary URL to force download
+        // Add fl_attachment flag to make browser download instead of display
+        let downloadUrl = fileUrl;
+        if (fileUrl.includes('cloudinary.com')) {
+            // Insert fl_attachment before the version number or file path
+            downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+        }
+
+        // Redirect to Cloudinary download URL
+        res.redirect(downloadUrl);
     } catch (error) {
         console.error('Error downloading book:', error);
         res.status(500).json({
