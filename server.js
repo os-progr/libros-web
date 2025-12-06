@@ -86,10 +86,11 @@ app.get('/fix-db-schema', async (req, res) => {
         const { testConnection } = require('./config/database');
         const mysql = require('mysql2/promise');
         const dbConfig = {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
+            host: process.env.MYSQLHOST || process.env.DB_HOST,
+            user: process.env.MYSQLUSER || process.env.DB_USER,
+            password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+            database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+            port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
             multipleStatements: true
         };
 
@@ -146,10 +147,11 @@ app.get('/force-migrate-library', async (req, res) => {
     try {
         const mysql = require('mysql2/promise');
         const dbConfig = {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME
+            host: process.env.MYSQLHOST || process.env.DB_HOST,
+            user: process.env.MYSQLUSER || process.env.DB_USER,
+            password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+            database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+            port: process.env.MYSQLPORT || process.env.DB_PORT || 3306
         };
         const conn = await mysql.createConnection(dbConfig);
 
@@ -178,10 +180,11 @@ app.get('/reset-reviews', async (req, res) => {
     try {
         const mysql = require('mysql2/promise');
         const dbConfig = {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME
+            host: process.env.MYSQLHOST || process.env.DB_HOST,
+            user: process.env.MYSQLUSER || process.env.DB_USER,
+            password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+            database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+            port: process.env.MYSQLPORT || process.env.DB_PORT || 3306
         };
         const conn = await mysql.createConnection(dbConfig);
         await conn.query('DELETE FROM reviews');
@@ -254,10 +257,11 @@ async function startServer() {
             const mysql = require('mysql2/promise');
             // Re-create connection solely for migration to ensure clean state
             const dbConfig = {
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_NAME,
+                host: process.env.MYSQLHOST || process.env.DB_HOST,
+                user: process.env.MYSQLUSER || process.env.DB_USER,
+                password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+                database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+                port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
                 multipleStatements: true
             };
             const tempConn = await mysql.createConnection(dbConfig);
