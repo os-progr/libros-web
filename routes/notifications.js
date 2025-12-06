@@ -14,7 +14,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     try {
         const notifications = await db.query(`
             SELECT * FROM notifications 
-            WHERE user_id = ? 
+            WHERE user_id = ? AND is_read = FALSE
             ORDER BY created_at DESC
             LIMIT 50
         `, [req.user.id]);
