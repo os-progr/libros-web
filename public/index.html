@@ -607,10 +607,25 @@
                 </div>
             </div>
         </div>
-    </div>
+        <div class="modal-overlay" id="genericConfirmationModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirmationTitle">Confirmación</h3>
+                    <button class="modal-close" onclick="UIManager.closeConfirmationModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmationMessage" class="confirmation-text"></p>
+                    <div class="form-actions"
+                        style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="UIManager.closeConfirmationModal()">Cancelar</button>
+                        <button class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- JavaScript -->
-    <script src="app.js"></script>
+        <!-- JavaScript -->
+        <script src="app.js"></script>
 </body>
 
 </html>

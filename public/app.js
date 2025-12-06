@@ -734,42 +734,89 @@ const UIManager = {
                 <div class="mini-cover">${book.cover_path ? `<img src="/api/books/${book.id}/cover">` : '📖'}</div>
                 <div class="mini-details">
                     <div class="mini-title">${this.escapeHtml(book.title)}</div>
-                    <div class="mini-stats">⭐ ${book.avg_rating.toFixed(1)} | ⬇️ ${book.download_count}</div>
                 </div>
             </div>
         `).join('');
     },
 
+    // Generic Confirmation Modal
+    showConfirmationModal(title, message, onConfirm) {
+        const modal = document.getElementById('genericConfirmationModal');
+        const titleEl = document.getElementById('confirmationTitle');
+        const messageEl = document.getElementById('confirmationMessage');
+        const confirmBtn = document.getElementById('confirmActionBtn');
+
+        if (!modal) return; // Safety check
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        messageEl.style.whiteSpace = 'pre-line'; // Respect newlines
+
+        // Clone button to remove previous event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        newConfirmBtn.onclick = () => {
+            onConfirm();
+            this.closeConfirmationModal();
+        };
+
+        modal.classList.add('active');
+    },
+
+    closeConfirmationModal() {
+        const modal = document.getElementById('genericConfirmationModal');
+        if (modal) modal.classList.remove('active');
+    },
+
     // Delete a review
     async deleteReview(reviewId, bookId) {
-        if (confirm('¿Eliminar esta reseña?')) {
-            const result = await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' });
-            const data = await result.json();
-            if (data.success) {
-                this.openReviewModal(bookId); // Refresh
-            } else {
-                alert('Error al eliminar reseña');
+        this.showConfirmationModal(
+            'Eliminar Reseña',
+            '¿Estás seguro de que quieres eliminar esta reseña?',
+            async () => {
+                try {
+                    const result = await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' });
+                    const data = await result.json();
+
+                    if (data.success) {
+                        // Refresh reviews
+                        this.openReviewModal(bookId);
+                    } else {
+                        alert(data.message || 'Error al eliminar reseña');
+                    }
+                } catch (error) {
+                    console.error('Error deleting review:', error);
+                    alert('Error al eliminar reseña');
+                }
             }
-        }
+        );
     },
 
     // Delete book from library
     async deleteBookFromLibrary(bookId, bookTitle) {
-        if (confirm(`¿Estás seguro de que quieres eliminar "${bookTitle}"?\n\nEsta acción no se puede deshacer.`)) {
-            try {
-                const result = await API.deleteBook(bookId);
+        this.showConfirmationModal(
+            'Eliminar Libro',
+            `¿Estás seguro de que quieres eliminar "${bookTitle}"?\n\nEsta acción no se puede deshacer.`,
+            async () => {
+                try {
+                    const result = await API.deleteBook(bookId);
 
-                if (result.success) {
-                    alert('✅ Libro eliminado exitosamente');
-                    await loadBooks(); // Reload the books list
-                } else {
-                    alert(`❌ Error: ${result.message || 'No se pudo eliminar el libro'}`);
+                    if (result.success) {
+                        // Optional: Show a nicer toast instead of alert, but alert acts as "Done"
+                        // For now keep logic but maybe just console log and reload? 
+                        // User said "pon como mensaje en web". 
+                        // Let's assume the modal is the important part. 
+                        await loadBooks(); // Reload the books list
+                    } else {
+                        alert(`❌ Error: ${result.message || 'No se pudo eliminar el libro'}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting book:', error);
+                    alert('❌ Error al eliminar el libro');
                 }
-            } catch (error) {
-                console.error('Error deleting book:', error);
-                alert('❌ Error al eliminar el libro');
             }
-        }
+        );
     },
 
     // Handle book status change
@@ -1241,21 +1288,21 @@ const AdminPanel = {
         if (popularBookEl) {
             if (stats.mostPopularBook) {
                 popularBookEl.innerHTML = `
-                    <div class="popular-book-icon">🔥</div>
-                    <div class="popular-book-info">
-                        <div class="popular-book-title">${this.escapeHtml(stats.mostPopularBook.title)}</div>
-                        <div class="popular-book-subtitle">
-                             ${stats.mostPopularBook.download_count} descargas • por ${this.escapeHtml(stats.mostPopularBook.author)}
-                        </div>
-                    </div>
+        < div class= "popular-book-icon" >🔥</div >
+        <div class="popular-book-info">
+            <div class="popular-book-title">${this.escapeHtml(stats.mostPopularBook.title)}</div>
+            <div class="popular-book-subtitle">
+                ${stats.mostPopularBook.download_count} descargas • por ${this.escapeHtml(stats.mostPopularBook.author)}
+            </div>
+        </div>
                 `;
             } else {
                 popularBookEl.innerHTML = `
-                    <div class="popular-book-icon">ℹ️</div>
-                    <div class="popular-book-info">
-                        <div class="popular-book-title">Sin datos</div>
-                        <div class="popular-book-subtitle">Aún no hay descargas</div>
-                    </div>
+            < div class= "popular-book-icon" > ℹ️</div >
+        <div class="popular-book-info">
+            <div class="popular-book-title">Sin datos</div>
+            <div class="popular-book-subtitle">Aún no hay descargas</div>
+        </div>
                 `;
             }
         }
@@ -1355,7 +1402,7 @@ const AdminPanel = {
         }
 
         tbody.innerHTML = users.map(user => `
-            <tr>
+            < tr >
                 <td>
                     <div class="user-cell">
                         <img src="${user.picture || 'https://via.placeholder.com/32'}" alt="${this.escapeHtml(user.name)}">
@@ -1376,14 +1423,14 @@ const AdminPanel = {
                         </button>
                     ` : '<span class="badge badge-admin">Admin</span>'}
                 </td>
-            </tr>
-        `).join('');
+            </tr >
+    `).join('');
     },
 
     async deleteUser(userId, userName) {
-        if (confirm(`¿Estás seguro de que quieres eliminar al usuario "${userName}"?\n\nEsta acción eliminará también todos sus libros y no se puede deshacer.`)) {
+        if (confirm(`¿Estás seguro de que quieres eliminar al usuario "${userName}" ?\n\nEsta acción eliminará también todos sus libros y no se puede deshacer.`)) {
             try {
-                const response = await fetch(`/api/admin/users/${userId}`, {
+                const response = await fetch(`/ api / admin / users / ${userId} `, {
                     method: 'DELETE'
                 });
                 const data = await response.json();
@@ -1393,7 +1440,7 @@ const AdminPanel = {
                     this.loadUsers(); // Reload list
                     this.loadStats(); // Update stats
                 } else {
-                    alert(`❌ Error: ${data.message}`);
+                    alert(`❌ Error: ${data.message} `);
                 }
             } catch (error) {
                 console.error('Error deleting user:', error);
@@ -1476,7 +1523,7 @@ const AdminPanel = {
         }
 
         tbody.innerHTML = books.map(book => `
-            <tr>
+    < tr >
                 <td>
                     <div class="book-title-cell" title="${this.escapeHtml(book.title)}">
                         ${this.escapeHtml(book.title)}
@@ -1512,14 +1559,14 @@ const AdminPanel = {
                         </button>
                     </div>
                 </td>
-            </tr>
-        `).join('');
+            </tr >
+    `).join('');
     },
 
     async deleteBook(bookId, bookTitle) {
-        if (confirm(`¿Estás seguro de que quieres eliminar el libro "${bookTitle}"?\n\nEsta acción no se puede deshacer.`)) {
+        if (confirm(`¿Estás seguro de que quieres eliminar el libro "${bookTitle}" ?\n\nEsta acción no se puede deshacer.`)) {
             try {
-                const response = await fetch(`/api/admin/books/${bookId}`, {
+                const response = await fetch(`/ api / admin / books / ${bookId} `, {
                     method: 'DELETE'
                 });
                 const data = await response.json();
@@ -1529,7 +1576,7 @@ const AdminPanel = {
                     this.loadBooks(); // Reload list
                     this.loadStats(); // Update stats
                 } else {
-                    alert(`❌ Error: ${data.message}`);
+                    alert(`❌ Error: ${data.message} `);
                 }
             } catch (error) {
                 console.error('Error deleting book:', error);
@@ -1607,7 +1654,7 @@ const AdminPanel = {
         const description = document.getElementById('editBookDescription').value;
 
         try {
-            const response = await fetch(`/api/admin/books/${id}`, {
+            const response = await fetch(`/ api / admin / books / ${id} `, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1622,7 +1669,7 @@ const AdminPanel = {
                 document.getElementById('editBookModal').classList.remove('active');
                 this.loadBooks();
             } else {
-                alert(`❌ Error: ${data.message}`);
+                alert(`❌ Error: ${data.message} `);
             }
         } catch (error) {
             console.error('Error updating book:', error);
@@ -1663,7 +1710,7 @@ const AdminPanel = {
         const type = document.getElementById('feedbackType').value;
 
         try {
-            const response = await fetch(`/api/admin/books/${id}/feedback`, {
+            const response = await fetch(`/ api / admin / books / ${id}/feedback`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, type })
