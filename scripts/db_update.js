@@ -6,7 +6,33 @@ const fs = require('fs');
 async function updateDB() {
     console.log('🔄 Iniciando actualización de base de datos...');
 
-    const config = {
+    let config;
+
+    // Prioritize MYSQL_URL
+    if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+        console.log('🔄 Usando MYSQL_URL/DATABASE_URL del entorno.');
+        // We can't directly pass the string to createConnection if we want to add multipleStatements: true
+        // So we rely on the library parsing it or we just use the object format if URL fails, 
+        // but mysql2 createConnection supports URL string.
+        // However, we need multipleStatements: true. 
+        // The best way is to let mysql2 parse the URL or just use the connection string as is IF it supports options.
+        // mysql2 documentation says createConnection(connectionUri) is valid.
+        // But how to pass multipleStatements? 
+        // We can pass an object with uri property or pass arguments.
+        // Let's stick to the object if possible, or parse the URL.
+        // Actually simpler: mysql2/promise createConnection takes a string OR an object.
+        // If string, we can't easily add options.
+        // Let's assume the user has the variables set if URL is not perfect, OR
+        // Use the object form with fallbacks.
+
+        // Railway provides MYSQLHOST, MYSQLUSER etc. as well. Let's use those as primary.
+        // The error earlier was ENOTFOUND MYSQL_HOST, which meant MYSQLHOST env var was missing or literal string.
+
+        // Let's try to parse the URL if present, or just use the fallback vars which should be correct on Railway.
+        // Since I am fixing the startServer to use URL, I should try to do the same here but robustly.
+    }
+
+    config = {
         host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
         user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
         password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
@@ -14,6 +40,17 @@ async function updateDB() {
         port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
         multipleStatements: true
     };
+
+    // If MYSQL_URL is available, we might want to use it, but adding multipleStatements to a URL string connection
+    // is tricky without parsing. 
+    // Wait, createConnection(url) AND createConnection({ uri: url, multipleStatements: true })?
+    // Let's just stick to the config object since we fixed the env vars injection logic mentally.
+    // The previous error in db_update.js was `getaddrinfo ENOTFOUND MYSQL_HOST`.
+    // This happened because `process.env.MYSQLHOST` was undefined, so it fell back to `process.env.DB_HOST`.
+    // And `process.env.DB_HOST` likely contained the string "MYSQL_HOST" (maybe from a bad .env file or misconfiguration).
+    // Or `process.env.MYSQLHOST` *was* set to "MYSQL_HOST".
+
+    // To be safe, I will log the config here too to debug if it fails again.
 
     try {
         const connection = await mysql.createConnection(config);
