@@ -253,18 +253,67 @@ async function startServer() {
     try {
         // Test database connection
         const dbConnected = await testConnection();
-                user_id INT NOT NULL,
-            book_id INT NOT NULL,
-                status ENUM('want_to_read', 'reading', 'read') NOT NULL,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-                            FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE,
-                                UNIQUE KEY unique_user_book_status(user_id, book_id)
-            ) ENGINE = InnoDB;
-        `);
 
-            // Add columns to users if they don't exist (using procedure/try-catch block pattern for MySQL 5.7/8.0 without IF COLUMN EXISTS)
-            // Or just try specific ALTERs and ignore errors
+        if (!dbConnected) {
+            console.error('❌ No se pudo conectar a la base de datos');
+            console.error('Por favor verifica tu configuración en el archivo .env');
+            process.exit(1);
+        }
+
+        // AUTO-MIGRATION: Ensure reviews table exists (Railway Fix)
+        try {
+            const mysql = require('mysql2/promise');
+            let tempConn;
+
+            // Prefer MYSQL_URL (Connection String) if available
+            if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+                console.log('🔄 Usando conexión vía URL para migración...');
+                tempConn = await mysql.createConnection(process.env.MYSQL_URL || process.env.DATABASE_URL);
+            } else {
+                const dbConfig = {
+                    host: process.env.MYSQLHOST || process.env.DB_HOST,
+                    user: process.env.MYSQLUSER || process.env.DB_USER,
+                    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+                    database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+                    port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
+                    multipleStatements: true
+                };
+                tempConn = await mysql.createConnection(dbConfig);
+            }
+
+            console.log('🔄 Ejecutando migración automática de emergencia...');
+
+            // Create reviews table if not exists with FORCE
+            await tempConn.query(`
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    book_id INT NOT NULL,
+                    user_id INT NOT NULL,
+                    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                    review_text TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    UNIQUE KEY unique_user_book_review (user_id, book_id)
+                ) ENGINE=InnoDB;
+            `);
+
+            // Create Reading Status Table
+            await tempConn.query(`
+                CREATE TABLE IF NOT EXISTS reading_status (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    book_id INT NOT NULL,
+                    status ENUM('want_to_read', 'reading', 'read') NOT NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                    UNIQUE KEY unique_user_book_status (user_id, book_id)
+                ) ENGINE=InnoDB;
+            `);
+
+            // Add columns to users if they don't exist
             const alterQueries = [
                 "ALTER TABLE users ADD COLUMN bio TEXT",
                 "ALTER TABLE users ADD COLUMN website VARCHAR(255)",
@@ -275,7 +324,6 @@ async function startServer() {
                 try {
                     await tempConn.query(q);
                 } catch (e) {
-                    // Ignore Duplicate column error
                     if (e.errno !== 1060) console.log('   (Info migración): ' + e.message);
                 }
             }
@@ -293,15 +341,15 @@ async function startServer() {
             console.log('🚀 Servidor LibrosWeb iniciado exitosamente');
             console.log('='.repeat(50));
             console.log(`📍 URL: http://localhost:${PORT}`);
-        console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`📚 Base de datos: ${process.env.DB_NAME || 'libros_web'}`);
-        console.log('='.repeat(50) + '\n');
-        console.log('💡 Para detener el servidor presiona Ctrl+C\n');
-    });
-} catch (error) {
-    console.error('❌ Error al iniciar el servidor:', error);
-    process.exit(1);
-}
+            console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`📚 Base de datos: ${process.env.DB_NAME || 'libros_web'}`);
+            console.log('='.repeat(50) + '\n');
+            console.log('💡 Para detener el servidor presiona Ctrl+C\n');
+        });
+    } catch (error) {
+        console.error('❌ Error al iniciar el servidor:', error);
+        process.exit(1);
+    }
 }
 
 // Handle graceful shutdown
