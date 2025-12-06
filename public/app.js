@@ -1568,7 +1568,7 @@ const AdminPanel = {
                         <button class="action-btn btn-view" onclick="AdminPanel.openFeedbackModal(${book.id}, '${this.escapeHtml(book.title)}')" title="Enviar Recomendación">
                             📢
                         </button>
-                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id}, '${this.escapeHtml(book.title)}')" title="Eliminar">
+                        <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id})" title="Eliminar">
                             🗑️
                         </button>
                     </div>
@@ -1580,8 +1580,9 @@ const AdminPanel = {
     async deleteBook(bookId, bookTitle) {
         if (confirm(`¿Estás seguro de que quieres eliminar el libro "${bookTitle}" ?\n\nEsta acción no se puede deshacer.`)) {
             try {
-                const response = await fetch(`/ api / admin / books / ${bookId} `, {
-                    method: 'DELETE'
+                const response = await fetch(`/api/admin/books/${bookId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
                 });
                 const data = await response.json();
 
