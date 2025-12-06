@@ -16,6 +16,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login-styles.css">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
@@ -93,34 +94,41 @@
     <!-- Main Content -->
     <main class="main">
         <div class="container">
-            <!-- Welcome Screen (for unauthenticated users) -->
-            <section id="welcomeScreen" class="hidden">
-                <div class="hero">
-                    <h1 class="hero-title">Inicia Sesión para Ver Libros</h1>
-                    <p class="hero-subtitle">Accede a nuestra biblioteca completa con tu cuenta</p>
-                </div>
-                <div class="welcome-content">
-                    <div class="welcome-card">
-                        <div class="welcome-icon">📚</div>
-                        <h3>Publica tus Libros</h3>
-                        <p>Sube tus obras en formato PDF y Word</p>
+            <!-- Login / Welcome Screen -->
+            <section id="welcomeScreen" class="login-background hidden">
+                <div class="login-card">
+                    <!-- Icon -->
+                    <div class="login-icon-container">
+                        🗳️
                     </div>
-                    <div class="welcome-card">
-                        <div class="welcome-icon">🔓</div>
-                        <h3>Acceso Libre</h3>
-                        <p>Comparte conocimiento sin restricciones</p>
+
+                    <!-- Inputs (Visual Only / Google Trigger) -->
+                    <div style="margin-top: 2rem;"></div>
+
+                    <div class="login-input-group">
+                        <span class="login-input-icon">👤</span>
+                        <input type="text" class="login-input" placeholder="Usuario" disabled
+                            style="cursor: not-allowed; background: #f0f0f0;">
                     </div>
-                    <div class="welcome-card">
-                        <div class="welcome-icon">☁️</div>
-                        <h3>En la Nube</h3>
-                        <p>Accede a tu biblioteca desde cualquier dispositivo</p>
+
+                    <div class="login-input-group">
+                        <span class="login-input-icon">🔒</span>
+                        <input type="password" class="login-input" placeholder="Contraseña" disabled
+                            style="cursor: not-allowed; background: #f0f0f0;">
                     </div>
-                </div>
-                <div class="welcome-cta">
-                    <a href="/auth/google" class="btn btn-primary btn-large">
-                        <span>🔐</span>
-                        <span>Iniciar sesión con Google</span>
+
+                    <!-- Buttons -->
+                    <a href="/auth/google" class="btn-login-custom">
+                        LOGIN CON GOOGLE
                     </a>
+
+                    <div class="login-divider"></div>
+
+                    <button class="btn-register-custom"
+                        onclick="alert('El registro es automático al iniciar sesión con Google.')">
+                        REGISTRARSE
+                    </button>
+                    <p style="margin-top: 10px; font-size: 0.8rem; color: #888;">Acceso exclusivo con cuenta Google</p>
                 </div>
             </section>
 
