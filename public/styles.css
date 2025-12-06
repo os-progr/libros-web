@@ -1080,7 +1080,10 @@ body {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
-}@
+}
+
+@
+
 /* Reviews System */
 .star-rating-input {
   display: inline-flex;
@@ -1089,35 +1092,42 @@ body {
   cursor: pointer;
   color: #ddd;
 }
+
 .star-rating-input span:hover,
 .star-rating-input span.active {
   color: #fbbf24;
 }
+
 .reviews-container {
   margin-bottom: 2rem;
   max-height: 400px;
   overflow-y: auto;
 }
+
 .review-item {
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
 }
+
 .review-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5rem;
 }
+
 .review-user {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
 }
+
 .review-avatar {
   width: 24px;
   height: 24px;
   border-radius: 50%;
 }
+
 .review-text {
   color: var(--text-secondary);
   margin-top: 0.5rem;
@@ -1128,6 +1138,7 @@ body {
   text-align: center;
   margin-bottom: 2rem;
 }
+
 .profile-avatar-large {
   width: 100px;
   height: 100px;
@@ -1136,24 +1147,28 @@ body {
   border: 4px solid var(--card-background);
   box-shadow: var(--shadow-md);
 }
+
 .profile-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
+
 .stat-box {
   background: var(--background-color);
   padding: 1rem;
   border-radius: 0.5rem;
   text-align: center;
 }
+
 .stat-number {
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary-color);
 }
+
 .book-card-mini {
   display: flex;
   gap: 1rem;
@@ -1163,9 +1178,11 @@ body {
   margin-bottom: 0.5rem;
   cursor: pointer;
 }
+
 .book-card-mini:hover {
   background-color: var(--background-color);
 }
+
 .mini-cover {
   width: 40px;
   height: 60px;
@@ -1174,24 +1191,20 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .mini-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
+
 .book-summary-mini {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--background-color);
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--background-color);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
-@
-@
-.logo-img {
-    height: 40px;
-    width: auto;
-    border-radius: 5px;
-}
-@
+
+@ @ @
