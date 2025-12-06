@@ -73,6 +73,28 @@ const SocialFeatures = {
         }
     },
 
+    async toggleFollow(userId) {
+        const isFollowing = await this.checkFollowStatus(userId);
+        if (isFollowing) {
+            await this.unfollowUser(userId);
+        } else {
+            await this.followUser(userId);
+        }
+    },
+
+    async openUserProfile(userId) {
+        // Open stats modal for this user
+        await this.openStatsModal(userId);
+    },
+
+    async startConversationWith(userId, userName) {
+        await this.openMessagesModal();
+        // Wait a bit for modal to open
+        setTimeout(() => {
+            this.openConversation(userId, userName);
+        }, 300);
+    },
+
     // ============================================
     // MESSAGING SYSTEM
     // ============================================
