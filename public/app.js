@@ -795,8 +795,9 @@ const UIManager = {
             AppState.libraryStatus[bookId] = status;
             // Optional: Show toast
         } else {
-            alert('Error al actualizar estado');
+            alert(`Error al actualizar estado: ${result.message || 'Error desconocido'}`);
             // Revert
+            selectElement.value = 'none';
         }
     },
 

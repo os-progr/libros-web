@@ -141,6 +141,38 @@ app.get('/fix-db-schema', async (req, res) => {
     }
 });
 
+// FORCE LIBRARY TABLE CREATE ROUTE
+app.get('/force-migrate-library', async (req, res) => {
+    try {
+        const mysql = require('mysql2/promise');
+        const dbConfig = {
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME
+        };
+        const conn = await mysql.createConnection(dbConfig);
+
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS reading_status (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                user_id INT NOT NULL,
+                book_id INT NOT NULL,
+                status ENUM('want_to_read', 'reading', 'read') NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_book_status (user_id, book_id)
+            ) ENGINE=InnoDB;
+        `);
+
+        await conn.end();
+        res.send('<h1>✅ Tabla de Biblioteca creada</h1><p>Ya puedes guardar estados de lectura.</p><a href="/">Volver</a>');
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Error</h1><pre>${error.message}</pre>`);
+    }
+});
+
 // CLEAR REVIEWS ROUTE
 app.get('/reset-reviews', async (req, res) => {
     try {
