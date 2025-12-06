@@ -92,17 +92,21 @@ router.post('/', isAuthenticated, async (req, res) => {
         // Notify book author about new review
         const book = books[0];
         if (book.user_id !== req.user.id) {
-            await db.query(`
-                INSERT INTO notifications (user_id, title, message, type, notification_type, related_id)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [
-                book.user_id,
-                'Nueva reseña en tu libro',
-                `${req.user.name} dejó una reseña de ${rating} estrellas en "${book.title}"`,
-                'info',
-                'review',
-                book_id
-            ]);
+            try {
+                await db.query(`
+                    INSERT INTO notifications (user_id, title, message, type, notification_type, related_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `, [
+                    book.user_id,
+                    'Nueva reseña en tu libro',
+                    `${req.user.name} dejó una reseña de ${rating} estrellas en "${book.title}"`,
+                    'info',
+                    'review',
+                    book_id
+                ]);
+            } catch (notifyError) {
+                console.error('Error sending review notification (non-critical):', notifyError);
+            }
         }
 
         res.json({
