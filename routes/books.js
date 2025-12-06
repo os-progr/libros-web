@@ -343,14 +343,8 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Delete files from filesystem
-        try {
-            if (book.pdf_path) await fs.unlink(book.pdf_path);
-            if (book.docx_path) await fs.unlink(book.docx_path);
-            if (book.cover_path) await fs.unlink(book.cover_path);
-        } catch (fileError) {
-            console.error('Error deleting files:', fileError);
-        }
+        // Files are now in Cloudinary, no need to delete from local filesystem
+        // Cloudinary files can be deleted manually if needed via admin panel
 
         // Delete from database
         await bookQueries.delete(req.params.id, req.user.id);
