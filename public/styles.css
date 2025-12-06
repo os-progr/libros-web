@@ -1188,3 +1188,10 @@ body {
     margin-bottom: 1.5rem;
 }
 @
+@
+.logo-img {
+    height: 40px;
+    width: auto;
+    border-radius: 5px;
+}
+@

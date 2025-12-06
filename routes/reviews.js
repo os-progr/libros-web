@@ -117,7 +117,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         console.error('Error saving review:', error);
         res.status(500).json({
             success: false,
-            message: 'Error al guardar reseña'
+            message: 'Error al guardar reseña: ' + error.message // Expose error for debugging
         });
     }
 });
