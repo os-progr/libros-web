@@ -272,6 +272,14 @@ async function startServer() {
                 port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
                 multipleStatements: true
             };
+
+            console.log('🔄 DEBUG DB CONFIG:', {
+                host: dbConfig.host,
+                user: dbConfig.user,
+                db: dbConfig.database,
+                port: dbConfig.port
+            });
+
             const tempConn = await mysql.createConnection(dbConfig);
 
             console.log('🔄 Ejecutando migración automática de emergencia...');
