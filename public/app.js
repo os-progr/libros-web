@@ -49,8 +49,11 @@ const AppState = {
     books: [],
     currentBook: null,
     searchQuery: '',
-    isAuthenticated: false
+    isAuthenticated: false,
+    libraryStatus: {}
 };
+
+
 
 // ============================================
 // DEVELOPER MODE MANAGER (Admin Only)
@@ -244,6 +247,32 @@ const API = {
             console.error('Error updating profile:', error);
             return { success: false };
         }
+    },
+
+    // Update Book Status (Shelves)
+    async updateBookStatus(bookId, status) {
+        try {
+            const response = await fetch('/api/library/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookId, status })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error updating status:', error);
+            return { success: false };
+        }
+    },
+
+    // Get Library Statuses
+    async getLibraryStatus() {
+        try {
+            const response = await fetch('/api/library/my-status');
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting statuses:', error);
+            return { success: false };
+        }
     }
 };
 
@@ -294,6 +323,7 @@ const UIManager = {
 
         booksGrid.innerHTML = books.map(book => {
             const canDelete = AppState.user && (book.user_id === AppState.user.id || isAdmin);
+            const currentStatus = AppState.libraryStatus[book.id];
 
             return `
             <div class="book-card fade-in" data-book-id="${book.id}">
@@ -328,6 +358,12 @@ const UIManager = {
 
                     <!-- Action Buttons -->
                     <div class="book-actions">
+                        <select class="book-status-select" onclick="event.stopPropagation()" onchange="UIManager.handleStatusChange(this, ${book.id})" title="Estado de lectura">
+                            <option value="none" ${!currentStatus ? 'selected' : ''}>📂 Estado</option>
+                            <option value="want_to_read" ${currentStatus === 'want_to_read' ? 'selected' : ''}>⏳ Quiero leer</option>
+                            <option value="reading" ${currentStatus === 'reading' ? 'selected' : ''}>📖 Leyendo</option>
+                            <option value="read" ${currentStatus === 'read' ? 'selected' : ''}>✅ Leído</option>
+                        </select>
                         <button class="book-action-btn" onclick="event.stopPropagation(); UIManager.openReviewModal(${book.id})" title="Ver reseñas">
                             ⭐ Reseñas
                         </button>
@@ -736,6 +772,34 @@ const UIManager = {
         }
     },
 
+    // Handle book status change
+    async handleStatusChange(selectElement, bookId) {
+        if (!AppState.isAuthenticated) {
+            alert('Debes iniciar sesión para guardar libros en tu biblioteca.');
+            selectElement.value = 'none'; // Reset
+            return;
+        }
+
+        const status = selectElement.value;
+        const originalText = selectElement.options[selectElement.selectedIndex].text;
+
+        // Show loading indication
+        selectElement.disabled = true;
+
+        const result = await API.updateBookStatus(bookId, status);
+
+        selectElement.disabled = false;
+
+        if (result.success) {
+            // Update local state
+            AppState.libraryStatus[bookId] = status;
+            // Optional: Show toast
+        } else {
+            alert('Error al actualizar estado');
+            // Revert
+        }
+    },
+
     // Show loading state
     showLoading(button) {
         button.disabled = true;
@@ -916,6 +980,15 @@ const EventHandlers = {
 };
 async function loadBooks() {
     const books = await API.getBooks();
+
+    // Load library statuses if authenticated
+    if (AppState.isAuthenticated) {
+        const statusResult = await API.getLibraryStatus();
+        if (statusResult.success) {
+            AppState.libraryStatus = statusResult.statuses || {};
+        }
+    }
+
     AppState.books = books;
     UIManager.renderBooks(books);
 }

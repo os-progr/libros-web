@@ -21,6 +21,7 @@ const adminRoutes = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
 const reviewRoutes = require('./routes/reviews');
 const profileRoutes = require('./routes/profile');
+const libraryRoutes = require('./routes/library');
 
 // Initialize Express app
 const app = express();
@@ -72,6 +73,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/library', libraryRoutes);
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
@@ -105,6 +107,20 @@ app.get('/fix-db-schema', async (req, res) => {
                 FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                 UNIQUE KEY unique_user_book_review (user_id, book_id)
+            ) ENGINE=InnoDB;
+        `);
+
+        // Create Reading Status Table
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS reading_status (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                user_id INT NOT NULL,
+                book_id INT NOT NULL,
+                status ENUM('want_to_read', 'reading', 'read') NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_book_status (user_id, book_id)
             ) ENGINE=InnoDB;
         `);
 
@@ -229,6 +245,20 @@ async function startServer() {
                     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
                     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                     UNIQUE KEY unique_user_book_review (user_id, book_id)
+                ) ENGINE=InnoDB;
+            `);
+
+            // Create Reading Status Table
+            await tempConn.query(`
+                CREATE TABLE IF NOT EXISTS reading_status (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    user_id INT NOT NULL,
+                    book_id INT NOT NULL,
+                    status ENUM('want_to_read', 'reading', 'read') NOT NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                    UNIQUE KEY unique_user_book_status (user_id, book_id)
                 ) ENGINE=InnoDB;
             `);
 
