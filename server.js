@@ -5,6 +5,14 @@
 console.log('🚀 STARTING APP - VERSION 2.0 (DEBUG MODE)');
 console.log('📅 Build Time: ' + new Date().toISOString());
 
+// Debug Env Vars
+console.log('Environment Debug:');
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('MYSQLHOST:', process.env.MYSQLHOST);
+console.log('MYSQL_URL:', process.env.MYSQL_URL ? 'Set (Hidden)' : 'Not Set');
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('MYSQLPORT:', process.env.MYSQLPORT);
+
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
