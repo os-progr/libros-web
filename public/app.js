@@ -1432,6 +1432,9 @@ const AdminPanel = {
                         <button class="action-btn btn-view" onclick="AdminPanel.openUserNotifyModal(${user.id}, '${this.escapeHtml(user.name)}')" title="Enviar Notificación">
                             🔔
                         </button>
+                        <button class="action-btn btn-primary" onclick="AdminPanel.messageAuthor(${user.id}, '${this.escapeHtml(user.name)}')" title="Enviar Mensaje">
+                            💬
+                        </button>
                         <button class="action-btn btn-danger" onclick="AdminPanel.deleteUser(${user.id}, '${this.escapeHtml(user.name)}')">
                             🗑️ Eliminar
                         </button>
@@ -1567,6 +1570,9 @@ const AdminPanel = {
                         </button>
                         <button class="action-btn btn-view" onclick="AdminPanel.openFeedbackModal(${book.id}, '${this.escapeHtml(book.title)}')" title="Enviar Recomendación">
                             📢
+                        </button>
+                        <button class="action-btn btn-primary" onclick="AdminPanel.messageAuthor(${book.user_id}, '${this.escapeHtml(book.uploader_name)}')" title="Enviar Mensaje">
+                            💬
                         </button>
                         <button class="action-btn btn-danger" onclick="AdminPanel.deleteBook(${book.id})" title="Eliminar">
                             🗑️
@@ -1742,6 +1748,15 @@ const AdminPanel = {
         } catch (error) {
             console.error('Error sending feedback:', error);
             alert('❌ Error al enviar recomendación');
+        }
+    },
+
+    messageAuthor(userId, userName) {
+        // Use SocialFeatures to start a conversation with the author
+        if (typeof SocialFeatures !== 'undefined') {
+            SocialFeatures.startConversationWith(userId, userName);
+        } else {
+            alert('Sistema de mensajería no disponible');
         }
     },
 
