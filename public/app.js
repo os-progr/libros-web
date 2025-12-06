@@ -297,6 +297,12 @@ const UIManager = {
             // Update user profile
             document.getElementById('userName').textContent = user.name;
             document.getElementById('userPicture').src = user.picture || '';
+
+            // Show admin button if user is admin
+            const adminPanelBtn = document.getElementById('adminPanelBtn');
+            if (adminPanelBtn && user.email === 'edaninguna@gmail.com') {
+                adminPanelBtn.classList.remove('hidden');
+            }
         } else {
             // User is not authenticated
             authenticatedActions.classList.add('hidden');
@@ -1129,6 +1135,14 @@ function setupEventListeners() {
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+    }
+
+    // Admin Panel Button
+    const adminPanelBtn = document.getElementById('adminPanelBtn');
+    if (adminPanelBtn) {
+        adminPanelBtn.addEventListener('click', () => {
+            AdminPanel.open();
         });
     }
 
