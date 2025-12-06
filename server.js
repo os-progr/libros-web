@@ -78,6 +78,53 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// EMERGENCY DB FIX ROUTE
+app.get('/fix-db-schema', async (req, res) => {
+    try {
+        const { testConnection } = require('./config/database');
+        const mysql = require('mysql2/promise');
+        const dbConfig = {
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            multipleStatements: true
+        };
+
+        const conn = await mysql.createConnection(dbConfig);
+
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS reviews (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                book_id INT NOT NULL,
+                user_id INT NOT NULL,
+                rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                review_text TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_book_review (user_id, book_id)
+            ) ENGINE=InnoDB;
+        `);
+
+        try {
+            await conn.query("ALTER TABLE users ADD COLUMN bio TEXT");
+        } catch (e) { }
+        try {
+            await conn.query("ALTER TABLE users ADD COLUMN website VARCHAR(255)");
+        } catch (e) { }
+        try {
+            await conn.query("ALTER TABLE users ADD COLUMN location VARCHAR(100)");
+        } catch (e) { }
+
+        await conn.end();
+        res.send('<h1>✅ Base de datos reparada correctamente</h1><p>La tabla REVIEWS ha sido creada. Ya puedes usar la aplicación.</p><a href="/">Volver al inicio</a>');
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Error al reparar DB</h1><pre>${error.message}</pre>`);
+    }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({
