@@ -134,6 +134,61 @@ async function startServer() {
             process.exit(1);
         }
 
+        // AUTO-MIGRATION: Ensure reviews table exists (Railway Fix)
+        try {
+            const mysql = require('mysql2/promise');
+            // Re-create connection solely for migration to ensure clean state
+            const dbConfig = {
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME,
+                multipleStatements: true
+            };
+            const tempConn = await mysql.createConnection(dbConfig);
+
+            console.log('🔄 Ejecutando migración automática de emergencia...');
+
+            // Create reviews table if not exists with FORCE
+            await tempConn.query(`
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    book_id INT NOT NULL,
+                    user_id INT NOT NULL,
+                    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                    review_text TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    UNIQUE KEY unique_user_book_review (user_id, book_id)
+                ) ENGINE=InnoDB;
+            `);
+
+            // Add columns to users if they don't exist (using procedure/try-catch block pattern for MySQL 5.7/8.0 without IF COLUMN EXISTS)
+            // Or just try specific ALTERs and ignore errors
+            const alterQueries = [
+                "ALTER TABLE users ADD COLUMN bio TEXT",
+                "ALTER TABLE users ADD COLUMN website VARCHAR(255)",
+                "ALTER TABLE users ADD COLUMN location VARCHAR(100)"
+            ];
+
+            for (const q of alterQueries) {
+                try {
+                    await tempConn.query(q);
+                } catch (e) {
+                    // Ignore Duplicate column error
+                    if (e.errno !== 1060) console.log('   (Info migración): ' + e.message);
+                }
+            }
+
+            console.log('✅ Migración de emergencia completada.');
+            await tempConn.end();
+
+        } catch (migErr) {
+            console.error('⚠️ Advertencia: Falló lac migración automática:', migErr.message);
+        }
+
         // Start server
         app.listen(PORT, () => {
             console.log('\n' + '='.repeat(50));
