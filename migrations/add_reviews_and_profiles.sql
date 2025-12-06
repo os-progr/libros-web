@@ -16,17 +16,16 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- Add bio field to users table for profiles
-ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS website VARCHAR(255);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS location VARCHAR(100);
+ALTER TABLE users ADD COLUMN bio TEXT;
+ALTER TABLE users ADD COLUMN website VARCHAR(255);
+ALTER TABLE users ADD COLUMN location VARCHAR(100);
 
 -- Update notifications table to support different types
-ALTER TABLE notifications ADD COLUMN IF NOT EXISTS notification_type VARCHAR(50) DEFAULT 'admin' 
-    COMMENT 'Types: admin, review, follower, author_new_book, system';
-ALTER TABLE notifications ADD COLUMN IF NOT EXISTS related_id INT 
-    COMMENT 'ID of related entity (book_id, review_id, etc)';
+ALTER TABLE notifications ADD COLUMN notification_type VARCHAR(50) DEFAULT 'admin' COMMENT 'Types: admin, review, follower, author_new_book, system';
+ALTER TABLE notifications ADD COLUMN related_id INT COMMENT 'ID of related entity (book_id, review_id, etc)';
 
--- Create index for better performance
-CREATE INDEX IF NOT EXISTS idx_reviews_book ON reviews(book_id);
-CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
-CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(notification_type);
+-- Create index for better performance (Wrapped in comments or separate blocks? No, just execute. If fails, script handles it)
+-- Note: db_update.js handles error 1061 (Duplicate key name) so these are safe to run repeatedly.
+CREATE INDEX idx_reviews_book ON reviews(book_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_notifications_type ON notifications(notification_type);
