@@ -6,7 +6,45 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
-message: 'Error al obtener reseñas'
+
+// @route   GET /api/reviews/book/:bookId
+// @desc    Get all reviews for a book
+// @access  Public
+router.get('/book/:bookId', async (req, res) => {
+    try {
+        const reviews = await db.query(`
+            SELECT 
+                r.*,
+                u.name as user_name,
+                u.picture as user_picture
+            FROM reviews r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.book_id = ?
+            ORDER BY r.created_at DESC
+        `, [req.params.bookId]);
+
+        // Get average rating
+        const avgResult = await db.query(`
+            SELECT 
+                AVG(rating) as avg_rating,
+                COUNT(*) as total_reviews
+            FROM reviews
+            WHERE book_id = ?
+        `, [req.params.bookId]);
+
+        res.json({
+            success: true,
+            reviews,
+            stats: {
+                average: avgResult[0] ? (parseFloat(avgResult[0].avg_rating) || 0) : 0,
+                total: avgResult[0] ? (avgResult[0].total_reviews || 0) : 0
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener reseñas'
         });
     }
 });
@@ -33,7 +71,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         }
 
         // Check if book exists
-        const [books] = await db.query('SELECT * FROM books WHERE id = ?', [book_id]);
+        const books = await db.query('SELECT * FROM books WHERE id = ?', [book_id]);
         if (books.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -89,7 +127,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // @access  Private (own reviews only)
 router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
-        const [reviews] = await db.query('SELECT * FROM reviews WHERE id = ?', [req.params.id]);
+        const reviews = await db.query('SELECT * FROM reviews WHERE id = ?', [req.params.id]);
 
         if (reviews.length === 0) {
             return res.status(404).json({
@@ -126,7 +164,7 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 // @access  Public
 router.get('/user/:userId', async (req, res) => {
     try {
-        const [reviews] = await db.query(`
+        const reviews = await db.query(`
             SELECT 
                 r.*,
                 b.title as book_title,
