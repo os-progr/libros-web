@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const { isAuthenticated } = require('../middleware/auth');
 const { bookQueries } = require('../config/database');
+const { uploadToCloudinary, deleteFromCloudinary } = require('../config/cloudinary');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -110,20 +111,53 @@ router.post('/',
                 });
             }
 
-            const pdfPath = req.files.pdf[0].path;
-            const docxPath = req.files.docx ? req.files.docx[0].path : null;
-            const coverPath = req.files.cover ? req.files.cover[0].path : null;
+            const pdfFile = req.files.pdf[0];
+            const docxFile = req.files.docx ? req.files.docx[0] : null;
+            const coverFile = req.files.cover ? req.files.cover[0] : null;
 
-            // Create book in database
+            // Upload files to Cloudinary
+            let pdfUrl, docxUrl, coverUrl;
+
+            // Upload PDF (required)
+            const pdfUpload = await uploadToCloudinary(pdfFile.path, 'pdfs', 'raw');
+            if (!pdfUpload.success) {
+                await fs.unlink(pdfFile.path).catch(console.error);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Error al subir el PDF'
+                });
+            }
+            pdfUrl = pdfUpload.url;
+            await fs.unlink(pdfFile.path).catch(console.error);
+
+            // Upload DOCX (optional)
+            if (docxFile) {
+                const docxUpload = await uploadToCloudinary(docxFile.path, 'docs', 'raw');
+                if (docxUpload.success) {
+                    docxUrl = docxUpload.url;
+                }
+                await fs.unlink(docxFile.path).catch(console.error);
+            }
+
+            // Upload Cover (optional)
+            if (coverFile) {
+                const coverUpload = await uploadToCloudinary(coverFile.path, 'covers', 'image');
+                if (coverUpload.success) {
+                    coverUrl = coverUpload.url;
+                }
+                await fs.unlink(coverFile.path).catch(console.error);
+            }
+
+            // Create book in database with Cloudinary URLs
             const bookId = await bookQueries.create({
                 userId: req.user.id,
                 title,
                 author,
                 description,
-                pdfPath,
-                docxPath,
-                coverPath,
-                allowDownload: true // Always allow download
+                pdfPath: pdfUrl,
+                docxPath: docxUrl || null,
+                coverPath: coverUrl || null,
+                allowDownload: true
             });
 
             // Fetch the created book
@@ -188,11 +222,8 @@ router.get('/:id/view', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Ownership check removed for viewing content
-        // if (book.user_id !== req.user.id) { ... }
-
-        // Send PDF file
-        res.sendFile(path.resolve(book.pdf_path));
+        // Redirect to Cloudinary URL
+        res.redirect(book.pdf_path);
     } catch (error) {
         console.error('Error viewing book:', error);
         res.status(500).json({
@@ -217,11 +248,7 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Ownership check removed for downloading
-        // if (book.user_id !== req.user.id) { ... }
-
-        let filePath;
-        let filename;
+        let fileUrl;
 
         if (format === 'docx') {
             if (!book.docx_path) {
@@ -230,11 +257,9 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
                     message: 'Versión Word no disponible'
                 });
             }
-            filePath = book.docx_path;
-            filename = `${book.title} - ${book.author}.docx`;
+            fileUrl = book.docx_path;
         } else {
-            filePath = book.pdf_path;
-            filename = `${book.title} - ${book.author}.pdf`;
+            fileUrl = book.pdf_path;
         }
 
         // Register download in database
@@ -246,11 +271,10 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             );
         } catch (dbError) {
             console.error('Error registering download:', dbError);
-            // Continue with download even if registration fails
         }
 
-        // Send file as download
-        res.download(path.resolve(filePath), filename);
+        // Redirect to Cloudinary URL
+        res.redirect(fileUrl);
     } catch (error) {
         console.error('Error downloading book:', error);
         res.status(500).json({
@@ -274,10 +298,8 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Ownership check removed for cover
-        // if (book.user_id !== req.user.id) { ... }
-
-        res.sendFile(path.resolve(book.cover_path));
+        // Redirect to Cloudinary URL
+        res.redirect(book.cover_path);
     } catch (error) {
         console.error('Error fetching cover:', error);
         res.status(500).json({
