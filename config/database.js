@@ -6,9 +6,23 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 // Create connection pool
-const pool = mysql.createPool(
-    process.env.MYSQL_URL || {
-        host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+// Create connection pool
+let poolConfig;
+
+if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+    console.log('🔄 Usando MYSQL_URL/DATABASE_URL para el pool de conexiones.');
+    poolConfig = process.env.MYSQL_URL || process.env.DATABASE_URL;
+} else {
+    let host = process.env.MYSQLHOST || process.env.DB_HOST || 'localhost';
+
+    // Fix common placeholder error
+    if (host === 'MYSQL_HOST') {
+        console.error('❌ CRITICAL: Host set to "MYSQL_HOST". Defaulting to localhost.');
+        host = '127.0.0.1';
+    }
+
+    poolConfig = {
+        host: host,
         user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
         password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
         database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'libros_web',
@@ -18,8 +32,10 @@ const pool = mysql.createPool(
         queueLimit: 0,
         enableKeepAlive: true,
         keepAliveInitialDelay: 0
-    }
-);
+    };
+}
+
+const pool = mysql.createPool(poolConfig);
 
 // Test database connection and initialize tables
 async function testConnection() {
