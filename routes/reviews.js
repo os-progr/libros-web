@@ -6,45 +6,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
-
-// @route   GET /api/reviews/book/:bookId
-// @desc    Get all reviews for a book
-// @access  Public
-router.get('/book/:bookId', async (req, res) => {
-    try {
-        const [reviews] = await db.query(`
-            SELECT 
-                r.*,
-                u.name as user_name,
-                u.picture as user_picture
-            FROM reviews r
-            JOIN users u ON r.user_id = u.id
-            WHERE r.book_id = ?
-            ORDER BY r.created_at DESC
-        `, [req.params.bookId]);
-
-        // Get average rating
-        const [avgResult] = await db.query(`
-            SELECT 
-                AVG(rating) as avg_rating,
-                COUNT(*) as total_reviews
-            FROM reviews
-            WHERE book_id = ?
-        `, [req.params.bookId]);
-
-        res.json({
-            success: true,
-            reviews,
-            stats: {
-                average: avgResult[0].avg_rating || 0,
-                total: avgResult[0].total_reviews || 0
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error al obtener reseñas'
+message: 'Error al obtener reseñas'
         });
     }
 });

@@ -12,7 +12,7 @@ const { isAuthenticated } = require('../middleware/auth');
 // @access  Private
 router.get('/', isAuthenticated, async (req, res) => {
     try {
-        const [notifications] = await db.query(`
+        const notifications = await db.query(`
             SELECT * FROM notifications 
             WHERE user_id = ? 
             ORDER BY created_at DESC
@@ -20,7 +20,7 @@ router.get('/', isAuthenticated, async (req, res) => {
         `, [req.user.id]);
 
         // Count unread
-        const [countResult] = await db.query(`
+        const countResult = await db.query(`
             SELECT COUNT(*) as count 
             FROM notifications 
             WHERE user_id = ? AND is_read = FALSE
@@ -29,7 +29,7 @@ router.get('/', isAuthenticated, async (req, res) => {
         res.json({
             success: true,
             notifications,
-            unreadCount: countResult[0].count
+            unreadCount: countResult[0] ? countResult[0].count : 0
         });
     } catch (error) {
         console.error('Error fetching notifications:', error);
