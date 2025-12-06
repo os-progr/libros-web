@@ -125,6 +125,26 @@ app.get('/fix-db-schema', async (req, res) => {
     }
 });
 
+// CLEAR REVIEWS ROUTE
+app.get('/reset-reviews', async (req, res) => {
+    try {
+        const mysql = require('mysql2/promise');
+        const dbConfig = {
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME
+        };
+        const conn = await mysql.createConnection(dbConfig);
+        await conn.query('DELETE FROM reviews');
+        await conn.query('ALTER TABLE reviews AUTO_INCREMENT = 1');
+        await conn.end();
+        res.send('<h1>🗑️ Reseñas eliminadas</h1><p>Todas las reseñas han sido borradas.</p><a href="/">Volver</a>');
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Error</h1><pre>${error.message}</pre>`);
+    }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({
