@@ -328,7 +328,7 @@ const UIManager = {
             return `
             <div class="book-card fade-in" data-book-id="${book.id}">
                 ${canDelete ? `
-                    <button class="book-delete-btn" onclick="event.stopPropagation(); UIManager.deleteBookFromLibrary(${book.id}, '${this.escapeHtml(book.title)}')" title="Eliminar libro">
+                    <button class="book-delete-btn" onclick="event.stopPropagation(); UIManager.deleteBookFromLibrary(${book.id})" title="Eliminar libro">
                         🗑️
                     </button>
                 ` : ''}
@@ -794,7 +794,10 @@ const UIManager = {
     },
 
     // Delete book from library
-    async deleteBookFromLibrary(bookId, bookTitle) {
+    async deleteBookFromLibrary(bookId) {
+        const book = AppState.books.find(b => b.id === bookId);
+        const bookTitle = book ? book.title : 'este libro';
+
         this.showConfirmationModal(
             'Eliminar Libro',
             `¿Estás seguro de que quieres eliminar "${bookTitle}"?\n\nEsta acción no se puede deshacer.`,
@@ -803,10 +806,7 @@ const UIManager = {
                     const result = await API.deleteBook(bookId);
 
                     if (result.success) {
-                        // Optional: Show a nicer toast instead of alert, but alert acts as "Done"
-                        // For now keep logic but maybe just console log and reload? 
-                        // User said "pon como mensaje en web". 
-                        // Let's assume the modal is the important part. 
+                        // Success toast or just reload
                         await loadBooks(); // Reload the books list
                     } else {
                         alert(`❌ Error: ${result.message || 'No se pudo eliminar el libro'}`);
