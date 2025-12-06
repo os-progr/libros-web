@@ -258,60 +258,31 @@ async function startServer() {
             console.error('❌ No se pudo conectar a la base de datos');
             console.error('Por favor verifica tu configuración en el archivo .env');
             process.exit(1);
-        }
-
-        // AUTO-MIGRATION: Ensure reviews table exists (Railway Fix)
-        try {
-            const mysql = require('mysql2/promise');
-            // Re-create connection solely for migration to ensure clean state
-            const dbConfig = {
-                host: process.env.MYSQLHOST || process.env.DB_HOST,
-                user: process.env.MYSQLUSER || process.env.DB_USER,
-                password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
-                database: process.env.MYSQLDATABASE || process.env.DB_NAME,
-                port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
-                multipleStatements: true
-            };
-
-            console.log('🔄 DEBUG DB CONFIG:', {
-                host: dbConfig.host,
-                user: dbConfig.user,
-                db: dbConfig.database,
-                port: dbConfig.port
-            });
-
-            const tempConn = await mysql.createConnection(dbConfig);
-
-            console.log('🔄 Ejecutando migración automática de emergencia...');
-
-            // Create reviews table if not exists with FORCE
-            await tempConn.query(`
-                CREATE TABLE IF NOT EXISTS reviews (
                     id INT PRIMARY KEY AUTO_INCREMENT,
-                    book_id INT NOT NULL,
+                book_id INT NOT NULL,
                     user_id INT NOT NULL,
-                    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-                    review_text TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    UNIQUE KEY unique_user_book_review (user_id, book_id)
-                ) ENGINE=InnoDB;
+                        rating INT NOT NULL CHECK(rating >= 1 AND rating <= 5),
+                            review_text TEXT,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                        FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE,
+                                            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                                UNIQUE KEY unique_user_book_review(user_id, book_id)
+                ) ENGINE = InnoDB;
             `);
 
             // Create Reading Status Table
             await tempConn.query(`
-                CREATE TABLE IF NOT EXISTS reading_status (
-                    id INT PRIMARY KEY AUTO_INCREMENT,
-                    user_id INT NOT NULL,
-                    book_id INT NOT NULL,
-                    status ENUM('want_to_read', 'reading', 'read') NOT NULL,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-                    UNIQUE KEY unique_user_book_status (user_id, book_id)
-                ) ENGINE=InnoDB;
+                CREATE TABLE IF NOT EXISTS reading_status(
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                user_id INT NOT NULL,
+                book_id INT NOT NULL,
+                status ENUM('want_to_read', 'reading', 'read') NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_user_book_status(user_id, book_id)
+            ) ENGINE = InnoDB;
             `);
 
             // Add columns to users if they don't exist (using procedure/try-catch block pattern for MySQL 5.7/8.0 without IF COLUMN EXISTS)
