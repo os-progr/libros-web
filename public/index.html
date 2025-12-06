@@ -17,6 +17,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="login-styles.css">
+    <link rel="stylesheet" href="social-styles.css">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
@@ -65,6 +66,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Social Features Buttons -->
+                        <button class="btn btn-secondary" onclick="SocialFeatures.openMessagesModal()" title="Mensajes">
+                            <span>💬</span>
+                            <span>Mensajes</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="SocialFeatures.openStatsModal()"
+                            title="Estadísticas">
+                            <span>📊</span>
+                            <span>Stats</span>
+                        </button>
 
                         <div class="user-profile">
                             <img id="userPicture" src="" alt="User" class="user-avatar">
@@ -607,8 +619,100 @@
             </div>
         </div>
 
+        <!-- Messages Modal -->
+        <div class="modal-overlay" id="messagesModal">
+            <div class="modal messages-modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">💬 Mensajes</h3>
+                    <button class="modal-close" onclick="SocialFeatures.closeMessagesModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="messages-container">
+                        <div class="conversations-list" id="conversationsList">
+                            <div class="loading">Cargando conversaciones...</div>
+                        </div>
+                        <div class="chat-area" id="chatArea">
+                            <div class="empty-chat">Selecciona una conversación</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Modal -->
+        <div class="modal-overlay" id="statsModal">
+            <div class="modal stats-modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">📊 Mis Estadísticas</h3>
+                    <button class="modal-close" onclick="SocialFeatures.closeStatsModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="statsContent">
+                        <div class="loading">Cargando estadísticas...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Profile Edit Modal -->
+        <div class="modal-overlay" id="enhancedProfileModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">✏️ Editar Perfil Completo</h3>
+                    <button class="modal-close" onclick="SocialFeatures.closeEnhancedProfileModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="enhancedProfileForm">
+                        <div class="form-group">
+                            <label class="form-label">Biografía Corta</label>
+                            <textarea class="form-textarea" id="enhancedBio" rows="2" maxlength="200"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sobre Mí (Extendido)</label>
+                            <textarea class="form-textarea" id="enhancedAboutMe" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sitio Web</label>
+                            <input type="url" class="form-input" id="enhancedWebsite" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ubicación</label>
+                            <input type="text" class="form-input" id="enhancedLocation" placeholder="Ciudad, País">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Twitter</label>
+                            <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Instagram</label>
+                            <input type="text" class="form-input" id="enhancedInstagram" placeholder="@usuario">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facebook</label>
+                            <input type="text" class="form-input" id="enhancedFacebook" placeholder="Usuario">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Géneros Favoritos</label>
+                            <input type="text" class="form-input" id="enhancedGenres"
+                                placeholder="Ficción, Ciencia, Historia...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Meta de Lectura Anual</label>
+                            <input type="number" class="form-input" id="enhancedReadingGoal" min="0" placeholder="12">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary"
+                                onclick="SocialFeatures.closeEnhancedProfileModal()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <!-- JavaScript -->
         <script src="app.js"></script>
+        <script src="social.js"></script>
 </body>
 
 </html>
