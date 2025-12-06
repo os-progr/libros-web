@@ -1207,27 +1207,26 @@ body {
   margin-bottom: 1.5rem;
 }
 
-@ @ @
+
 /* Library Status Dropdown */
 .book-status-select {
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background-color: var(--card-bg);
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s ease;
-    flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  flex: 1;
 }
 
 .book-status-select:hover {
-    border-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .book-status-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
-
