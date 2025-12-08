@@ -1,5 +1,45 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.4 (2025-12-08)
+
+### 💬 Chat Global Público - Comunicación en Tiempo Real
+- **Widget de Chat Flotante**: Esquina inferior derecha, siempre accesible
+- **Chat Público para Todos**: Todos los usuarios autenticados pueden participar
+- **Auto-Limpieza Inteligente**:
+  - ✅ Mantiene automáticamente los últimos 199 mensajes
+  - ✅ Cuando llega a 200 mensajes, elimina los más antiguos (200-1)
+  - ✅ Sistema eficiente que previene sobrecarga de base de datos
+- **Características del Widget**:
+  - 💬 Icono animado con efecto pulse
+  - 📊 Contador de mensajes totales en tiempo real
+  - ▼/▲ Botón para expandir/contraer
+  - 🎨 Diseño moderno con gradientes
+  - 📱 Totalmente responsivo
+- **Funcionalidades**:
+  - ✅ Envío de mensajes (máximo 500 caracteres)
+  - ✅ Auto-refresh cada 5 segundos cuando está abierto
+  - ✅ Contador de caracteres en tiempo real
+  - ✅ Enter para enviar, Shift+Enter para nueva línea
+  - ✅ Scroll automático a mensajes nuevos
+  - ✅ Avatar y nombre de usuario en cada mensaje
+  - ✅ Timestamp relativo (Ahora, 5m, 2h, etc.)
+  - ✅ Mensajes propios destacados con gradiente
+- **Backend Robusto**:
+  - 🔒 Solo usuarios autenticados pueden participar
+  - 🛡️ Validación de longitud de mensajes
+  - 🗑️ Auto-limpieza en cada mensaje nuevo
+  - 📊 Endpoint para contador de mensajes
+- **Base de Datos**:
+  - Nueva tabla `global_chat` con índices optimizados
+  - Migración automática incluida
+- **Archivos Nuevos**:
+  - `routes/chat.js` - Backend del chat
+  - `public/global-chat.js` - Frontend del widget
+  - `public/global-chat.css` - Estilos modernos
+  - `migrations/007_global_chat.sql` - Migración de BD
+
+---
+
 ## v12.3 (2025-12-08)
 
 ### 🎨 Modernización del Header - Diseño Llamativo y Funcional

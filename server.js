@@ -32,6 +32,7 @@ const profileRoutes = require('./routes/profile');
 const libraryRoutes = require('./routes/library');
 const socialRoutes = require('./routes/social');
 const commentsRoutes = require('./routes/comments');
+const chatRoutes = require('./routes/chat');
 
 // Initialize Express app
 const app = express();
@@ -86,6 +87,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/library', libraryRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/comments', commentsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
