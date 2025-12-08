@@ -3,10 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const libre = require('libreoffice-convert');
-const { promisify } = require('util');
-
-const libreConvert = promisify(libre.convert);
+const mammoth = require('mammoth');
+const puppeteer = require('puppeteer');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -39,6 +37,9 @@ const upload = multer({
 // @route   POST /api/tools/convert-docx
 // @desc    Convert DOCX to PDF
 // @access  Public (or Protected if desired)
+// @route   POST /api/tools/convert-docx
+// @desc    Convert DOCX to PDF using Mammoth + Puppeteer (No LibreOffice required)
+// @access  Public
 router.post('/convert-docx', upload.single('file'), async (req, res) => {
     let inputPath = null;
     let outputPath = null;
@@ -55,21 +56,58 @@ router.post('/convert-docx', upload.single('file'), async (req, res) => {
         const outputFilename = path.basename(inputPath, path.extname(inputPath)) + '.pdf';
         outputPath = path.join(path.dirname(inputPath), outputFilename);
 
-        // Read file
-        const docxBuf = await fs.promises.readFile(inputPath);
+        // 1. Convert DOCX to HTML using Mammoth
+        const result = await mammoth.convertToHtml({ path: inputPath });
+        const htmlContent = result.value; // The generated HTML
 
-        // Convert it to pdf format
-        // Note: This relies on LibreOffice being installed on the server/system
-        let pdfBuf;
-        try {
-            pdfBuf = await libreConvert(docxBuf, '.pdf', undefined);
-        } catch (convertError) {
-            console.error('LibreOffice conversion failed:', convertError);
-            throw new Error('Error al convertir: Asegúrate de que LibreOffice esté instalado en el servidor.');
+        if (!htmlContent) {
+            throw new Error('No se pudo extraer contenido del documento.');
         }
 
-        // Write output to file (optional, we could just send buffer directly)
-        await fs.promises.writeFile(outputPath, pdfBuf);
+        // 2. Add basic styling to the HTML
+        const styledHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: 'Arial', sans-serif;
+                        line-height: 1.6;
+                        color: #333;
+                        padding: 40px;
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    img { max-width: 100%; height: auto; }
+                    h1, h2, h3 { color: #000; }
+                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                    td, th { border: 1px solid #ddd; padding: 8px; }
+                </style>
+            </head>
+            <body>
+                ${htmlContent}
+            </body>
+            </html>
+        `;
+
+        // 3. Convert HTML to PDF using Puppeteer
+        const browser = await puppeteer.launch({
+            headless: 'new',
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+
+        await page.setContent(styledHtml, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
+        });
+
+        await browser.close();
+
+        // Write PDF to output path
+        await fs.promises.writeFile(outputPath, pdfBuffer);
 
         // Send file to client
         res.download(outputPath, req.file.originalname.replace(/\.(docx|doc)$/i, '.pdf'), async (err) => {
@@ -93,7 +131,7 @@ router.post('/convert-docx', upload.single('file'), async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: error.message || 'Error interno durante la conversión'
+            message: 'Error en la conversión: ' + error.message
         });
     }
 });

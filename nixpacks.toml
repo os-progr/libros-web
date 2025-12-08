@@ -2,7 +2,7 @@
 # Defines the environment and dependencies needed
 
 [phases.setup]
-nixPkgs = ["nodejs", "npm", "libreoffice", "liberation_ttf", "font-awesome_5", "fontconfig"]
+nixPkgs = ["nodejs", "npm", "chromium", "liberation_ttf", "font-awesome_5", "fontconfig", "nss", "freetype", "freetype", "harfbuzz", "ca-certificates"]
 
 [phases.build]
 cmds = ["npm ci --omit=dev"]
