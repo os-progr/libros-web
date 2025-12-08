@@ -712,207 +712,188 @@
         </div>
 
 
-        <div class="modal-header">
-            <h2 class="modal-title">✏️ Editar Perfil</h2>
-            <button class="modal-close" id="closeEditProfileModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="editProfileForm">
-                <div class="form-group">
-                    <label class="form-label">Biografía</label>
-                    <textarea class="form-textarea" id="editProfileBio" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Sitio Web</label>
-                    <input type="url" class="form-input" id="editProfileWebsite">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Ubicación</label>
-                    <input type="text" class="form-input" id="editProfileLocation">
-                </div>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            </form>
-        </div>
-    </div>
-    </div>
 
-    <!-- PDF Tools Modal -->
-    <div class="modal-overlay" id="toolsModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">🛠️ Convertidor PDF</h2>
-                <button class="modal-close" id="closeToolsModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="tools-intro">
-                    <p>Convierte tus documentos Word (.docx) a PDF fácilmente.</p>
-                </div>
 
-                <form id="convertForm">
-                    <div class="form-group">
-                        <label class="form-label">Seleccionar archivo Word</label>
-                        <div class="file-input-wrapper">
-                            <label for="convertFile" class="file-input-label">
-                                <span>📄</span>
-                                <span>Elegir DOCX</span>
-                            </label>
-                            <input type="file" class="file-input" id="convertFile" name="file" accept=".docx,.doc"
-                                required>
-                        </div>
-                        <div class="file-name" id="convertFileName"></div>
-                    </div>
-
-                    <div id="conversionStatus" class="status-message hidden"></div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="btnConvert">
-                            <span>🔄</span>
-                            <span>Convertir a PDF</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Logout Confirmation Modal -->
-    <div class="modal-overlay" id="logoutModal">
-        <div class="modal confirmation-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">🚪 Cerrar Sesión</h2>
-                <button class="modal-close" id="closeLogoutModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="confirmation-text">¿Estás seguro de que deseas salir de tu cuenta?</p>
-                <div class="form-actions">
-                    <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
-                    <button class="btn btn-danger" id="confirmLogout">Cerrar Sesión</button>
-                </div>
-            </div>
-        </div>
-        <div class="modal-overlay" id="genericConfirmationModal">
+        <!-- PDF Tools Modal -->
+        <div class="modal-overlay" id="toolsModal">
             <div class="modal">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="confirmationTitle">Confirmación</h3>
-                    <button class="modal-close" onclick="UIManager.closeConfirmationModal()">&times;</button>
+                    <h2 class="modal-title">🛠️ Convertidor PDF</h2>
+                    <button class="modal-close" id="closeToolsModal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p id="confirmationMessage" class="confirmation-text"></p>
-                    <div class="form-actions"
-                        style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
-                        <button class="btn btn-secondary" onclick="UIManager.closeConfirmationModal()">Cancelar</button>
-                        <button class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+                    <div class="tools-intro">
+                        <p>Convierte tus documentos Word (.docx) a PDF fácilmente.</p>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Messages Modal -->
-        <div class="modal-overlay" id="messagesModal">
-            <div class="modal messages-modal">
-                <div class="modal-header">
-                    <h3 class="modal-title">💬 Mensajes</h3>
-                    <button class="modal-close" onclick="SocialFeatures.closeMessagesModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="messages-container">
-                        <div class="conversations-list" id="conversationsList">
-                            <div class="loading">Cargando conversaciones...</div>
+                    <form id="convertForm">
+                        <div class="form-group">
+                            <label class="form-label">Seleccionar archivo Word</label>
+                            <div class="file-input-wrapper">
+                                <label for="convertFile" class="file-input-label">
+                                    <span>📄</span>
+                                    <span>Elegir DOCX</span>
+                                </label>
+                                <input type="file" class="file-input" id="convertFile" name="file" accept=".docx,.doc"
+                                    required>
+                            </div>
+                            <div class="file-name" id="convertFileName"></div>
                         </div>
-                        <div class="chat-area" id="chatArea">
-                            <div class="empty-chat">Selecciona una conversación</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Enhanced Profile Edit Modal -->
-        <div class="modal-overlay" id="enhancedProfileModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3 class="modal-title">✏️ Editar Perfil Completo</h3>
-                    <button class="modal-close" onclick="SocialFeatures.closeEnhancedProfileModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="enhancedProfileForm">
-                        <div class="form-group">
-                            <label class="form-label">Biografía Corta</label>
-                            <textarea class="form-textarea" id="enhancedBio" rows="2" maxlength="200"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sobre Mí (Extendido)</label>
-                            <textarea class="form-textarea" id="enhancedAboutMe" rows="4"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sitio Web</label>
-                            <input type="url" class="form-input" id="enhancedWebsite" placeholder="https://...">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Ubicación</label>
-                            <input type="text" class="form-input" id="enhancedLocation" placeholder="Ciudad, País">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Twitter</label>
-                            <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Instagram</label>
-                            <input type="text" class="form-input" id="enhancedInstagram" placeholder="@usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Facebook</label>
-                            <input type="text" class="form-input" id="enhancedFacebook" placeholder="Usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Géneros Favoritos</label>
-                            <input type="text" class="form-input" id="enhancedGenres"
-                                placeholder="Ficción, Ciencia, Historia...">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Meta de Lectura Anual</label>
-                            <input type="number" class="form-input" id="enhancedReadingGoal" min="0" placeholder="12">
-                        </div>
+                        <div id="conversionStatus" class="status-message hidden"></div>
+
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary"
-                                onclick="SocialFeatures.closeEnhancedProfileModal()">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="submit" class="btn btn-primary" id="btnConvert">
+                                <span>🔄</span>
+                                <span>Convertir a PDF</span>
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Comments Modal -->
-        <div class="modal-overlay" id="commentsModal">
-            <div class="modal comments-modal-large">
+        <!-- Logout Confirmation Modal -->
+        <div class="modal-overlay" id="logoutModal">
+            <div class="modal confirmation-modal">
                 <div class="modal-header">
-                    <h3 class="modal-title">💬 Comentarios: <span id="commentsBookTitle"></span></h3>
-                    <button class="modal-close" onclick="CommentsSystem.closeCommentsModal()">&times;</button>
+                    <h2 class="modal-title">🚪 Cerrar Sesión</h2>
+                    <button class="modal-close" id="closeLogoutModal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="comments-section">
-                        <div id="commentsContainer">
-                            <div class="loading">Cargando comentarios...</div>
-                        </div>
-                    </div>
-                    <div class="comment-input-section">
-                        <div id="replyIndicator" class="reply-indicator hidden"></div>
-                        <textarea id="commentInput" class="comment-textarea"
-                            placeholder="Escribe un comentario... (Ctrl+Enter para publicar)"></textarea>
-                        <button class="btn btn-primary" onclick="CommentsSystem.postComment()">Publicar</button>
+                    <p class="confirmation-text">¿Estás seguro de que deseas salir de tu cuenta?</p>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
+                        <button class="btn btn-danger" id="confirmLogout">Cerrar Sesión</button>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="modal-overlay" id="genericConfirmationModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="confirmationTitle">Confirmación</h3>
+                        <button class="modal-close" onclick="UIManager.closeConfirmationModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="confirmationMessage" class="confirmation-text"></p>
+                        <div class="form-actions"
+                            style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                            <button class="btn btn-secondary"
+                                onclick="UIManager.closeConfirmationModal()">Cancelar</button>
+                            <button class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Modal -->
+            <div class="modal-overlay" id="messagesModal">
+                <div class="modal messages-modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">💬 Mensajes</h3>
+                        <button class="modal-close" onclick="SocialFeatures.closeMessagesModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="messages-container">
+                            <div class="conversations-list" id="conversationsList">
+                                <div class="loading">Cargando conversaciones...</div>
+                            </div>
+                            <div class="chat-area" id="chatArea">
+                                <div class="empty-chat">Selecciona una conversación</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Profile Edit Modal -->
+            <div class="modal-overlay" id="enhancedProfileModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">✏️ Editar Perfil Completo</h3>
+                        <button class="modal-close"
+                            onclick="SocialFeatures.closeEnhancedProfileModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="enhancedProfileForm">
+                            <div class="form-group">
+                                <label class="form-label">Biografía Corta</label>
+                                <textarea class="form-textarea" id="enhancedBio" rows="2" maxlength="200"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sobre Mí (Extendido)</label>
+                                <textarea class="form-textarea" id="enhancedAboutMe" rows="4"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sitio Web</label>
+                                <input type="url" class="form-input" id="enhancedWebsite" placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ubicación</label>
+                                <input type="text" class="form-input" id="enhancedLocation" placeholder="Ciudad, País">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Twitter</label>
+                                <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Instagram</label>
+                                <input type="text" class="form-input" id="enhancedInstagram" placeholder="@usuario">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Facebook</label>
+                                <input type="text" class="form-input" id="enhancedFacebook" placeholder="Usuario">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Géneros Favoritos</label>
+                                <input type="text" class="form-input" id="enhancedGenres"
+                                    placeholder="Ficción, Ciencia, Historia...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Meta de Lectura Anual</label>
+                                <input type="number" class="form-input" id="enhancedReadingGoal" min="0"
+                                    placeholder="12">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="SocialFeatures.closeEnhancedProfileModal()">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Modal -->
+            <div class="modal-overlay" id="commentsModal">
+                <div class="modal comments-modal-large">
+                    <div class="modal-header">
+                        <h3 class="modal-title">💬 Comentarios: <span id="commentsBookTitle"></span></h3>
+                        <button class="modal-close" onclick="CommentsSystem.closeCommentsModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="comments-section">
+                            <div id="commentsContainer">
+                                <div class="loading">Cargando comentarios...</div>
+                            </div>
+                        </div>
+                        <div class="comment-input-section">
+                            <div id="replyIndicator" class="reply-indicator hidden"></div>
+                            <textarea id="commentInput" class="comment-textarea"
+                                placeholder="Escribe un comentario... (Ctrl+Enter para publicar)"></textarea>
+                            <button class="btn btn-primary" onclick="CommentsSystem.postComment()">Publicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
 
-        <!-- JavaScript -->
-        <script src="app.js"></script>
-        <script src="social.js"></script>
-        <script src="comments.js"></script>
-        <script src="tools.js"></script>
+            <!-- JavaScript -->
+            <script src="app.js"></script>
+            <script src="social.js"></script>
+            <script src="comments.js"></script>
+            <script src="tools.js"></script>
 </body>
 
 </html>
