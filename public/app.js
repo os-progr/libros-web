@@ -50,7 +50,12 @@ const AppState = {
     currentBook: null,
     searchQuery: '',
     isAuthenticated: false,
-    libraryStatus: {}
+    libraryStatus: {},
+    adminEmails: ['edaninguna@gmail.com', 'studyciberse@gmail.com'],
+
+    isAdmin() {
+        return this.user && this.adminEmails.includes(this.user.email);
+    }
 };
 
 
@@ -119,6 +124,41 @@ const DeveloperMode = {
             return false;
         }
     }
+};
+
+
+
+// ============================================
+// THEME MANAGER
+// ============================================
+const ThemeManager = {
+    init() {
+        // Check for saved theme preference or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark-theme');
+            this.updateIcon(true);
+        } else {
+            document.body.classList.remove('dark-theme');
+            this.updateIcon(false);
+        }
+    },
+
+    toggleTheme() {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        this.updateIcon(isDark);
+    },
+
+    updateIcon(isDark) {
+        const icon = document.getElementById('themeIcon');
+        if (icon) {
+            icon.textContent = isDark ? '☀️' : '🌙';
+        }
+    }
+}
 };
 
 // ============================================
@@ -326,8 +366,9 @@ const UIManager = {
 
         emptyState.classList.add('hidden');
 
-        const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
-        const isAdmin = AppState.user && adminEmails.includes(AppState.user.email);
+        emptyState.classList.add('hidden');
+
+        const isAdmin = AppState.isAdmin();
 
         booksGrid.innerHTML = books.map(book => {
             const canDelete = AppState.user && (book.user_id === AppState.user.id || isAdmin);
@@ -1061,6 +1102,9 @@ async function initializeApp() {
     // Initialize Developer Mode (only for admin)
     DeveloperMode.init(user);
 
+    // Initialize Theme
+    ThemeManager.init();
+
     // Update UI based on auth status
     UIManager.updateAuthUI(user);
 
@@ -1085,6 +1129,12 @@ function setupEventListeners() {
         });
     }
 
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => ThemeManager.toggleTheme());
+    }
+
     document.getElementById('closeUploadModal').addEventListener('click', () => {
         UIManager.closeUploadModal();
     });
@@ -1093,9 +1143,11 @@ function setupEventListeners() {
     document.getElementById('uploadForm').addEventListener('submit', EventHandlers.handleUploadSubmit);
 
     // File inputs
-    document.getElementById('bookFile').addEventListener('change', EventHandlers.handleFileChange);
-    document.getElementById('bookDocx').addEventListener('change', EventHandlers.handleFileChange);
-    document.getElementById('bookCover').addEventListener('change', EventHandlers.handleFileChange);
+    const bookFile = document.getElementById('bookFile');
+    if (bookFile) bookFile.addEventListener('change', EventHandlers.handleFileChange);
+
+    const bookCover = document.getElementById('bookCover');
+    if (bookCover) bookCover.addEventListener('change', EventHandlers.handleFileChange);
 
     // Search
     document.getElementById('searchInput').addEventListener('input', EventHandlers.handleSearch);
@@ -1123,25 +1175,6 @@ function setupEventListeners() {
         logoutBtn.addEventListener('click', EventHandlers.handleLogout);
     }
 
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        });
-    }
 
     // Admin Panel Button
     const adminPanelBtn = document.getElementById('adminPanelBtn');
