@@ -378,7 +378,11 @@ const UIManager = {
 
             return `
             <div class="book-card fade-in" data-book-id="${book.id}">
-                ${''}
+                ${canDelete ? `
+                    <button class="book-delete-btn" onclick="event.stopPropagation(); UIManager.deleteBookFromLibrary(${book.id})" title="Eliminar libro">
+                        🗑️
+                    </button>
+                ` : ''}
                 <div class="book-cover">
                     ${book.cover_path
                     ? `<img src="/api/books/${book.id}/cover" alt="${this.escapeHtml(book.title)}">`
