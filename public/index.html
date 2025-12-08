@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="social-styles.css">
     <link rel="stylesheet" href="comments-styles.css">
     <link rel="stylesheet" href="header-modern.css">
-    <link rel="stylesheet" href="global-chat.css">
+    <link rel="stylesheet" href="header-modern.css">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
@@ -43,11 +43,7 @@
                 <div class="nav-actions">
                     <!-- Authenticated user actions -->
                     <div id="authenticatedActions" class="hidden">
-                        <!-- Chat Toggle -->
-                        <button class="icon-button" id="headerChatBtn" title="Chat Global">
-                            <span class="icon-emoji">💬</span>
-                            <span class="notification-badge hidden" id="headerChatBadge">0</span>
-                        </button>
+
 
                         <!-- Notifications -->
                         <div class="icon-button-wrapper">
@@ -722,38 +718,13 @@
             </div>
         </div>
 
-        <!-- Global Chat Widget -->
-        <div class="global-chat-widget" id="globalChatWidget">
-            <div class="chat-widget-header" id="chatWidgetHeader">
-                <div class="chat-header-content">
-                    <span class="chat-icon">💬</span>
-                    <span class="chat-title">Chat Global</span>
-                    <span class="chat-count" id="chatMessageCount">0</span>
-                </div>
-                <button class="chat-toggle-btn" id="chatToggleBtn">
-                    <span id="chatToggleIcon">▼</span>
-                </button>
-            </div>
-            <div class="chat-widget-body hidden" id="chatWidgetBody">
-                <div class="chat-messages-container" id="globalChatMessages">
-                    <div class="chat-loading">Cargando mensajes...</div>
-                </div>
-                <div class="chat-input-container">
-                    <textarea id="globalChatInput" class="chat-input"
-                        placeholder="Escribe un mensaje... (Enter para enviar)" maxlength="500" rows="2"></textarea>
-                    <button class="chat-send-btn" id="chatSendBtn">
-                        <span>📤</span>
-                    </button>
-                </div>
-                <div class="chat-char-count" id="chatCharCount">0/500</div>
-            </div>
-        </div>
+
 
         <!-- JavaScript -->
         <script src="app.js"></script>
         <script src="social.js"></script>
         <script src="comments.js"></script>
-        <script src="global-chat.js"></script>
+
 </body>
 
 </html>
