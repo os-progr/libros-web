@@ -28,8 +28,15 @@ router.get('/google/callback',
         console.log('📝 Session ID:', req.sessionID);
         console.log('🔐 Session data:', req.session);
 
-        // Redirect to home
-        res.redirect('/');
+        // Explicitly save session before redirect
+        req.session.save((err) => {
+            if (err) {
+                console.error('❌ Session save error:', err);
+                return res.redirect('/?error=session_save_failed');
+            }
+            // Redirect to home
+            res.redirect('/');
+        });
     }
 );
 

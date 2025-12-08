@@ -38,6 +38,9 @@ const chatRoutes = require('./routes/chat');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for secure cookies behind load balancers (Railway, Heroku, etc.)
+app.set('trust proxy', 1);
+
 // ============================================
 // MIDDLEWARE CONFIGURATION
 // ============================================
