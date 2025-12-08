@@ -17,7 +17,7 @@ const isAdmin = (req, res, next) => {
 
     // Verificar si el usuario es administrador
     // Verificar si el usuario es administrador
-    const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+    const adminEmails = ['edaninguna@gmail.com'];
     if (!adminEmails.includes(req.user.email)) {
         return res.status(403).json({
             success: false,

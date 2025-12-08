@@ -51,7 +51,7 @@ const AppState = {
     searchQuery: '',
     isAuthenticated: false,
     libraryStatus: {},
-    adminEmails: ['edaninguna@gmail.com', 'studyciberse@gmail.com'],
+    adminEmails: ['edaninguna@gmail.com'],
 
     isAdmin() {
         return this.user && this.adminEmails.includes(this.user.email);

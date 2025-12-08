@@ -371,7 +371,7 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
         }
 
         // Check if user owns the book or is admin
-        const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+        const adminEmails = ['edaninguna@gmail.com'];
         if (book.user_id !== req.user.id && !adminEmails.includes(req.user.email)) {
             return res.status(403).json({
                 success: false,
