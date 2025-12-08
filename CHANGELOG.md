@@ -5,8 +5,9 @@
 ### 💬 Chat Global Público - Comunicación en Tiempo Real
 - **Widget de Chat Flotante**: Esquina inferior derecha, siempre accesible
 - **Chat Público para Todos**: Todos los usuarios autenticados pueden participar
-- **Reemplazo de Mensajes Privados**: 
-  - ❌ Eliminado sistema de mensajes privados del header
+- **Simplificación del Header**: 
+  - ❌ Eliminado sistema de mensajes privados
+  - ❌ Eliminado botón de estadísticas personales
   - ✅ Ahora solo existe el chat global público (más simple y directo)
   - ✅ Todos los usuarios pueden comunicarse en un solo lugar
 - **Auto-Limpieza Inteligente**:
@@ -41,6 +42,10 @@
   - `public/global-chat.js` - Frontend del widget
   - `public/global-chat.css` - Estilos modernos
   - `migrations/007_global_chat.sql` - Migración de BD
+- **Correcciones**:
+  - 🔧 Mejorada inicialización del chat con sistema de reintentos
+  - 🔧 Agregados logs de depuración para diagnóstico
+  - 🔧 Verificaciones de seguridad (null checks)
 
 ---
 
