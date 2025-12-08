@@ -361,6 +361,7 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
 // @access  Private
 router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
+        console.log(`[DELETE] Request to delete book ${req.params.id} by user ${req.user.email}`);
         const book = await bookQueries.findById(req.params.id);
 
         if (!book) {
@@ -372,7 +373,13 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 
         // Check if user owns the book or is admin
         const adminEmails = ['edaninguna@gmail.com'];
-        if (book.user_id !== req.user.id && !adminEmails.includes(req.user.email)) {
+        const isOwner = book.user_id === req.user.id;
+        const isAdmin = adminEmails.includes(req.user.email);
+
+        console.log(`[DELETE] Permission check - Owner: ${isOwner}, Admin: ${isAdmin} (${req.user.email})`);
+
+        if (!isOwner && !isAdmin) {
+            console.log('[DELETE] Permission denied');
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para eliminar este libro'
@@ -384,11 +391,13 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 
         // Delete from database
         // Monitor deletion strategy
-        if (adminEmails.includes(req.user.email)) {
+        if (isAdmin) {
             // Admin deletion (bypasses ownership check)
+            console.log('[DELETE] Executing Admin deletion');
             await bookQueries.deleteAny(req.params.id);
         } else {
             // User deletion (enforces ownership)
+            console.log('[DELETE] Executing Owner deletion');
             await bookQueries.delete(req.params.id, req.user.id);
         }
 
