@@ -397,7 +397,7 @@ const UIManager = {
                     <!-- Rating Stars -->
                     <div class="book-rating">
                         ${this.renderStars(book.avg_rating || 0)}
-                        <span class="rating-text">${book.avg_rating ? book.avg_rating.toFixed(1) : '0.0'} (${book.review_count || 0})</span>
+                        <span class="rating-text">${book.avg_rating ? book.avg_rating.toFixed(1) : '0.0'}</span>
                     </div>
 
                     <div class="book-meta">
