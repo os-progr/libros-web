@@ -117,18 +117,29 @@ if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
 // Create session store
 const sessionStore = new MySQLStore(sessionStoreOptions);
 
+// Handle session store errors
+sessionStore.onReady = () => {
+    console.log('✅ MySQL Session Store is ready');
+};
+
+sessionStore.on('error', (error) => {
+    console.error('❌ Session Store Error:', error);
+});
+
 console.log('✅ MySQL Session Store configured');
 
 // Session configuration with MySQL Store
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
     store: sessionStore,
-    resave: false,
+    resave: true, // Changed to true to ensure sessions are saved
     saveUninitialized: false,
+    rolling: true, // Refresh session on each request
     cookie: {
         secure: process.env.NODE_ENV === 'production', // HTTPS only in production
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     }
 }));
 

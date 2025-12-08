@@ -23,7 +23,12 @@ router.get('/google/callback',
         failureRedirect: '/?error=auth_failed'
     }),
     (req, res) => {
-        // Successful authentication, redirect to home
+        // Successful authentication
+        console.log('✅ User authenticated:', req.user?.email);
+        console.log('📝 Session ID:', req.sessionID);
+        console.log('🔐 Session data:', req.session);
+
+        // Redirect to home
         res.redirect('/');
     }
 );
@@ -32,6 +37,10 @@ router.get('/google/callback',
 // @desc    Get current authenticated user
 // @access  Private
 router.get('/user', (req, res) => {
+    console.log('🔍 Checking auth - Session ID:', req.sessionID);
+    console.log('🔍 Is Authenticated:', req.isAuthenticated());
+    console.log('🔍 User:', req.user?.email || 'No user');
+
     if (req.isAuthenticated()) {
         res.json({
             success: true,
