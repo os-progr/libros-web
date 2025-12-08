@@ -537,6 +537,38 @@ const UIManager = {
         return `<span class="stars">${stars}</span>`;
     },
 
+    // Update book rating dynamically
+    updateBookRating(bookId, newAverage, newTotal) {
+        // Update local state
+        const book = AppState.books.find(b => b.id == bookId);
+        if (book) {
+            book.avg_rating = newAverage;
+            if (newTotal) book.review_count = newTotal;
+        }
+
+        // Update Book Card UI
+        const bookCard = document.querySelector(`.book-card[data-book-id="${bookId}"]`);
+        if (bookCard) {
+            const ratingContainer = bookCard.querySelector('.book-rating');
+            if (ratingContainer) {
+                // Animate change
+                ratingContainer.innerHTML = `
+                    ${this.renderStars(newAverage)}
+                    <span class="rating-text rating-update-anim">${newAverage.toFixed(1)}</span>
+                `;
+            }
+        }
+
+        // Update Review Modal Summary if open
+        const summaryRating = document.querySelector('#reviewBookSummary .mini-rating');
+        if (summaryRating) {
+            summaryRating.innerHTML = `${this.renderStars(newAverage)} (${newTotal || 0} reseñas)`;
+            // Add pulse effect to summary too
+            summaryRating.classList.add('rating-update-anim');
+            setTimeout(() => summaryRating.classList.remove('rating-update-anim'), 600);
+        }
+    },
+
     // Share book on social media
     shareBook(bookId, bookTitle) {
         const url = `${window.location.origin}/?book=${bookId}`;
@@ -1030,6 +1062,11 @@ const EventHandlers = {
 
         if (result.success) {
             UIManager.openReviewModal(bookId); // Reload reviews
+
+            // Update rating on the book card with animation
+            if (result.new_average !== undefined) {
+                UIManager.updateBookRating(bookId, result.new_average, result.total_reviews);
+            }
         } else {
             alert(result.message || 'Error al publicar reseña');
         }

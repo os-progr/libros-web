@@ -109,9 +109,23 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
+        // Calculate new average
+        const avgResult = await db.query(`
+            SELECT 
+                AVG(rating) as avg_rating,
+                COUNT(*) as total_reviews
+            FROM reviews
+            WHERE book_id = ?
+        `, [book_id]);
+
+        const newAverage = avgResult[0] ? (parseFloat(avgResult[0].avg_rating) || 0) : 0;
+        const newTotal = avgResult[0] ? (avgResult[0].total_reviews || 0) : 0;
+
         res.json({
             success: true,
-            message: 'Reseña guardada exitosamente'
+            message: 'Reseña guardada exitosamente',
+            new_average: newAverage,
+            total_reviews: newTotal
         });
     } catch (error) {
         console.error('Error saving review:', error);
