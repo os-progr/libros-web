@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="login-styles.css">
     <link rel="stylesheet" href="social-styles.css">
     <link rel="stylesheet" href="comments-styles.css">
+    <link rel="stylesheet" href="header-modern.css">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
 </head>
 
@@ -39,22 +40,12 @@
                 </div>
 
                 <div class="nav-actions">
-                    <!-- Theme Toggle -->
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
-                        <span id="themeIcon">🌙</span>
-                    </button>
-
                     <!-- Authenticated user actions -->
                     <div id="authenticatedActions" class="hidden">
-                        <!-- Admin Panel Button (Only for admin) -->
-                        <button class="btn btn-admin hidden" id="adminPanelBtn" title="Panel de Administración">
-                            <span>⚙️</span>
-                            <span>Admin</span>
-                        </button>
-
-                        <div class="notifications-wrapper">
-                            <button class="notification-btn" id="notificationBtn">
-                                🔔
+                        <!-- Notifications -->
+                        <div class="icon-button-wrapper">
+                            <button class="icon-button" id="notificationBtn" title="Notificaciones">
+                                <span class="icon-emoji">🔔</span>
                                 <span class="notification-badge hidden" id="notificationBadge">0</span>
                             </button>
                             <div class="notifications-dropdown hidden" id="notificationsDropdown">
@@ -68,28 +59,47 @@
                             </div>
                         </div>
 
-                        <!-- Social Features Buttons -->
-                        <button class="btn btn-secondary" onclick="SocialFeatures.openMessagesModal()" title="Mensajes">
-                            <span>💬</span>
-                            <span>Mensajes</span>
-                        </button>
-                        <button class="btn btn-secondary" onclick="SocialFeatures.openStatsModal()"
-                            title="Estadísticas">
-                            <span>📊</span>
-                            <span>Stats</span>
+                        <!-- Messages -->
+                        <div class="icon-button-wrapper">
+                            <button class="icon-button" id="messagesBtn" onclick="SocialFeatures.openMessagesModal()"
+                                title="Mensajes">
+                                <span class="icon-emoji">💬</span>
+                                <span class="message-badge hidden" id="messageBadge">0</span>
+                            </button>
+                        </div>
+
+                        <!-- Stats -->
+                        <button class="icon-button" onclick="SocialFeatures.openStatsModal()" title="Mis Estadísticas">
+                            <span class="icon-emoji">📊</span>
                         </button>
 
-                        <div class="user-profile">
-                            <img id="userPicture" src="" alt="User" class="user-avatar">
-                            <span id="userName"></span>
-                        </div>
-                        <button class="btn btn-primary" id="uploadBtn">
-                            <span>📤</span>
-                            <span>Publicar Libro</span>
+                        <!-- Admin Panel (Only for admin) -->
+                        <button class="icon-button icon-button-admin hidden" id="adminPanelBtn"
+                            title="Panel de Administración">
+                            <span class="icon-emoji">⚙️</span>
                         </button>
-                        <button class="btn btn-secondary" id="logoutBtn">
+
+                        <!-- User Profile -->
+                        <div class="user-profile-compact">
+                            <img id="userPicture" src="" alt="User" class="user-avatar-small">
+                            <div class="user-info-compact">
+                                <span id="userName" class="user-name-compact"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <button class="btn btn-primary btn-compact" id="uploadBtn" title="Publicar Libro">
+                            <span>📤</span>
+                            <span class="btn-text">Publicar</span>
+                        </button>
+
+                        <!-- Theme Toggle -->
+                        <button class="icon-button" id="themeToggle" title="Cambiar tema">
+                            <span id="themeIcon">🌙</span>
+                        </button>
+
+                        <button class="btn btn-secondary btn-compact" id="logoutBtn" title="Cerrar Sesión">
                             <span>🚪</span>
-                            <span>Salir</span>
                         </button>
                     </div>
 

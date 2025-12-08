@@ -1,5 +1,40 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.3 (2025-12-08)
+
+### 🎨 Modernización del Header - Diseño Llamativo y Funcional
+- **Diseño Completamente Renovado**: Header moderno con estética premium y llamativa
+- **Icono de Mensajes Funcional**: 
+  - ✅ Badge animado que muestra mensajes no leídos en tiempo real
+  - ✅ Contador actualizado automáticamente
+  - ✅ Animaciones suaves y atractivas (bounce, glow)
+  - ✅ Gradientes modernos (azul para mensajes, rojo para notificaciones)
+- **Botones de Icono Modernos**:
+  - ✅ Diseño circular con efectos hover glassmorphism
+  - ✅ Transformaciones 3D al interactuar
+  - ✅ Sombras dinámicas y gradientes
+  - ✅ Botón admin con animación pulse-glow
+- **Perfil de Usuario Compacto**:
+  - ✅ Diseño pill con gradiente sutil
+  - ✅ Avatar con borde de color primario
+  - ✅ Nombre truncado con ellipsis
+  - ✅ Efectos hover suaves
+- **Reorganización Visual**:
+  - 🔔 Notificaciones → 💬 Mensajes → 📊 Stats → ⚙️ Admin → 👤 Perfil → 📤 Publicar → 🌙 Tema → 🚪 Salir
+  - Orden lógico y flujo visual mejorado
+  - Espaciado optimizado (0.75rem gap)
+- **Diseño Responsivo**:
+  - En tablets: Oculta textos de botones, solo iconos
+  - En móviles: Botones más compactos, spacing reducido
+  - Perfil compacto se adapta automáticamente
+- **Archivo CSS Dedicado**: `header-modern.css` para mejor organización
+- **Mejoras de UX**:
+  - Feedback visual inmediato en todas las interacciones
+  - Animaciones fluidas con cubic-bezier
+  - Estados hover, active y focus bien definidos
+
+---
+
 ## v12.2 (2025-12-08)
 
 ### 🛡️ Corrección de Errores del Panel Admin

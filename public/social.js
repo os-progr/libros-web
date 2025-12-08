@@ -119,9 +119,41 @@ const SocialFeatures = {
 
             if (data.success) {
                 this.renderConversations(data.conversations);
+                // Update message badge
+                this.updateMessageBadge(data.conversations);
             }
         } catch (error) {
             console.error('Error loading conversations:', error);
+        }
+    },
+
+    updateMessageBadge(conversations) {
+        const badge = document.getElementById('messageBadge');
+        if (!badge) return;
+
+        // Count total unread messages
+        const unreadCount = conversations.reduce((total, conv) => total + (conv.unread_count || 0), 0);
+
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    },
+
+    async loadUnreadMessageCount() {
+        try {
+            const response = await fetch('/api/social/conversations', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateMessageBadge(data.conversations);
+            }
+        } catch (error) {
+            console.error('Error loading unread count:', error);
         }
     },
 

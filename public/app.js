@@ -1062,9 +1062,13 @@ async function initializeApp() {
     // Update UI based on auth status
     UIManager.updateAuthUI(user);
 
-    // If authenticated, load books
+    // If authenticated, load books and message count
     if (user) {
         await loadBooks();
+        // Load unread message count for badge
+        if (typeof SocialFeatures !== 'undefined') {
+            SocialFeatures.loadUnreadMessageCount();
+        }
     } else {
         // Show welcome screen (handled by updateAuthUI)
         // window.location.href = '/auth/google';
