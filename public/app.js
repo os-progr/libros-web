@@ -340,9 +340,12 @@ const UIManager = {
 
             // Show admin button if user is admin
             const adminPanelBtn = document.getElementById('adminPanelBtn');
-            const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
-            if (adminPanelBtn && adminEmails.includes(user.email)) {
-                adminPanelBtn.classList.remove('hidden');
+            if (adminPanelBtn) {
+                if (AppState.isAdmin()) {
+                    adminPanelBtn.classList.remove('hidden');
+                } else {
+                    adminPanelBtn.classList.add('hidden');
+                }
             }
         } else {
             // User is not authenticated
@@ -366,12 +369,11 @@ const UIManager = {
 
         emptyState.classList.add('hidden');
 
-        emptyState.classList.add('hidden');
-
         const isAdmin = AppState.isAdmin();
 
         booksGrid.innerHTML = books.map(book => {
-            const canDelete = AppState.user && (book.user_id === AppState.user.id || isAdmin);
+            // Use loose comparison (==) for IDs to match string/number types
+            const canDelete = AppState.user && (book.user_id == AppState.user.id || isAdmin);
             const currentStatus = AppState.libraryStatus[book.id];
 
             return `
