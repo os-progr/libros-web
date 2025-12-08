@@ -291,6 +291,13 @@ router.get('/conversations', isAuthenticated, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching conversations:', error);
+        // If table doesn't exist yet, return empty conversations
+        if (error.code === 'ER_NO_SUCH_TABLE') {
+            return res.json({
+                success: true,
+                conversations: []
+            });
+        }
         res.status(500).json({
             success: false,
             message: 'Error al obtener conversaciones'
@@ -395,6 +402,21 @@ router.get('/stats/:userId', isAuthenticated, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching stats:', error);
+        // If tables don't exist yet, return default stats
+        if (error.code === 'ER_NO_SUCH_TABLE') {
+            return res.json({
+                success: true,
+                stats: {
+                    booksUploaded: 0,
+                    booksDownloaded: 0,
+                    reviewsWritten: 0,
+                    followers: 0,
+                    following: 0,
+                    totalDownloads: 0,
+                    monthlyActivity: []
+                }
+            });
+        }
         res.status(500).json({
             success: false,
             message: 'Error al obtener estadísticas'

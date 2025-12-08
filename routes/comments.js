@@ -59,6 +59,13 @@ router.get('/book/:bookId', isAuthenticated, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching comments:', error);
+        // If table doesn't exist yet, return empty comments
+        if (error.code === 'ER_NO_SUCH_TABLE') {
+            return res.json({
+                success: true,
+                comments: []
+            });
+        }
         res.status(500).json({
             success: false,
             message: 'Error al obtener comentarios'

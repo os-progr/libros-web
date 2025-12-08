@@ -45,9 +45,28 @@ async function updateDB() {
         const connection = await mysql.createConnection(config);
         console.log('✅ Conectado a la base de datos.');
 
-        const sqlPath = path.join(__dirname, '../migrations/add_reviews_and_profiles.sql');
+        // Get all migration files from the migrations directory
+        const migrationsDir = path.join(__dirname, '../migrations');
 
-        if (fs.existsSync(sqlPath)) {
+        if (!fs.existsSync(migrationsDir)) {
+            console.log('⚠️ No se encontró el directorio de migraciones.');
+            await connection.end();
+            return;
+        }
+
+        // Read all .sql files and sort them alphabetically
+        const migrationFiles = fs.readdirSync(migrationsDir)
+            .filter(file => file.endsWith('.sql'))
+            .sort(); // Sort alphabetically to ensure correct order (004, 005, 006, etc.)
+
+        console.log(`📂 Encontrados ${migrationFiles.length} archivos de migración:`);
+        migrationFiles.forEach(file => console.log(`   - ${file}`));
+
+        // Execute each migration file
+        for (const migrationFile of migrationFiles) {
+            const sqlPath = path.join(migrationsDir, migrationFile);
+            console.log(`\n🔄 Ejecutando migración: ${migrationFile}`);
+
             const sqlContent = fs.readFileSync(sqlPath, 'utf8');
 
             // Split by semicolon but ignore semicolons inside quotes if simple splitting fails
@@ -57,28 +76,32 @@ async function updateDB() {
                 .map(stmt => stmt.trim())
                 .filter(stmt => stmt.length > 0);
 
-            console.log(`📜 Ejecutando ${statements.length} sentencias SQL...`);
+            console.log(`   📜 Ejecutando ${statements.length} sentencias SQL...`);
 
             for (const sql of statements) {
                 try {
                     await connection.query(sql);
+                    // Only log successful creates/alters, not every statement
+                    if (sql.toUpperCase().includes('CREATE TABLE')) {
+                        const tableName = sql.match(/CREATE TABLE (?:IF NOT EXISTS )?`?(\w+)`?/i)?.[1];
+                        console.log(`   ✅ Tabla creada/verificada: ${tableName}`);
+                    }
                 } catch (err) {
                     // Error 1060: Duplicate column name
                     // Error 1050: Table already exists
                     // Error 1061: Duplicate key name
                     if (err.errno === 1060 || err.errno === 1050 || err.errno === 1061) {
-                        console.log(`   ⏭️ Ya existe (omitido): ${sql.substring(0, 30)}...`);
+                        console.log(`   ⏭️ Ya existe (omitido): ${sql.substring(0, 50)}...`);
                     } else {
                         console.warn(`   ⚠️ Advertencia ejecutando SQL: ${err.message}`);
                         // console.warn(`   Sentencia: ${sql.substring(0, 100)}...`);
                     }
                 }
             }
-            console.log('✅ Actualización completada (si hubo).');
-        } else {
-            console.log('ℹ️ No se encontró archivo de migración add_reviews_and_profiles.sql, omitiendo.');
+            console.log(`   ✅ Migración ${migrationFile} completada.`);
         }
 
+        console.log('\n✅ Todas las migraciones completadas.');
         await connection.end();
         console.log('✅ Desconectado.');
     } catch (error) {

@@ -1,5 +1,21 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.1 (2025-12-08)
+
+### 🔧 Corrección Crítica de Migraciones
+- **Problema Resuelto**: Error `Table 'railway.messages' doesn't exist` en producción
+- **Causa**: El script de migración solo ejecutaba `add_reviews_and_profiles.sql`, ignorando otras migraciones críticas
+- **Solución**: Actualizado `scripts/db_update.js` para ejecutar **todas** las migraciones automáticamente
+- **Impacto**: 
+  - ✅ Tabla `messages` ahora se crea correctamente
+  - ✅ Tabla `follows` ahora se crea correctamente
+  - ✅ Tabla `comments` ahora se crea correctamente
+  - ✅ Todas las funcionalidades sociales funcionan en producción
+  - ✅ Sistema de comentarios funcional
+- **Mejora Técnica**: El sistema ahora descubre y ejecuta automáticamente todos los archivos `.sql` en el directorio `migrations/` en orden alfabético
+
+---
+
 ## v10.8 (2025-12-05)
 
 ### 🔔 Notificaciones y Feedback Admin
