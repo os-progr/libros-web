@@ -56,10 +56,18 @@ const GlobalChat = {
         }
 
         // Toggle chat
-        toggleBtn.addEventListener('click', (e) => {
+        const toggleHandler = (e) => {
             e.stopPropagation();
             this.toggleChat();
-        });
+        };
+
+        toggleBtn.addEventListener('click', toggleHandler);
+
+        // Header button handler
+        const headerBtn = document.getElementById('headerChatBtn');
+        if (headerBtn) {
+            headerBtn.addEventListener('click', toggleHandler);
+        }
 
         header.addEventListener('click', (e) => {
             if (e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
@@ -192,10 +200,19 @@ const GlobalChat = {
     },
 
     updateMessageCount() {
+        const count = this.messages.length;
+
+        // Update widget counter
         const countEl = document.getElementById('chatMessageCount');
         if (countEl) {
-            const count = this.messages.length;
             countEl.textContent = count;
+        }
+
+        // Update header badge
+        const headerBadge = document.getElementById('headerChatBadge');
+        if (headerBadge) {
+            headerBadge.textContent = count;
+            headerBadge.classList.remove('hidden'); // Always show count if chat is active feature
         }
     },
 

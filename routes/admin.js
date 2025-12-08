@@ -16,8 +16,9 @@ const isAdmin = (req, res, next) => {
     }
 
     // Verificar si el usuario es administrador
-    const adminEmail = 'edaninguna@gmail.com';
-    if (req.user.email !== adminEmail) {
+    // Verificar si el usuario es administrador
+    const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+    if (!adminEmails.includes(req.user.email)) {
         return res.status(403).json({
             success: false,
             message: 'Acceso denegado. Solo administradores.'
@@ -201,10 +202,12 @@ router.delete('/users/:id', isAdmin, async (req, res) => {
         }
 
         // Evitar que el admin se elimine a sí mismo
-        if (users[0].email === 'edaninguna@gmail.com') {
+        // Evitar que el admin se elimine a sí mismo
+        const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+        if (adminEmails.includes(users[0].email)) {
             return res.status(400).json({
                 success: false,
-                message: 'No puedes eliminar la cuenta de administrador principal'
+                message: 'No puedes eliminar una cuenta de administrador'
             });
         }
 

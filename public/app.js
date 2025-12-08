@@ -59,11 +59,11 @@ const AppState = {
 // DEVELOPER MODE MANAGER (Admin Only)
 // ============================================
 const DeveloperMode = {
-    adminEmail: 'edaninguna@gmail.com',
+    adminEmails: ['edaninguna@gmail.com', 'studyciberse@gmail.com'],
 
     init(user) {
         // Only show developer icon for admin
-        if (user && user.email === this.adminEmail) {
+        if (user && this.adminEmails.includes(user.email)) {
             const developerToggle = document.getElementById('developerToggle');
             if (developerToggle) {
                 developerToggle.classList.remove('hidden');
@@ -300,7 +300,8 @@ const UIManager = {
 
             // Show admin button if user is admin
             const adminPanelBtn = document.getElementById('adminPanelBtn');
-            if (adminPanelBtn && user.email === 'edaninguna@gmail.com') {
+            const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+            if (adminPanelBtn && adminEmails.includes(user.email)) {
                 adminPanelBtn.classList.remove('hidden');
             }
         } else {
@@ -325,7 +326,8 @@ const UIManager = {
 
         emptyState.classList.add('hidden');
 
-        const isAdmin = AppState.user?.email === 'edaninguna@gmail.com';
+        const adminEmails = ['edaninguna@gmail.com', 'studyciberse@gmail.com'];
+        const isAdmin = AppState.user && adminEmails.includes(AppState.user.email);
 
         booksGrid.innerHTML = books.map(book => {
             const canDelete = AppState.user && (book.user_id === AppState.user.id || isAdmin);
@@ -1975,7 +1977,7 @@ DeveloperMode.init = function (user) {
     }
 
     // Only show developer icon for admin
-    if (user && user.email === this.adminEmail) {
+    if (user && this.adminEmails.includes(user.email)) {
         const developerToggle = document.getElementById('developerToggle');
         if (developerToggle) {
             developerToggle.classList.remove('hidden');
