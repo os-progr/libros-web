@@ -5,6 +5,10 @@
 ### 💬 Chat Global Público - Comunicación en Tiempo Real
 - **Widget de Chat Flotante**: Esquina inferior derecha, siempre accesible
 - **Chat Público para Todos**: Todos los usuarios autenticados pueden participar
+- **Reemplazo de Mensajes Privados**: 
+  - ❌ Eliminado sistema de mensajes privados del header
+  - ✅ Ahora solo existe el chat global público (más simple y directo)
+  - ✅ Todos los usuarios pueden comunicarse en un solo lugar
 - **Auto-Limpieza Inteligente**:
   - ✅ Mantiene automáticamente los últimos 199 mensajes
   - ✅ Cuando llega a 200 mensajes, elimina los más antiguos (200-1)
