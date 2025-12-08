@@ -1,10 +1,10 @@
 {
   "name": "libros-web",
-  "version": "12.4.0",
+  "version": "12.6.0",
   "description": "Plataforma para compartir y descubrir libros con autenticación de Google",
   "main": "server.js",
   "scripts": {
-    "start": "echo '🚀 STARTING VERSION 12.4' && node scripts/db_update.js && node init-uploads.js && node server.js",
+    "start": "echo '🚀 STARTING VERSION 12.6' && node scripts/db_update.js && node init-uploads.js && node server.js",
     "dev": "node init-uploads.js && nodemon server.js",
     "install:prod": "npm ci --omit=dev",
     "audit": "npm audit --production",
@@ -28,6 +28,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
     "express-session": "^1.17.3",
     "libreoffice-convert": "^1.7.0",
     "multer": "^1.4.5-lts.1",

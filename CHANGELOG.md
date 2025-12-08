@@ -1,5 +1,31 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.6 (2025-12-08)
+
+### 🔒 MySQL Session Store - Producción Escalable
+- **Problema Resuelto**:
+  - ❌ Eliminado warning: "MemoryStore is not designed for production"
+  - ✅ Implementado MySQL Session Store para producción
+- **Mejoras de Sesiones**:
+  - 💾 **Sesiones persistentes** en base de datos MySQL
+  - 📈 **Escalable** a múltiples procesos/servidores
+  - 🔄 **Limpieza automática** de sesiones expiradas (cada 15 min)
+  - ⏱️ **Expiración**: 24 horas de inactividad
+  - 🗑️ **Sin memory leaks** (problema de MemoryStore resuelto)
+- **Dependencias**:
+  - ➕ Agregado `express-mysql-session@^3.0.0`
+- **Configuración**:
+  - 🔧 Tabla `sessions` creada automáticamente
+  - 🔐 Usa las mismas credenciales de MySQL existentes
+  - ⚙️ Configuración optimizada para Railway
+- **Beneficios**:
+  - ✅ **Sin warnings** en producción
+  - ✅ **Sesiones persistentes** (sobreviven a reinicios)
+  - ✅ **Escalabilidad horizontal** (múltiples instancias)
+  - ✅ **Mejor rendimiento** en producción
+
+---
+
 ## v12.5 (2025-12-08)
 
 ### 🔒 Mejoras de Seguridad y Configuración

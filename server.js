@@ -48,13 +48,48 @@ app.use(cors({
     credentials: true
 }));
 
+
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration
+// ============================================
+// SESSION STORE CONFIGURATION
+// ============================================
+
+// Import MySQL Session Store
+const MySQLStore = require('express-mysql-session')(session);
+
+// Create session store options
+const sessionStoreOptions = {
+    host: process.env.MYSQLHOST || process.env.DB_HOST,
+    port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
+    user: process.env.MYSQLUSER || process.env.DB_USER,
+    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+    database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+    clearExpired: true,
+    checkExpirationInterval: 900000, // 15 minutes
+    expiration: 86400000, // 24 hours
+    createDatabaseTable: true,
+    schema: {
+        tableName: 'sessions',
+        columnNames: {
+            session_id: 'session_id',
+            expires: 'expires',
+            data: 'data'
+        }
+    }
+};
+
+// Create session store
+const sessionStore = new MySQLStore(sessionStoreOptions);
+
+console.log('✅ MySQL Session Store configured');
+
+// Session configuration with MySQL Store
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
+    store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {

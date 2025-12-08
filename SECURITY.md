@@ -10,9 +10,12 @@
 
 ### 2. **Autenticación y Sesiones**
 - ✅ Google OAuth 2.0 para autenticación segura
+- ✅ **MySQL Session Store** en producción (escalable y persistente)
 - ✅ Sesiones con cookies httpOnly (previene XSS)
 - ✅ Cookies secure en producción (solo HTTPS)
 - ✅ Secret de sesión en variables de entorno
+- ✅ Limpieza automática de sesiones expiradas (cada 15 minutos)
+- ✅ Expiración de sesiones: 24 horas
 
 ### 3. **Base de Datos**
 - ✅ Prepared statements (previene SQL injection)
