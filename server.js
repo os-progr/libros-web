@@ -169,6 +169,8 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/library', libraryRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/comments', commentsRoutes);
+const toolsRoutes = require('./routes/tools');
+app.use('/api/tools', toolsRoutes);
 
 
 // Serve index.html for root route
