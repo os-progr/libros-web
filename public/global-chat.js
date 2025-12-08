@@ -6,14 +6,33 @@ const GlobalChat = {
     isOpen: false,
     messages: [],
     refreshInterval: null,
+    initialized: false,
 
     init() {
+        // Prevent double initialization
+        if (this.initialized) return;
+
+        console.log('🔄 Initializing Global Chat...');
+        console.log('AppState:', AppState);
+        console.log('isAuthenticated:', AppState?.isAuthenticated);
+
         // Only initialize if user is authenticated
-        if (!AppState.isAuthenticated) {
-            document.getElementById('globalChatWidget').style.display = 'none';
+        if (!AppState || !AppState.isAuthenticated) {
+            console.log('❌ User not authenticated, hiding chat widget');
+            const widget = document.getElementById('globalChatWidget');
+            if (widget) {
+                widget.style.display = 'none';
+            }
             return;
         }
 
+        console.log('✅ User authenticated, showing chat widget');
+        const widget = document.getElementById('globalChatWidget');
+        if (widget) {
+            widget.style.display = 'flex';
+        }
+
+        this.initialized = true;
         this.setupEventListeners();
         this.loadMessages();
 
@@ -31,8 +50,17 @@ const GlobalChat = {
         const input = document.getElementById('globalChatInput');
         const header = document.getElementById('chatWidgetHeader');
 
+        if (!toggleBtn || !sendBtn || !input || !header) {
+            console.error('❌ Chat elements not found');
+            return;
+        }
+
         // Toggle chat
-        toggleBtn.addEventListener('click', () => this.toggleChat());
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleChat();
+        });
+
         header.addEventListener('click', (e) => {
             if (e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
                 this.toggleChat();
@@ -55,6 +83,8 @@ const GlobalChat = {
             const count = input.value.length;
             document.getElementById('chatCharCount').textContent = `${count}/500`;
         });
+
+        console.log('✅ Chat event listeners set up');
     },
 
     toggleChat() {
@@ -92,14 +122,17 @@ const GlobalChat = {
         } catch (error) {
             console.error('Error loading chat messages:', error);
             if (!silent) {
-                document.getElementById('globalChatMessages').innerHTML =
-                    '<div class="chat-error">Error al cargar mensajes</div>';
+                const container = document.getElementById('globalChatMessages');
+                if (container) {
+                    container.innerHTML = '<div class="chat-error">Error al cargar mensajes</div>';
+                }
             }
         }
     },
 
     renderMessages() {
         const container = document.getElementById('globalChatMessages');
+        if (!container) return;
 
         if (this.messages.length === 0) {
             container.innerHTML = '<div class="chat-empty">No hay mensajes aún. ¡Sé el primero en escribir!</div>';
@@ -159,15 +192,20 @@ const GlobalChat = {
     },
 
     updateMessageCount() {
-        const count = this.messages.length;
-        document.getElementById('chatMessageCount').textContent = count;
+        const countEl = document.getElementById('chatMessageCount');
+        if (countEl) {
+            const count = this.messages.length;
+            countEl.textContent = count;
+        }
     },
 
     scrollToBottom() {
         const container = document.getElementById('globalChatMessages');
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 100);
+        if (container) {
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
     },
 
     formatTime(timestamp) {
@@ -207,14 +245,37 @@ const GlobalChat = {
     }
 };
 
-// Initialize when DOM is ready and user is authenticated
+// Try to initialize when AppState is ready
+function tryInitGlobalChat() {
+    if (typeof AppState !== 'undefined' && AppState.isAuthenticated) {
+        console.log('✅ AppState ready, initializing chat');
+        GlobalChat.init();
+        return true;
+    }
+    return false;
+}
+
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait a bit for AppState to be set
-    setTimeout(() => {
-        if (typeof AppState !== 'undefined' && AppState.isAuthenticated) {
-            GlobalChat.init();
-        }
-    }, 1000);
+    console.log('📄 DOM loaded, attempting to initialize chat...');
+
+    // Try immediately
+    if (!tryInitGlobalChat()) {
+        // If not ready, try again after delays
+        setTimeout(() => {
+            if (!tryInitGlobalChat()) {
+                setTimeout(() => tryInitGlobalChat(), 1500);
+            }
+        }, 500);
+    }
+});
+
+// Also try when window loads (backup)
+window.addEventListener('load', () => {
+    if (!GlobalChat.initialized) {
+        console.log('🔄 Window loaded, trying chat init again...');
+        tryInitGlobalChat();
+    }
 });
 
 // Cleanup on page unload
