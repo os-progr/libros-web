@@ -1,5 +1,30 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.5 (2025-12-08)
+
+### 🔒 Mejoras de Seguridad y Configuración
+- **Configuración de NPM Moderna**:
+  - ✅ Actualizado a sintaxis moderna `--omit=dev` (elimina warning)
+  - ✅ Archivo `.npmrc` para configuración de producción segura
+  - ✅ Scripts de auditoría de seguridad agregados
+  - ✅ Versiones mínimas de Node.js (>=18) y npm (>=9) especificadas
+- **Documento de Seguridad**:
+  - 📄 Creado `SECURITY.md` con todas las medidas implementadas
+  - 📋 Checklist de seguridad completo
+  - 🔐 Guía de variables de entorno requeridas
+  - 💡 Recomendaciones para mejoras futuras
+- **Package.json Actualizado**:
+  - 🔄 Versión sincronizada con VERSION (12.5.0)
+  - 🛡️ Scripts de seguridad: `audit`, `audit:fix`, `install:prod`
+  - ⚙️ Engines especificados para compatibilidad
+- **Protección contra Vulnerabilidades**:
+  - ✅ Dependencias de desarrollo NO se instalan en producción
+  - ✅ Auditorías automáticas habilitadas
+  - ✅ Configuración optimizada para Railway
+  - ✅ Sin advertencias de npm en despliegue
+
+---
+
 ## v12.4 (2025-12-08)
 
 ### 💬 Chat Global Público - Comunicación en Tiempo Real

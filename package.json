@@ -1,11 +1,18 @@
 {
   "name": "libros-web",
-  "version": "1.0.0",
+  "version": "12.4.0",
   "description": "Plataforma para compartir y descubrir libros con autenticación de Google",
   "main": "server.js",
   "scripts": {
-    "start": "echo '🚀 STARTING VERSION 3.1' && node scripts/db_update.js && node init-uploads.js && node server.js",
-    "dev": "node init-uploads.js && nodemon server.js"
+    "start": "echo '🚀 STARTING VERSION 12.4' && node scripts/db_update.js && node init-uploads.js && node server.js",
+    "dev": "node init-uploads.js && nodemon server.js",
+    "install:prod": "npm ci --omit=dev",
+    "audit": "npm audit --production",
+    "audit:fix": "npm audit fix --production"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "keywords": [
     "books",
