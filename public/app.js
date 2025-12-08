@@ -418,9 +418,7 @@ const UIManager = {
                         <button class="book-action-btn" onclick="event.stopPropagation(); UIManager.openReviewModal(${book.id})" title="Ver reseñas">
                             ⭐ Reseñas
                         </button>
-                        <button class="book-action-btn" onclick="event.stopPropagation(); CommentsSystem.openCommentsModal(${book.id}, '${this.escapeHtml(book.title)}')" title="Comentarios">
-                            💬 Comentarios
-                        </button>
+
                         <button class="book-action-btn" onclick="event.stopPropagation(); UIManager.shareBook(${book.id}, '${this.escapeHtml(book.title)}')" title="Compartir">
                             📤 Compartir
                         </button>
