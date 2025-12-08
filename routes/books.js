@@ -222,8 +222,19 @@ router.get('/:id/view', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Redirect to Cloudinary URL
-        res.redirect(book.pdf_path);
+        // Check if it's a remote URL (Cloudinary) or local file
+        if (book.pdf_path && book.pdf_path.startsWith('http')) {
+            res.redirect(book.pdf_path);
+        } else {
+            // Serve local file
+            const filePath = path.resolve(__dirname, '..', book.pdf_path);
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    console.error('Error serving local file:', err);
+                    res.status(404).send('Archivo no encontrado');
+                }
+            });
+        }
     } catch (error) {
         console.error('Error viewing book:', error);
         res.status(500).json({
@@ -276,16 +287,31 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
             console.error('Error registering download:', dbError);
         }
 
-        // Modify Cloudinary URL to force download
-        // Add fl_attachment flag to make browser download instead of display
-        let downloadUrl = fileUrl;
-        if (fileUrl.includes('cloudinary.com')) {
-            // Insert fl_attachment before the version number or file path
-            downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-        }
+        // Handle File Download
+        if (fileUrl && fileUrl.startsWith('http')) {
+            // Cloudinary / Remote logic
+            let downloadUrl = fileUrl;
+            if (fileUrl.includes('cloudinary.com')) {
+                // Insert fl_attachment before the version number or file path to force download
+                // This regex works for typical Cloudinary URLs
+                downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+            }
+            res.redirect(downloadUrl);
+        } else {
+            // Local file logic
+            // Clean filename characters
+            const safeFilename = filename.replace(/[^a-z0-9\s.-]/gi, '_');
+            const filePath = path.resolve(__dirname, '..', fileUrl);
 
-        // Redirect to Cloudinary download URL
-        res.redirect(downloadUrl);
+            res.download(filePath, safeFilename, (err) => {
+                if (err) {
+                    console.error('Error downloading local file:', err);
+                    if (!res.headersSent) {
+                        res.status(404).send('Archivo no encontrado');
+                    }
+                }
+            });
+        }
     } catch (error) {
         console.error('Error downloading book:', error);
         res.status(500).json({
@@ -309,8 +335,18 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Redirect to Cloudinary URL
-        res.redirect(book.cover_path);
+        if (book.cover_path.startsWith('http')) {
+            res.redirect(book.cover_path);
+        } else {
+            const filePath = path.resolve(__dirname, '..', book.cover_path);
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    // Try serving a default placeholder if cover missing
+                    console.error('Error serving local cover:', err);
+                    res.status(404).send('Portada no encontrada');
+                }
+            });
+        }
     } catch (error) {
         console.error('Error fetching cover:', error);
         res.status(500).json({

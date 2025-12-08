@@ -1,5 +1,22 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.7 (2025-12-08)
+
+### 📂 Corrección de Acceso a Archivos
+- **Problema Resuelto**: Error "No podemos abrir este archivo" al intentar ver o descargar libros antiguos.
+- **Causa**: La aplicación redirigía ciegamente a rutas locales (`uploads/...`) que no eran accesibles globalmente tras la migración a Cloudinary.
+- **Solución**:
+  - ✅ Implementada lógica híbrida en el backend (`routes/books.js`)
+  - ✅ Detecta si el archivo es una URL (Cloudinary) o una ruta local
+  - ✅ Si es URL → Redirige correctamente
+  - ✅ Si es Local → Sirve el archivo usando `res.sendFile` o `res.download`
+- **Impacto**:
+  - ✅ Compatibilidad total con libros antiguos alojados localmente
+  - ✅ Compatibilidad con nuevos libros alojados en Cloudinary
+  - ✅ Descargas y visualización funcionan en ambos casos
+
+---
+
 ## v12.6 (2025-12-08)
 
 ### 🔒 MySQL Session Store - Producción Escalable
