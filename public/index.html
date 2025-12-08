@@ -524,11 +524,7 @@
                     <img src="" alt="Profile" id="profileImage" class="profile-avatar-large">
                     <div class="profile-info">
                         <h2 id="profileName">Usuario</h2>
-                        <p id="profileBio" class="profile-bio">Sin biografía</p>
-                        <div class="profile-meta">
-                            <span id="profileLocation">📍 Ubicación desconocida</span>
-                            <a href="#" id="profileWebsite" target="_blank">🌐 Sitio Web</a>
-                        </div>
+                        <!-- REMOVED BIO, LOCATION, WEBSITE -->
                     </div>
                 </div>
 
@@ -544,7 +540,7 @@
                 </div>
 
                 <div id="profileEditSection" class="hidden">
-                    <button class="btn btn-secondary" id="btnEditProfile">✏️ Editar Perfil</button>
+                    <!-- Edit removed -->
                 </div>
 
                 <h3>📚 Libros Publicados</h3>
@@ -555,32 +551,7 @@
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal-overlay" id="editProfileModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">✏️ Editar Perfil</h2>
-                <button class="modal-close" id="closeEditProfileModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="editProfileForm">
-                    <div class="form-group">
-                        <label class="form-label">Biografía</label>
-                        <textarea class="form-textarea" id="editProfileBio" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Sitio Web</label>
-                        <input type="url" class="form-input" id="editProfileWebsite">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ubicación</label>
-                        <input type="text" class="form-input" id="editProfileLocation">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Edit Profile Modal REMOVED -->
 
     <!-- PDF Tools Modal -->
     <div class="modal-overlay" id="toolsModal">
@@ -682,22 +653,10 @@
                 </div>
                 <div class="modal-body">
                     <form id="enhancedProfileForm">
-                        <div class="form-group">
-                            <label class="form-label">Biografía Corta</label>
-                            <textarea class="form-textarea" id="enhancedBio" rows="2" maxlength="200"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sobre Mí (Extendido)</label>
-                            <textarea class="form-textarea" id="enhancedAboutMe" rows="4"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sitio Web</label>
-                            <input type="url" class="form-input" id="enhancedWebsite" placeholder="https://...">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Ubicación</label>
-                            <input type="text" class="form-input" id="enhancedLocation" placeholder="Ciudad, País">
-                        </div>
+
+
+
+
                         <div class="form-group">
                             <label class="form-label">Twitter</label>
                             <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">

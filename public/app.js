@@ -739,26 +739,13 @@ const UIManager = {
             const p = result.profile;
             document.getElementById('profileName').textContent = p.name;
             document.getElementById('profileImage').src = p.picture || '';
-            document.getElementById('profileBio').textContent = p.bio || 'Sin biografía';
-            document.getElementById('profileLocation').textContent = p.location ? `📍 ${p.location}` : '📍 Ubicación no especificada';
-
-            const webLink = document.getElementById('profileWebsite');
-            if (p.website) {
-                webLink.href = p.website;
-                webLink.classList.remove('hidden');
-            } else {
-                webLink.classList.add('hidden');
-            }
 
             document.getElementById('profileTotalBooks').textContent = p.stats.total_books;
             document.getElementById('profileTotalDownloads').textContent = p.stats.total_downloads;
 
             // Show edit button if own profile
             const editSection = document.getElementById('profileEditSection');
-            if (AppState.user && AppState.user.id === p.id) {
-                editSection.classList.remove('hidden');
-                document.getElementById('btnEditProfile').onclick = () => this.openEditProfileModal(p);
-            } else {
+            if (editSection) {
                 editSection.classList.add('hidden');
             }
 
@@ -768,10 +755,7 @@ const UIManager = {
     },
 
     openEditProfileModal(profile) {
-        document.getElementById('editProfileBio').value = profile.bio || '';
-        document.getElementById('editProfileWebsite').value = profile.website || '';
-        document.getElementById('editProfileLocation').value = profile.location || '';
-        document.getElementById('editProfileModal').classList.add('active');
+        // Feature disabled
     },
 
     renderProfileBooks(books) {
@@ -1053,29 +1037,10 @@ const EventHandlers = {
     },
 
     // Handle profile edit submission
+    // Handle profile edit submission
     async handleEditProfileSubmit(e) {
         e.preventDefault();
-        const bio = document.getElementById('editProfileBio').value.trim();
-        const website = document.getElementById('editProfileWebsite').value.trim();
-        const location = document.getElementById('editProfileLocation').value.trim();
-
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        UIManager.showLoading(submitBtn);
-
-        const result = await API.updateProfile({ bio, website, location });
-
-        if (result.success) {
-            alert('Perfil actualizado');
-            document.getElementById('editProfileModal').classList.remove('active');
-            // Reload profile view
-            if (AppState.user) {
-                UIManager.openProfileModal(AppState.user.id);
-            }
-        } else {
-            alert(result.message || 'Error al actualizar perfil');
-        }
-        UIManager.hideLoading(submitBtn, originalText);
+        // Feature disabled
     }
 };
 async function loadBooks() {
