@@ -1,0 +1,75 @@
+/* ============================================
+   UPDATED NOTIFICATIONS STYLES
+   ============================================ */
+
+.notifications-dropdown .notification-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.75;
+    /* Read notifications are slightly dimmed */
+    background-color: var(--card-background);
+}
+
+.notifications-dropdown .notification-item:hover {
+    background-color: var(--background-color);
+    opacity: 1;
+}
+
+.notifications-dropdown .notification-item.unread {
+    opacity: 1;
+    background-color: rgba(59, 130, 246, 0.1);
+    /* Light blue background for unread */
+    border-left: 3px solid var(--primary-color);
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.notification-message {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+}
+
+.notification-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.empty-notifications {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.notif-heading-actions {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+#markAllReadBtn {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#markAllReadBtn:hover {
+    color: var(--primary-hover);
+}
