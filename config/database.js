@@ -180,6 +180,13 @@ const bookQueries = {
         return result.affectedRows > 0;
     },
 
+    // Delete book by ID (Admin override)
+    deleteAny: async (id) => {
+        const sql = 'DELETE FROM books WHERE id = ?';
+        const result = await query(sql, [id]);
+        return result.affectedRows > 0;
+    },
+
     // Check if user owns book
     isOwner: async (bookId, userId) => {
         const sql = 'SELECT id FROM books WHERE id = ? AND user_id = ?';

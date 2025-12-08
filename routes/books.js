@@ -383,7 +383,14 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
         // Cloudinary files can be deleted manually if needed via admin panel
 
         // Delete from database
-        await bookQueries.delete(req.params.id, req.user.id);
+        // Monitor deletion strategy
+        if (adminEmails.includes(req.user.email)) {
+            // Admin deletion (bypasses ownership check)
+            await bookQueries.deleteAny(req.params.id);
+        } else {
+            // User deletion (enforces ownership)
+            await bookQueries.delete(req.params.id, req.user.id);
+        }
 
         res.json({
             success: true,
