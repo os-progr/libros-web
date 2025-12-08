@@ -53,6 +53,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // ============================================
 // SESSION STORE CONFIGURATION
 // ============================================
@@ -60,26 +61,58 @@ app.use(express.urlencoded({ extended: true }));
 // Import MySQL Session Store
 const MySQLStore = require('express-mysql-session')(session);
 
-// Create session store options
-const sessionStoreOptions = {
-    host: process.env.MYSQLHOST || process.env.DB_HOST,
-    port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
-    user: process.env.MYSQLUSER || process.env.DB_USER,
-    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
-    database: process.env.MYSQLDATABASE || process.env.DB_NAME,
-    clearExpired: true,
-    checkExpirationInterval: 900000, // 15 minutes
-    expiration: 86400000, // 24 hours
-    createDatabaseTable: true,
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
+// Create session store options - Use same logic as database.js
+let sessionStoreOptions;
+
+if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+    // Use connection string (Railway preferred method)
+    console.log('🔄 Using MYSQL_URL for session store');
+    const connectionString = process.env.MYSQL_URL || process.env.DATABASE_URL;
+
+    // Parse connection string to extract components
+    const url = new URL(connectionString);
+    sessionStoreOptions = {
+        host: url.hostname,
+        port: parseInt(url.port) || 3306,
+        user: url.username,
+        password: url.password,
+        database: url.pathname.substring(1), // Remove leading slash
+        clearExpired: true,
+        checkExpirationInterval: 900000, // 15 minutes
+        expiration: 86400000, // 24 hours
+        createDatabaseTable: true,
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
         }
-    }
-};
+    };
+} else {
+    // Use individual environment variables
+    console.log('🔄 Using individual MySQL env vars for session store');
+    sessionStoreOptions = {
+        host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || 3306),
+        user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+        password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
+        database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'libros_web',
+        clearExpired: true,
+        checkExpirationInterval: 900000, // 15 minutes
+        expiration: 86400000, // 24 hours
+        createDatabaseTable: true,
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    };
+}
 
 // Create session store
 const sessionStore = new MySQLStore(sessionStoreOptions);
