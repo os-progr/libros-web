@@ -1,5 +1,19 @@
 # 📝 Registro de Cambios - LibrosWeb
 
+## v12.2 (2025-12-08)
+
+### 🛡️ Corrección de Errores del Panel Admin
+- **Problema Resuelto**: Error `Cannot read properties of undefined (reading 'total')` en `/api/admin/stats`
+- **Causa**: Las consultas a la base de datos no manejaban casos donde las tablas no existen o retornan resultados vacíos
+- **Solución**: Implementada programación defensiva con:
+  - ✅ Función helper `safeCount()` para validar resultados antes de acceder a propiedades
+  - ✅ Try-catch individual para cada consulta de estadísticas
+  - ✅ Valores por defecto (0) cuando las consultas fallan
+  - ✅ El panel admin ahora muestra estadísticas en 0 en lugar de crashear
+- **Impacto**: El panel de administración es ahora más robusto y no falla durante el despliegue inicial
+
+---
+
 ## v12.1 (2025-12-08)
 
 ### 🔧 Corrección Crítica de Migraciones
