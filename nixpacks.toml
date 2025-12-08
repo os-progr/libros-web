@@ -1,0 +1,11 @@
+# Nixpacks configuration for Railway
+# Defines the environment and dependencies needed
+
+[phases.setup]
+nixPkgs = ["nodejs", "npm", "libreoffice"]
+
+[phases.build]
+cmds = ["npm ci --omit=dev"]
+
+[phases.start]
+cmds = ["npm start"]
