@@ -18,7 +18,9 @@ const isAdmin = (req, res, next) => {
     // Verificar si el usuario es administrador
     // Verificar si el usuario es administrador
     const adminEmails = ['edaninguna@gmail.com'];
-    if (!adminEmails.includes(req.user.email)) {
+    const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
+
+    if (!adminEmails.includes(userEmail)) {
         return res.status(403).json({
             success: false,
             message: 'Acceso denegado. Solo administradores.'

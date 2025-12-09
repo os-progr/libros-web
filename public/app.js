@@ -54,7 +54,7 @@ const AppState = {
     adminEmails: ['edaninguna@gmail.com'],
 
     isAdmin() {
-        return this.user && this.adminEmails.includes(this.user.email);
+        return this.user && this.adminEmails.includes(this.user.email.toLowerCase().trim());
     }
 };
 
@@ -1147,6 +1147,16 @@ function setupEventListeners() {
     // File inputs
     const bookFile = document.getElementById('bookFile');
     if (bookFile) bookFile.addEventListener('change', EventHandlers.handleFileChange);
+
+    // Profile Edit Trigger
+    const userProfileCompact = document.querySelector('.user-profile-compact');
+    if (userProfileCompact) {
+        userProfileCompact.addEventListener('click', () => {
+            if (typeof SocialFeatures !== 'undefined') {
+                SocialFeatures.openEnhancedProfileModal();
+            }
+        });
+    }
 
     const bookCover = document.getElementById('bookCover');
     if (bookCover) bookCover.addEventListener('change', EventHandlers.handleFileChange);

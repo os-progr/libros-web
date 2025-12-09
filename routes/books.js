@@ -373,10 +373,11 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 
         // Check if user owns the book or is admin
         const adminEmails = ['edaninguna@gmail.com'];
+        const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
         const isOwner = book.user_id === req.user.id;
-        const isAdmin = adminEmails.includes(req.user.email);
+        const isAdmin = adminEmails.includes(userEmail);
 
-        console.log(`[DELETE] Permission check - Owner: ${isOwner}, Admin: ${isAdmin} (${req.user.email})`);
+        console.log(`[DELETE] Permission check - Owner: ${isOwner}, Admin: ${isAdmin} (${userEmail})`);
 
         if (!isOwner && !isAdmin) {
             console.log('[DELETE] Permission denied');

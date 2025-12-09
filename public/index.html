@@ -303,7 +303,7 @@
                     <h3 class="admin-section-title">ℹ️ Información del Sistema</h3>
                     <div class="system-info">
                         <div class="info-row"><span class="info-label">Versión:</span><span
-                                class="info-value">v12.12</span></div>
+                                class="info-value">v12.13</span></div>
                         <div class="info-row"><span class="info-label">Libros Hoy:</span><span class="info-value"
                                 id="statBooksToday">-</span></div>
                         <div class="info-row"><span class="info-label">Reportes Pendientes:</span><span
@@ -653,10 +653,13 @@
                 </div>
                 <div class="modal-body">
                     <form id="enhancedProfileForm">
-
-
-
-
+                        <div class="form-group">
+                            <label class="form-label">Nombre para mostrar</label>
+                            <input type="text" class="form-input" id="enhancedName"
+                                placeholder="Tu nombre público o anónimo" required>
+                            <small style="color: var(--text-secondary); font-size: 0.8rem;">Este nombre será visible
+                                para todos.</small>
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Twitter</label>
                             <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">

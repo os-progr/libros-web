@@ -430,6 +430,7 @@ router.get('/stats/:userId', isAuthenticated, async (req, res) => {
 router.put('/profile', isAuthenticated, async (req, res) => {
     try {
         const {
+            name,
             bio,
             website,
             location,
@@ -443,6 +444,7 @@ router.put('/profile', isAuthenticated, async (req, res) => {
 
         await db.query(`
             UPDATE users SET
+                name = COALESCE(?, name),
                 bio = ?,
                 website = ?,
                 location = ?,
@@ -454,6 +456,7 @@ router.put('/profile', isAuthenticated, async (req, res) => {
                 reading_goal_yearly = ?
             WHERE id = ?
         `, [
+            name,
             bio, website, location, about_me,
             social_twitter, social_instagram, social_facebook,
             favorite_genres, reading_goal_yearly,

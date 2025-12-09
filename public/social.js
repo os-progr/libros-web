@@ -382,6 +382,7 @@ const SocialFeatures = {
 
         if (data.success) {
             const profile = data.profile;
+            document.getElementById('enhancedName').value = profile.name || '';
             document.getElementById('enhancedBio').value = profile.bio || '';
             document.getElementById('enhancedAboutMe').value = profile.about_me || '';
             document.getElementById('enhancedWebsite').value = profile.website || '';
@@ -403,6 +404,7 @@ const SocialFeatures = {
         event.preventDefault();
 
         const profileData = {
+            name: document.getElementById('enhancedName').value,
             bio: document.getElementById('enhancedBio').value,
             about_me: document.getElementById('enhancedAboutMe').value,
             website: document.getElementById('enhancedWebsite').value,
