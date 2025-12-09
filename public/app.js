@@ -786,8 +786,16 @@ const UIManager = {
         }
     },
 
-    openEditProfileModal(profile) {
-        // Feature disabled
+    // Open Edit Profile Modal
+    openEditProfileModal() {
+        const modal = document.getElementById('editProfileModal');
+        const nameInput = document.getElementById('editProfileName');
+
+        if (AppState.user) {
+            nameInput.value = AppState.user.name;
+        }
+
+        modal.classList.add('active');
     },
 
     renderProfileBooks(books) {
@@ -1081,7 +1089,49 @@ const EventHandlers = {
     // Handle profile edit submission
     async handleEditProfileSubmit(e) {
         e.preventDefault();
-        // Feature disabled
+
+        const nameInput = document.getElementById('editProfileName');
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+
+        UIManager.showLoading(btn);
+
+        try {
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('El nombre no puede estar vacío');
+                UIManager.hideLoading(btn, originalText);
+                return;
+            }
+
+            const result = await API.updateProfile({ name });
+
+            if (result.success) {
+                alert('✅ Perfil actualizado exitosamente');
+
+                // Update local state
+                if (AppState.user) AppState.user.name = name;
+
+                // Update UI elements
+                const headerName = document.getElementById('userName');
+                if (headerName) headerName.textContent = name;
+
+                // Close modal
+                document.getElementById('editProfileModal').classList.remove('active');
+
+                // Reload profile to see changes
+                if (AppState.user) {
+                    UIManager.openProfileModal(AppState.user.id);
+                }
+            } else {
+                alert(result.message || 'Error al actualizar perfil');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Error al actualizar el perfil');
+        } finally {
+            UIManager.hideLoading(btn, originalText);
+        }
     }
 };
 async function loadBooks() {

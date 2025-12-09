@@ -79,13 +79,13 @@ router.get('/:userId', async (req, res) => {
 // @access  Private
 router.put('/', isAuthenticated, async (req, res) => {
     try {
-        const { bio, website, location } = req.body;
+        const { name, bio, website, location } = req.body;
 
         await db.query(`
             UPDATE users
-            SET bio = ?, website = ?, location = ?
+            SET name = COALESCE(?, name), bio = ?, website = ?, location = ?
             WHERE id = ?
-        `, [bio || null, website || null, location || null, req.user.id]);
+        `, [name || null, bio || null, website || null, location || null, req.user.id]);
 
         res.json({
             success: true,
