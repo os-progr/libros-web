@@ -69,8 +69,7 @@
                         </button>
 
                         <!-- User Profile -->
-                        <div class="user-profile-compact"
-                            onclick="if(typeof SocialFeatures !== 'undefined') SocialFeatures.openEnhancedProfileModal()">
+                        <div class="user-profile-compact">
                             <img id="userPicture" src="" alt="User" class="user-avatar-small">
                             <div class="user-info-compact">
                                 <span id="userName" class="user-name-compact"></span>
@@ -304,7 +303,7 @@
                     <h3 class="admin-section-title">ℹ️ Información del Sistema</h3>
                     <div class="system-info">
                         <div class="info-row"><span class="info-label">Versión:</span><span
-                                class="info-value">v12.14</span></div>
+                                class="info-value">v12.18</span></div>
                         <div class="info-row"><span class="info-label">Libros Hoy:</span><span class="info-value"
                                 id="statBooksToday">-</span></div>
                         <div class="info-row"><span class="info-label">Reportes Pendientes:</span><span
@@ -645,52 +644,7 @@
             </div>
         </div>
 
-        <!-- Enhanced Profile Edit Modal -->
-        <div class="modal-overlay" id="enhancedProfileModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3 class="modal-title">✏️ Editar Perfil Completo</h3>
-                    <button class="modal-close" onclick="SocialFeatures.closeEnhancedProfileModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="enhancedProfileForm">
-                        <div class="form-group">
-                            <label class="form-label">Nombre para mostrar</label>
-                            <input type="text" class="form-input" id="enhancedName"
-                                placeholder="Tu nombre público o anónimo" required>
-                            <small style="color: var(--text-secondary); font-size: 0.8rem;">Este nombre será visible
-                                para todos.</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Twitter</label>
-                            <input type="text" class="form-input" id="enhancedTwitter" placeholder="@usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Instagram</label>
-                            <input type="text" class="form-input" id="enhancedInstagram" placeholder="@usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Facebook</label>
-                            <input type="text" class="form-input" id="enhancedFacebook" placeholder="Usuario">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Géneros Favoritos</label>
-                            <input type="text" class="form-input" id="enhancedGenres"
-                                placeholder="Ficción, Ciencia, Historia...">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Meta de Lectura Anual</label>
-                            <input type="number" class="form-input" id="enhancedReadingGoal" min="0" placeholder="12">
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary"
-                                onclick="SocialFeatures.closeEnhancedProfileModal()">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Comments Modal -->
         <div class="modal-overlay" id="commentsModal">

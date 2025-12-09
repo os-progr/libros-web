@@ -47,7 +47,7 @@ passport.use(new GoogleStrategy({
             // Extract user data from Google profile
             const googleId = profile.id;
             const email = profile.emails[0].value;
-            const name = profile.displayName;
+            const name = 'Anónimo';
             const picture = profile.photos[0]?.value || null;
 
             // Check if user already exists
