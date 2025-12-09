@@ -6,11 +6,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
+const { validateReviewCreation, validateBookId } = require('../middleware/validators');
 
 // @route   GET /api/reviews/book/:bookId
 // @desc    Get all reviews for a book
 // @access  Public
-router.get('/book/:bookId', async (req, res) => {
+router.get('/book/:bookId', validateBookId, async (req, res) => {
     try {
         const reviews = await db.query(`
             SELECT 
@@ -52,7 +53,7 @@ router.get('/book/:bookId', async (req, res) => {
 // @route   POST /api/reviews
 // @desc    Create or update a review
 // @access  Private
-router.post('/', isAuthenticated, async (req, res) => {
+router.post('/', isAuthenticated, validateReviewCreation, async (req, res) => {
     try {
         const { book_id, rating, review_text } = req.body;
 

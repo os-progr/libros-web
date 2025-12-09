@@ -10,6 +10,9 @@ const fs = require('fs').promises;
 const { isAuthenticated } = require('../middleware/auth');
 const { bookQueries } = require('../config/database');
 const { uploadToCloudinary, deleteFromCloudinary } = require('../config/cloudinary');
+const { sanitizeFilePath, sanitizeFilename, isAllowedRemoteUrl } = require('../utils/security');
+const { uploadLimiter } = require('../middleware/rateLimiter');
+const { validateBookCreation, validateBookId } = require('../middleware/validators');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -94,11 +97,13 @@ router.get('/', isAuthenticated, async (req, res) => {
 // @access  Private
 router.post('/',
     isAuthenticated,
+    uploadLimiter, // Rate limiting for uploads
     upload.fields([
         { name: 'pdf', maxCount: 1 },
         { name: 'docx', maxCount: 1 },
         { name: 'cover', maxCount: 1 }
     ]),
+    validateBookCreation, // Input validation
     async (req, res) => {
         try {
             const { title, author, description } = req.body;
@@ -181,7 +186,7 @@ router.post('/',
 // @route   GET /api/books/:id
 // @desc    Get a specific book
 // @access  Private
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.get('/:id', isAuthenticated, validateBookId, async (req, res) => {
     try {
         const book = await bookQueries.findById(req.params.id);
 
@@ -211,7 +216,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 // @route   GET /api/books/:id/view
 // @desc    View PDF in browser
 // @access  Private
-router.get('/:id/view', isAuthenticated, async (req, res) => {
+router.get('/:id/view', isAuthenticated, validateBookId, async (req, res) => {
     try {
         const book = await bookQueries.findById(req.params.id);
 
@@ -224,16 +229,33 @@ router.get('/:id/view', isAuthenticated, async (req, res) => {
 
         // Check if it's a remote URL (Cloudinary) or local file
         if (book.pdf_path && book.pdf_path.startsWith('http')) {
+            // Validate it's from an allowed domain
+            if (!isAllowedRemoteUrl(book.pdf_path)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'URL no permitida'
+                });
+            }
             res.redirect(book.pdf_path);
         } else {
-            // Serve local file
-            const filePath = path.resolve(__dirname, '..', book.pdf_path);
-            res.sendFile(filePath, (err) => {
-                if (err) {
-                    console.error('Error serving local file:', err);
-                    res.status(404).send('Archivo no encontrado');
-                }
-            });
+            try {
+                // Sanitize the path to prevent traversal attacks
+                const sanitizedPath = sanitizeFilePath(book.pdf_path);
+                const filePath = path.resolve(__dirname, '..', sanitizedPath);
+
+                res.sendFile(filePath, (err) => {
+                    if (err) {
+                        console.error('Error serving local file:', err);
+                        res.status(404).send('Archivo no encontrado');
+                    }
+                });
+            } catch (securityError) {
+                console.error('Security error in file path:', securityError);
+                return res.status(403).json({
+                    success: false,
+                    message: 'Ruta de archivo no válida'
+                });
+            }
         }
     } catch (error) {
         console.error('Error viewing book:', error);
@@ -247,7 +269,7 @@ router.get('/:id/view', isAuthenticated, async (req, res) => {
 // @route   GET /api/books/:id/download
 // @desc    Download PDF or DOCX
 // @access  Private
-router.get('/:id/download', isAuthenticated, async (req, res) => {
+router.get('/:id/download', isAuthenticated, validateBookId, async (req, res) => {
     try {
         const book = await bookQueries.findById(req.params.id);
         const format = req.query.format || 'pdf';
@@ -289,28 +311,43 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
 
         // Handle File Download
         if (fileUrl && fileUrl.startsWith('http')) {
+            // Validate remote URL
+            if (!isAllowedRemoteUrl(fileUrl)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'URL no permitida'
+                });
+            }
+
             // Cloudinary / Remote logic
             let downloadUrl = fileUrl;
             if (fileUrl.includes('cloudinary.com')) {
                 // Insert fl_attachment before the version number or file path to force download
-                // This regex works for typical Cloudinary URLs
                 downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
             }
             res.redirect(downloadUrl);
         } else {
-            // Local file logic
-            // Clean filename characters
-            const safeFilename = filename.replace(/[^a-z0-9\s.-]/gi, '_');
-            const filePath = path.resolve(__dirname, '..', fileUrl);
+            try {
+                // Sanitize filename and path
+                const safeFilename = sanitizeFilename(filename);
+                const sanitizedPath = sanitizeFilePath(fileUrl);
+                const filePath = path.resolve(__dirname, '..', sanitizedPath);
 
-            res.download(filePath, safeFilename, (err) => {
-                if (err) {
-                    console.error('Error downloading local file:', err);
-                    if (!res.headersSent) {
-                        res.status(404).send('Archivo no encontrado');
+                res.download(filePath, safeFilename, (err) => {
+                    if (err) {
+                        console.error('Error downloading local file:', err);
+                        if (!res.headersSent) {
+                            res.status(404).send('Archivo no encontrado');
+                        }
                     }
-                }
-            });
+                });
+            } catch (securityError) {
+                console.error('Security error in download:', securityError);
+                return res.status(403).json({
+                    success: false,
+                    message: 'Ruta de archivo no válida'
+                });
+            }
         }
     } catch (error) {
         console.error('Error downloading book:', error);
@@ -324,7 +361,7 @@ router.get('/:id/download', isAuthenticated, async (req, res) => {
 // @route   GET /api/books/:id/cover
 // @desc    Get book cover image
 // @access  Private
-router.get('/:id/cover', isAuthenticated, async (req, res) => {
+router.get('/:id/cover', isAuthenticated, validateBookId, async (req, res) => {
     try {
         const book = await bookQueries.findById(req.params.id);
 
@@ -336,16 +373,33 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
         }
 
         if (book.cover_path.startsWith('http')) {
+            // Validate remote URL
+            if (!isAllowedRemoteUrl(book.cover_path)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'URL no permitida'
+                });
+            }
             res.redirect(book.cover_path);
         } else {
-            const filePath = path.resolve(__dirname, '..', book.cover_path);
-            res.sendFile(filePath, (err) => {
-                if (err) {
-                    // Try serving a default placeholder if cover missing
-                    console.error('Error serving local cover:', err);
-                    res.status(404).send('Portada no encontrada');
-                }
-            });
+            try {
+                // Sanitize path
+                const sanitizedPath = sanitizeFilePath(book.cover_path);
+                const filePath = path.resolve(__dirname, '..', sanitizedPath);
+
+                res.sendFile(filePath, (err) => {
+                    if (err) {
+                        console.error('Error serving local cover:', err);
+                        res.status(404).send('Portada no encontrada');
+                    }
+                });
+            } catch (securityError) {
+                console.error('Security error in cover path:', securityError);
+                return res.status(403).json({
+                    success: false,
+                    message: 'Ruta de archivo no válida'
+                });
+            }
         }
     } catch (error) {
         console.error('Error fetching cover:', error);
@@ -359,7 +413,7 @@ router.get('/:id/cover', isAuthenticated, async (req, res) => {
 // @route   DELETE /api/books/:id
 // @desc    Delete a book
 // @access  Private
-router.delete('/:id', isAuthenticated, async (req, res) => {
+router.delete('/:id', isAuthenticated, validateBookId, async (req, res) => {
     try {
         console.log(`[DELETE] Request to delete book ${req.params.id} by user ${req.user.email}`);
         const book = await bookQueries.findById(req.params.id);

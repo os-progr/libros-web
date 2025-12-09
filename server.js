@@ -51,6 +51,53 @@ app.use(cors({
     credentials: true
 }));
 
+// ============================================
+// RATE LIMITING - Security Protection
+// ============================================
+const rateLimit = require('express-rate-limit');
+
+// General API rate limiter
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Max 100 requests per windowMs
+    message: {
+        success: false,
+        message: 'Demasiadas peticiones desde esta IP, por favor intenta más tarde.'
+    },
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    skip: (req) => {
+        // Skip rate limiting for health checks
+        return req.path === '/health';
+    }
+});
+
+// Strict limiter for authentication endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Max 10 login attempts per 15 minutes
+    message: {
+        success: false,
+        message: 'Demasiados intentos de inicio de sesión. Por favor intenta en 15 minutos.'
+    },
+    skipSuccessfulRequests: true // Don't count successful requests
+});
+
+// Upload limiter (more restrictive)
+const uploadLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20, // Max 20 uploads per hour
+    message: {
+        success: false,
+        message: 'Límite de subidas alcanzado. Por favor intenta en una hora.'
+    }
+});
+
+// Apply general rate limiter to all API routes
+app.use('/api/', apiLimiter);
+
+// Apply auth limiter to authentication routes
+app.use('/auth/google', authLimiter);
 
 // Body parser
 app.use(express.json());

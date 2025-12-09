@@ -6,11 +6,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
+const { validateCommentCreation, validateCommentUpdate, validateBookId } = require('../middleware/validators');
 
 // @route   GET /api/comments/book/:bookId
 // @desc    Get all comments for a book
 // @access  Private
-router.get('/book/:bookId', isAuthenticated, async (req, res) => {
+router.get('/book/:bookId', isAuthenticated, validateBookId, async (req, res) => {
     try {
         const bookId = req.params.bookId;
 
@@ -76,7 +77,7 @@ router.get('/book/:bookId', isAuthenticated, async (req, res) => {
 // @route   POST /api/comments
 // @desc    Create a new comment
 // @access  Private
-router.post('/', isAuthenticated, async (req, res) => {
+router.post('/', isAuthenticated, validateCommentCreation, async (req, res) => {
     try {
         const { book_id, comment_text, parent_comment_id } = req.body;
 
@@ -275,7 +276,7 @@ router.post('/:id/like', isAuthenticated, async (req, res) => {
 // @route   PUT /api/comments/:id
 // @desc    Edit a comment
 // @access  Private
-router.put('/:id', isAuthenticated, async (req, res) => {
+router.put('/:id', isAuthenticated, validateCommentUpdate, async (req, res) => {
     try {
         const commentId = req.params.id;
         const { comment_text } = req.body;
