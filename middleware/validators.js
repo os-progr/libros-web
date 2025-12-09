@@ -78,9 +78,9 @@ const validateReviewCreation = [
         .toInt(),
 
     body('review_text')
+        .optional({ checkFalsy: true }) // Allow empty string
         .trim()
-        .notEmpty().withMessage('El texto de la reseña es obligatorio')
-        .isLength({ min: 10, max: 5000 }).withMessage('La reseña debe tener entre 10 y 5000 caracteres'),
+        .isLength({ max: 5000 }).withMessage('La reseña no puede exceder 5000 caracteres'),
 
     handleValidationErrors
 ];
