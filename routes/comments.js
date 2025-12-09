@@ -81,13 +81,6 @@ router.post('/', isAuthenticated, validateCommentCreation, async (req, res) => {
     try {
         const { book_id, comment_text, parent_comment_id } = req.body;
 
-        if (!book_id || !comment_text) {
-            return res.status(400).json({
-                success: false,
-                message: 'El libro y el texto del comentario son requeridos'
-            });
-        }
-
         // Insert comment
         const [result] = await db.query(
             'INSERT INTO comments (book_id, user_id, parent_comment_id, comment_text) VALUES (?, ?, ?, ?)',
@@ -280,13 +273,6 @@ router.put('/:id', isAuthenticated, validateCommentUpdate, async (req, res) => {
     try {
         const commentId = req.params.id;
         const { comment_text } = req.body;
-
-        if (!comment_text) {
-            return res.status(400).json({
-                success: false,
-                message: 'El texto del comentario es requerido'
-            });
-        }
 
         // Check if comment exists and user owns it
         const [comments] = await db.query(

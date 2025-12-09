@@ -57,20 +57,6 @@ router.post('/', isAuthenticated, validateReviewCreation, async (req, res) => {
     try {
         const { book_id, rating, review_text } = req.body;
 
-        if (!book_id || !rating) {
-            return res.status(400).json({
-                success: false,
-                message: 'Book ID y calificación son obligatorios'
-            });
-        }
-
-        if (rating < 1 || rating > 5) {
-            return res.status(400).json({
-                success: false,
-                message: 'La calificación debe estar entre 1 y 5'
-            });
-        }
-
         // Check if book exists
         const books = await db.query('SELECT * FROM books WHERE id = ?', [book_id]);
         if (books.length === 0) {
