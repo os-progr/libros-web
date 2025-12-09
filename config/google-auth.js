@@ -84,8 +84,16 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await userQueries.findById(id);
+
+        // If user not found (deleted or invalid session), clear the session
+        if (!user) {
+            console.warn(`⚠️  User with ID ${id} not found in database. Session will be cleared.`);
+            return done(null, false); // This will clear the invalid session
+        }
+
         done(null, user);
     } catch (error) {
+        console.error('Error deserializing user:', error);
         done(error, null);
     }
 });

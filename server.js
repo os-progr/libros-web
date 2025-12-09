@@ -341,7 +341,57 @@ app.get('/reset-reviews', async (req, res) => {
     }
 });
 
-// Health check endpoint
+// SESSION CLEANUP ROUTE - Fixes "Failed to deserialize user" errors
+app.get('/cleanup-sessions', async (req, res) => {
+    try {
+        const mysql = require('mysql2/promise');
+        let conn;
+
+        if (process.env.MYSQL_URL || process.env.DATABASE_URL) {
+            conn = await mysql.createConnection(process.env.MYSQL_URL || process.env.DATABASE_URL);
+        } else {
+            const dbConfig = {
+                host: process.env.MYSQLHOST || process.env.DB_HOST,
+                user: process.env.MYSQLUSER || process.env.DB_USER,
+                password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+                database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+                port: process.env.MYSQLPORT || process.env.DB_PORT || 3306
+            };
+            conn = await mysql.createConnection(dbConfig);
+        }
+
+        // Count before
+        const [beforeCount] = await conn.query('SELECT COUNT(*) as count FROM sessions');
+
+        // Delete expired sessions
+        const [expiredResult] = await conn.query('DELETE FROM sessions WHERE expires < NOW()');
+
+        // Delete orphaned sessions (sessions with non-existent user IDs)
+        const [orphanedResult] = await conn.query(`
+            DELETE s FROM sessions s
+            LEFT JOIN users u ON JSON_EXTRACT(s.data, '$.passport.user') = u.id
+            WHERE JSON_EXTRACT(s.data, '$.passport.user') IS NOT NULL
+            AND u.id IS NULL
+        `);
+
+        // Count after
+        const [afterCount] = await conn.query('SELECT COUNT(*) as count FROM sessions');
+        const totalDeleted = beforeCount[0].count - afterCount[0].count;
+
+        await conn.end();
+
+        res.send(`
+            <h1>✅ Sesiones limpiadas</h1>
+            <p>Sesiones expiradas eliminadas: ${expiredResult.affectedRows}</p>
+            <p>Sesiones huérfanas eliminadas: ${orphanedResult.affectedRows}</p>
+            <p>Total eliminado: ${totalDeleted}</p>
+            <p>Sesiones restantes: ${afterCount[0].count}</p>
+            <a href="/">Volver</a>
+        `);
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Error</h1><pre>${error.message}</pre>`);
+    }
+});
 app.get('/health', (req, res) => {
     res.json({
         status: 'ok',
