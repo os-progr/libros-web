@@ -948,9 +948,13 @@ const EventHandlers = {
             formData.append('author', document.getElementById('bookAuthor').value.trim());
             formData.append('description', document.getElementById('bookDescription').value.trim());
 
-            const pdfFile = document.getElementById('bookFile').files[0];
-            const docxFile = document.getElementById('bookDocx').files[0];
-            const coverFile = document.getElementById('bookCover').files[0];
+            const pdfInput = document.getElementById('bookFile');
+            const docxInput = document.getElementById('bookDocx');
+            const coverInput = document.getElementById('bookCover');
+
+            const pdfFile = pdfInput ? pdfInput.files[0] : null;
+            const docxFile = docxInput ? docxInput.files[0] : null;
+            const coverFile = coverInput ? coverInput.files[0] : null;
 
             if (pdfFile) formData.append('pdf', pdfFile);
             if (docxFile) formData.append('docx', docxFile);
