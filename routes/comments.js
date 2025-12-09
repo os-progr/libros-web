@@ -6,12 +6,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
-const { validateCommentCreation, validateCommentUpdate, validateBookId } = require('../middleware/validators');
+const { validateCommentCreation, validateCommentUpdate, validateBookIdParam } = require('../middleware/validators');
 
 // @route   GET /api/comments/book/:bookId
 // @desc    Get all comments for a book
 // @access  Private
-router.get('/book/:bookId', isAuthenticated, validateBookId, async (req, res) => {
+router.get('/book/:bookId', isAuthenticated, validateBookIdParam, async (req, res) => {
     try {
         const bookId = req.params.bookId;
 

@@ -6,12 +6,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 const { isAuthenticated } = require('../middleware/auth');
-const { validateReviewCreation, validateBookId } = require('../middleware/validators');
+const { validateReviewCreation, validateBookIdParam } = require('../middleware/validators');
 
 // @route   GET /api/reviews/book/:bookId
 // @desc    Get all reviews for a book
 // @access  Public
-router.get('/book/:bookId', validateBookId, async (req, res) => {
+router.get('/book/:bookId', validateBookIdParam, async (req, res) => {
     try {
         const reviews = await db.query(`
             SELECT 

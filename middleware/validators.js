@@ -61,6 +61,17 @@ const validateBookId = [
     handleValidationErrors
 ];
 
+/**
+ * Validation rules for bookId parameter (alternative naming)
+ */
+const validateBookIdParam = [
+    param('bookId')
+        .isInt({ min: 1 }).withMessage('ID de libro inválido')
+        .toInt(),
+
+    handleValidationErrors
+];
+
 // ============================================
 // REVIEW VALIDATORS
 // ============================================
@@ -276,6 +287,7 @@ module.exports = {
     // Book validators
     validateBookCreation,
     validateBookId,
+    validateBookIdParam,
 
     // Review validators
     validateReviewCreation,
