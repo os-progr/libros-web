@@ -1398,7 +1398,7 @@ const AdminPanel = {
         if (popularBookEl) {
             if (stats.mostPopularBook) {
                 popularBookEl.innerHTML = `
-        < div class= "popular-book-icon" >🔥</div >
+        <div class="popular-book-icon">🔥</div>
         <div class="popular-book-info">
             <div class="popular-book-title">${this.escapeHtml(stats.mostPopularBook.title)}</div>
             <div class="popular-book-subtitle">
@@ -1408,7 +1408,7 @@ const AdminPanel = {
                 `;
             } else {
                 popularBookEl.innerHTML = `
-            < div class= "popular-book-icon" > ℹ️</div >
+            <div class="popular-book-icon">ℹ️</div>
         <div class="popular-book-info">
             <div class="popular-book-title">Sin datos</div>
             <div class="popular-book-subtitle">Aún no hay descargas</div>
@@ -1512,7 +1512,7 @@ const AdminPanel = {
         }
 
         tbody.innerHTML = users.map(user => `
-            < tr >
+        <tr>
                 <td>
                     <div class="user-cell">
                         <img src="${user.picture || 'https://via.placeholder.com/32'}" alt="${this.escapeHtml(user.name)}">
@@ -1536,14 +1536,14 @@ const AdminPanel = {
                         </button>
                     ` : '<span class="badge badge-admin">Admin</span>'}
                 </td>
-            </tr >
+            </tr>
     `).join('');
     },
 
     async deleteUser(userId, userName) {
         if (confirm(`¿Estás seguro de que quieres eliminar al usuario "${userName}" ?\n\nEsta acción eliminará también todos sus libros y no se puede deshacer.`)) {
             try {
-                const response = await fetch(`/ api / admin / users / ${userId} `, {
+                const response = await fetch(`/api/admin/users/${userId}`, {
                     method: 'DELETE'
                 });
                 const data = await response.json();
@@ -1553,7 +1553,7 @@ const AdminPanel = {
                     this.loadUsers(); // Reload list
                     this.loadStats(); // Update stats
                 } else {
-                    alert(`❌ Error: ${data.message} `);
+                    alert(`❌ Error: ${data.message}`);
                 }
             } catch (error) {
                 console.error('Error deleting user:', error);
@@ -1636,7 +1636,7 @@ const AdminPanel = {
         }
 
         tbody.innerHTML = books.map(book => `
-    < tr >
+        <tr>
                 <td>
                     <div class="book-title-cell" title="${this.escapeHtml(book.title)}">
                         ${this.escapeHtml(book.title)}
@@ -1675,7 +1675,7 @@ const AdminPanel = {
                         </button>
                     </div>
                 </td>
-            </tr >
+            </tr>
     `).join('');
     },
 
@@ -1771,7 +1771,7 @@ const AdminPanel = {
         const description = document.getElementById('editBookDescription').value;
 
         try {
-            const response = await fetch(`/ api / admin / books / ${id} `, {
+            const response = await fetch(`/api/admin/books/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1786,7 +1786,7 @@ const AdminPanel = {
                 document.getElementById('editBookModal').classList.remove('active');
                 this.loadBooks();
             } else {
-                alert(`❌ Error: ${data.message} `);
+                alert(`❌ Error: ${data.message}`);
             }
         } catch (error) {
             console.error('Error updating book:', error);
@@ -1827,7 +1827,7 @@ const AdminPanel = {
         const type = document.getElementById('feedbackType').value;
 
         try {
-            const response = await fetch(`/ api / admin / books / ${id}/feedback`, {
+            const response = await fetch(`/api/admin/books/${id}/feedback`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, type })
