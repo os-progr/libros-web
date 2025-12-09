@@ -69,7 +69,8 @@
                         </button>
 
                         <!-- User Profile -->
-                        <div class="user-profile-compact">
+                        <div class="user-profile-compact"
+                            onclick="if(typeof SocialFeatures !== 'undefined') SocialFeatures.openEnhancedProfileModal()">
                             <img id="userPicture" src="" alt="User" class="user-avatar-small">
                             <div class="user-info-compact">
                                 <span id="userName" class="user-name-compact"></span>
@@ -303,7 +304,7 @@
                     <h3 class="admin-section-title">ℹ️ Información del Sistema</h3>
                     <div class="system-info">
                         <div class="info-row"><span class="info-label">Versión:</span><span
-                                class="info-value">v12.13</span></div>
+                                class="info-value">v12.14</span></div>
                         <div class="info-row"><span class="info-label">Libros Hoy:</span><span class="info-value"
                                 id="statBooksToday">-</span></div>
                         <div class="info-row"><span class="info-label">Reportes Pendientes:</span><span

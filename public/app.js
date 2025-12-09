@@ -1148,15 +1148,7 @@ function setupEventListeners() {
     const bookFile = document.getElementById('bookFile');
     if (bookFile) bookFile.addEventListener('change', EventHandlers.handleFileChange);
 
-    // Profile Edit Trigger
-    const userProfileCompact = document.querySelector('.user-profile-compact');
-    if (userProfileCompact) {
-        userProfileCompact.addEventListener('click', () => {
-            if (typeof SocialFeatures !== 'undefined') {
-                SocialFeatures.openEnhancedProfileModal();
-            }
-        });
-    }
+    // Profile Edit Trigger (Moved to HTML onclick for reliability)
 
     const bookCover = document.getElementById('bookCover');
     if (bookCover) bookCover.addEventListener('change', EventHandlers.handleFileChange);
