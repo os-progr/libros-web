@@ -157,3 +157,11 @@
     background: #eee;
     margin: 1.5rem 0;
 }
+
+/* Responsive Login */
+@media (max-width: 360px) {
+    .login-card {
+        width: 90%;
+        padding: 3rem 1.5rem 2rem;
+    }
+}
