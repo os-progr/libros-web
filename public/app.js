@@ -957,15 +957,12 @@ const EventHandlers = {
             formData.append('description', document.getElementById('bookDescription').value.trim());
 
             const pdfInput = document.getElementById('bookFile');
-            const docxInput = document.getElementById('bookDocx');
             const coverInput = document.getElementById('bookCover');
 
             const pdfFile = pdfInput ? pdfInput.files[0] : null;
-            const docxFile = docxInput ? docxInput.files[0] : null;
             const coverFile = coverInput ? coverInput.files[0] : null;
 
             if (pdfFile) formData.append('pdf', pdfFile);
-            if (docxFile) formData.append('docx', docxFile);
             if (coverFile) formData.append('cover', coverFile);
 
             const result = await API.uploadBook(formData);
@@ -1010,7 +1007,6 @@ const EventHandlers = {
         let fileNameElement;
 
         if (e.target.id === 'bookFile') fileNameElement = document.getElementById('fileName');
-        else if (e.target.id === 'bookDocx') fileNameElement = document.getElementById('docxFileName');
         else fileNameElement = document.getElementById('coverFileName');
 
         if (file) {

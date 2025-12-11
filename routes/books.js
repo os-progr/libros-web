@@ -236,7 +236,37 @@ router.get('/:id/view', isAuthenticated, validateBookId, async (req, res) => {
                     message: 'URL no permitida'
                 });
             }
-            res.redirect(book.pdf_path);
+
+            // Proxy the content to avoid CORS/X-Frame-Options issues
+            const https = require('https');
+            const http = require('http');
+            const protocol = book.pdf_path.startsWith('https') ? https : http;
+
+            const request = protocol.get(book.pdf_path, (response) => {
+                if (response.statusCode !== 200) {
+                    return res.status(response.statusCode).send('Error al obtener el archivo remoto');
+                }
+
+                // Set appropriate headers
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'inline; filename="book.pdf"');
+
+                if (response.headers['content-length']) {
+                    res.setHeader('Content-Length', response.headers['content-length']);
+                }
+
+                response.pipe(res);
+            });
+
+            request.on('error', (err) => {
+                console.error('Error proxying book file:', err);
+                if (!res.headersSent) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'Error al visualizar el libro'
+                    });
+                }
+            });
         } else {
             try {
                 // Sanitize the path to prevent traversal attacks
@@ -320,12 +350,40 @@ router.get('/:id/download', isAuthenticated, validateBookId, async (req, res) =>
             }
 
             // Cloudinary / Remote logic
-            let downloadUrl = fileUrl;
-            if (fileUrl.includes('cloudinary.com')) {
-                // Insert fl_attachment before the version number or file path to force download
-                downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-            }
-            res.redirect(downloadUrl);
+            // Cloudinary / Remote logic
+            // Proxy logic to ensure download works without CORS/Blocked issues
+            const https = require('https');
+            const http = require('http');
+            const protocol = fileUrl.startsWith('https') ? https : http;
+
+            const request = protocol.get(fileUrl, (response) => {
+                if (response.statusCode !== 200) {
+                    return res.status(response.statusCode).send('Error al obtener el archivo remoto');
+                }
+
+                // Set headers for download
+                res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+
+                // Encode filename for headers (safe ascii)
+                const encodedFilename = encodeURIComponent(filename).replace(/%20/g, ' ');
+                res.setHeader('Content-Disposition', `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+
+                if (response.headers['content-length']) {
+                    res.setHeader('Content-Length', response.headers['content-length']);
+                }
+
+                response.pipe(res);
+            });
+
+            request.on('error', (err) => {
+                console.error('Error proxying download:', err);
+                if (!res.headersSent) {
+                    res.status(500).json({
+                        success: false,
+                        message: 'Error al descargar el libro'
+                    });
+                }
+            });
         } else {
             try {
                 // Sanitize filename and path
