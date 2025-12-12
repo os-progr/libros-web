@@ -240,33 +240,49 @@ router.get('/:id/view', isAuthenticated, validateBookId, async (req, res) => {
             // Proxy the content to avoid CORS/X-Frame-Options issues
             const https = require('https');
             const http = require('http');
-            const protocol = book.pdf_path.startsWith('https') ? https : http;
 
-            const request = protocol.get(book.pdf_path, (response) => {
-                if (response.statusCode !== 200) {
-                    return res.status(response.statusCode).send('Error al obtener el archivo remoto');
-                }
+            const fetchUrl = (urlToFetch) => {
+                console.log(`[PROXY] Requesting: ${urlToFetch}`);
+                const protocol = urlToFetch.startsWith('https') ? https : http;
 
-                // Set appropriate headers
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', 'inline; filename="book.pdf"');
+                const request = protocol.get(urlToFetch, (response) => {
+                    console.log(`[PROXY] Response status: ${response.statusCode}`);
 
-                if (response.headers['content-length']) {
-                    res.setHeader('Content-Length', response.headers['content-length']);
-                }
+                    // Handle Redirects (301, 302, 307, etc.)
+                    if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                        console.log(`[PROXY] Redirecting to: ${response.headers.location}`);
+                        return fetchUrl(response.headers.location);
+                    }
 
-                response.pipe(res);
-            });
+                    if (response.statusCode !== 200) {
+                        console.error(`[PROXY] Error fetching file. Status: ${response.statusCode}`);
+                        return res.status(response.statusCode).send(`Error al obtener el archivo remoto (Status: ${response.statusCode})`);
+                    }
 
-            request.on('error', (err) => {
-                console.error('Error proxying book file:', err);
-                if (!res.headersSent) {
-                    res.status(500).json({
-                        success: false,
-                        message: 'Error al visualizar el libro'
-                    });
-                }
-            });
+                    // Set appropriate headers
+                    res.setHeader('Content-Type', 'application/pdf');
+                    // Force inline to view in browser
+                    res.setHeader('Content-Disposition', 'inline; filename="book.pdf"');
+
+                    if (response.headers['content-length']) {
+                        res.setHeader('Content-Length', response.headers['content-length']);
+                    }
+
+                    response.pipe(res);
+                });
+
+                request.on('error', (err) => {
+                    console.error('[PROXY] Network error:', err);
+                    if (!res.headersSent) {
+                        res.status(500).json({
+                            success: false,
+                            message: 'Error de red al visualizar el libro'
+                        });
+                    }
+                });
+            };
+
+            fetchUrl(book.pdf_path);
         } else {
             try {
                 // Sanitize the path to prevent traversal attacks
@@ -350,40 +366,54 @@ router.get('/:id/download', isAuthenticated, validateBookId, async (req, res) =>
             }
 
             // Cloudinary / Remote logic
-            // Cloudinary / Remote logic
             // Proxy logic to ensure download works without CORS/Blocked issues
             const https = require('https');
             const http = require('http');
-            const protocol = fileUrl.startsWith('https') ? https : http;
 
-            const request = protocol.get(fileUrl, (response) => {
-                if (response.statusCode !== 200) {
-                    return res.status(response.statusCode).send('Error al obtener el archivo remoto');
-                }
+            const fetchDownload = (urlToFetch) => {
+                console.log(`[DOWNLOAD] Requesting: ${urlToFetch}`);
+                const protocol = urlToFetch.startsWith('https') ? https : http;
 
-                // Set headers for download
-                res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+                const request = protocol.get(urlToFetch, (response) => {
+                    console.log(`[DOWNLOAD] Response status: ${response.statusCode}`);
 
-                // Encode filename for headers (safe ascii)
-                const encodedFilename = encodeURIComponent(filename).replace(/%20/g, ' ');
-                res.setHeader('Content-Disposition', `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+                    // Handle Redirects
+                    if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                        console.log(`[DOWNLOAD] Redirecting to: ${response.headers.location}`);
+                        return fetchDownload(response.headers.location);
+                    }
 
-                if (response.headers['content-length']) {
-                    res.setHeader('Content-Length', response.headers['content-length']);
-                }
+                    if (response.statusCode !== 200) {
+                        console.error(`[DOWNLOAD] Error fetching file. Status: ${response.statusCode}`);
+                        return res.status(response.statusCode).send(`Error al obtener el archivo remoto (Status: ${response.statusCode})`);
+                    }
 
-                response.pipe(res);
-            });
+                    // Set headers for download
+                    res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
 
-            request.on('error', (err) => {
-                console.error('Error proxying download:', err);
-                if (!res.headersSent) {
-                    res.status(500).json({
-                        success: false,
-                        message: 'Error al descargar el libro'
-                    });
-                }
-            });
+                    // Encode filename for headers (safe ascii)
+                    const encodedFilename = encodeURIComponent(filename).replace(/%20/g, ' ');
+                    res.setHeader('Content-Disposition', `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+
+                    if (response.headers['content-length']) {
+                        res.setHeader('Content-Length', response.headers['content-length']);
+                    }
+
+                    response.pipe(res);
+                });
+
+                request.on('error', (err) => {
+                    console.error('[DOWNLOAD] Network error:', err);
+                    if (!res.headersSent) {
+                        res.status(500).json({
+                            success: false,
+                            message: 'Error de red al descargar el libro'
+                        });
+                    }
+                });
+            };
+
+            fetchDownload(fileUrl);
         } else {
             try {
                 // Sanitize filename and path
